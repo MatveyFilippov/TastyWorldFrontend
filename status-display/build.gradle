@@ -1,0 +1,48 @@
+import io.github.fvarrui.javapackager.gradle.PackageTask
+
+plugins {
+    id 'application'
+    id 'io.github.fvarrui.javapackager.plugin' version '1.7.6'
+}
+
+group 'homer.tastyworld.frontend'
+version '1.0-SNAPSHOT'
+
+application {
+    mainModule = 'homer.tastyworld.frontend.statusdisplay'
+    mainClass = 'homer.tastyworld.frontend.statusdisplay.StatusDisplayApplication'
+}
+
+javafx {
+    version = '21.0.2'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {}
+
+task packageToApp(type: PackageTask, dependsOn: build) {
+    mainClass = application.mainClass
+
+    outputDirectory = file(uri("$rootDir/packaged-apps/status-display"))
+    setAppName("TastyWorld-StatusDisplay")
+    displayName = "TastyWorld-StatusDisplay"
+    organizationName = "Homer"
+    jreMinVersion = targetCompatibility
+    additionalModulePaths = [file("$System.env.PATH_TO_FX_MODS")]
+//    administratorRequired = true
+//    fileAssociations =
+//    additionalResources = [ file('file path'), file('folder path'), ... ]
+//    platform = "auto"|"linux"|"mac"|"windows"  // Default is "auto"
+
+//    linuxConfig {
+//        ...
+//    }
+    macConfig {
+        icnsFile = file(uri("src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.icns"))
+    }
+    winConfig {
+        icoFile = file(uri("src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.ico"))
+        disableRunAfterInstall = false
+        removeOldLibs = true
+    }
+}

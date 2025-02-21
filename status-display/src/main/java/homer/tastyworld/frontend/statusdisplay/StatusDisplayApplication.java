@@ -1,0 +1,35 @@
+package homer.tastyworld.frontend.statusdisplay;
+
+import homer.tastyworld.frontend.starterpack.ui.TastyWorldApplication;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+public class StatusDisplayApplication extends TastyWorldApplication {
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(StatusDisplayApplication.class.getResource("tastyworld-status-display.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setTitle("TastyWorldStatusDisplay");
+//        scene.setCursor(Cursor.NONE);
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ESCAPE)) {
+                stage.close();
+            }
+        });
+        stage.setScene(scene);
+//        stage.setFullScreen(true);
+        stage.setAlwaysOnTop(true);
+        stage.setFullScreenExitHint("Press ESC to exit");
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+
+}

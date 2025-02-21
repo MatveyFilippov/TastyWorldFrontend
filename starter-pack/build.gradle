@@ -1,0 +1,27 @@
+plugins {
+    id 'maven-publish'
+}
+
+group 'homer.tastyworld.frontend'
+version '0.0.1-SNAPSHOT'
+
+javafx {
+    version = '21.0.2'
+    modules = ['javafx.controls']
+}
+
+dependencies {}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = 'starter-pack'
+        }
+    }
+    repositories {
+        maven {
+            url = uri("${rootDir}/local-repo")
+        }
+    }
+}

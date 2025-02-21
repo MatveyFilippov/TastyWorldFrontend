@@ -1,0 +1,95 @@
+plugins {
+    id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.13' apply false
+}
+
+allprojects {
+    group = 'homer.tastyworld.frontend'
+    version = '1.0.0'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url uri("${rootDir}/local-repo")
+        }
+    }
+
+    sourceCompatibility = '9'
+    targetCompatibility = '9'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.openjfx.javafxplugin'
+
+    dependencies {
+        implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+        implementation 'org.slf4j:slf4j-api:1.7.36'
+        implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2'
+        implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
+        implementation 'com.rabbitmq:amqp-client:5.16.0'
+    }
+    if (project.name != 'starter-pack') {
+        dependencies {
+            implementation 'homer.tastyworld.frontend:starter-pack:0.0.1-SNAPSHOT'
+        }
+    }
+
+    plugins.withType(JavaPlugin) {
+        sourceCompatibility = '9'
+        targetCompatibility = '9'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+//        options.compilerArgs += ['--module-path', classpath.asPath]
+    }
+}
+
+task createLocalRepoDir {
+    doLast {
+        new File(rootDir, "local-repo").mkdirs()
+    }
+}
+
+task createPackagedAppsDir {
+    doLast {
+        new File(rootDir, "packaged-apps").mkdirs()
+    }
+}
+
+task cleanAll {
+    dependsOn subprojects.clean
+    doFirst {
+        new File(rootDir, "local-repo").deleteDir()
+        new File(rootDir, "packaged-apps").deleteDir()
+    }
+}
+
+task updateStarterPack {
+    group = 'Build'
+    description = 'Publishes starter-pack and rebuilds other modules'
+
+    dependsOn cleanAll, createLocalRepoDir
+    dependsOn ':starter-pack:publish'
+
+    allprojects.each { project ->
+        if (project.name != 'starter-pack' && project.name != rootProject.name) {
+            dependsOn "${project.path}:build"  // --refresh-dependencies
+        }
+    }
+}
+
+task packageAllApps {
+    group = 'Build'
+    description = 'Package javaFX app from all modules'
+
+    dependsOn updateStarterPack, createPackagedAppsDir
+
+    allprojects.each { project ->
+        if (project.name != 'starter-pack' && project.name != rootProject.name) {
+            dependsOn "${project.path}:packageToApp"
+        }
+    }
+}
