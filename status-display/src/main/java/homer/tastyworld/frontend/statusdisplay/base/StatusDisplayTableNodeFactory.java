@@ -1,12 +1,9 @@
 package homer.tastyworld.frontend.statusdisplay.base;
 
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
-import javafx.geometry.Pos;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.TextAlignment;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,16 +15,7 @@ public class StatusDisplayTableNodeFactory implements TableNodeFactory {
 
     public static AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
-        Label label = new Label(name);
-        label.setTextAlignment(TextAlignment.CENTER);
-        label.setAlignment(Pos.CENTER);
-        label.setWrapText(true);
-        AnchorPane.setTopAnchor(label, 0.0);
-        AnchorPane.setBottomAnchor(label, 0.0);
-        AnchorPane.setLeftAnchor(label, 0.0);
-        AnchorPane.setRightAnchor(label, 0.0);
-        label.styleProperty().bind(Helper.getAdaptiveFontSize(pane, 5));
-        pane.getChildren().add(label);
+        Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 5));
         return pane;
     }
 
