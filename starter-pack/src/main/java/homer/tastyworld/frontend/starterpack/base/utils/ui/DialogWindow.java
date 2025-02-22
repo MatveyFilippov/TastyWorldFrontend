@@ -27,7 +27,7 @@ public class DialogWindow {
             if (checker.isGoodAnswer(result)) {
                 return result;
             }
-            ErrorAlert.showAlert("InvalidValue", "Вы ввели плохое значение, попробуйте заново", true);
+            AlertWindow.showError("InvalidValue", "Вы ввели плохое значение, попробуйте заново", true);
         }
     }
 

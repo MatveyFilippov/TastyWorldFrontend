@@ -1,0 +1,42 @@
+package homer.tastyworld.frontend.starterpack.base.utils.ui.helpers;
+
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.TextAlignment;
+
+public class Text {
+
+    public static StringExpression getAdaptiveFontSize(AnchorPane pane, int divide) {
+        return Bindings.concat(
+                "-fx-font-size: ",
+                Bindings.max(pane.widthProperty().divide(divide), pane.heightProperty().divide(divide)).asString(),
+                "px;"
+        );
+    }
+
+    public static void setTextLeft(AnchorPane pane, String text, StringExpression fontSize) {
+        Label label = new Label(text);
+        label.setWrapText(true);
+        AnchorPane.setTopAnchor(label, 0.0);
+        AnchorPane.setBottomAnchor(label, 0.0);
+        label.styleProperty().bind(fontSize);
+        pane.getChildren().add(label);
+    }
+
+    public static void setTextCentre(AnchorPane pane, String text, StringExpression fontSize) {
+        Label label = new Label(text);
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(false);
+        AnchorPane.setTopAnchor(label, 0.0);
+        AnchorPane.setBottomAnchor(label, 0.0);
+        AnchorPane.setLeftAnchor(label, 0.0);
+        AnchorPane.setRightAnchor(label, 0.0);
+        label.styleProperty().bind(fontSize);
+        pane.getChildren().add(label);
+    }
+
+}

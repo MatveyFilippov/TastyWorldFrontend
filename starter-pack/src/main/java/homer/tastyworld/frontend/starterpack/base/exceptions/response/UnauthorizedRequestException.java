@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.exceptions.response;
 
 import homer.tastyworld.frontend.starterpack.api.Response;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.ErrorAlert;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 
 public class UnauthorizedRequestException extends ResponseException {
 
@@ -11,7 +11,7 @@ public class UnauthorizedRequestException extends ResponseException {
 
     @Override
     protected void action() {
-        ErrorAlert.showAlert("Unauthorized", response.error, true);
+        AlertWindow.showError("Unauthorized", response.error, true);
     }
 
 }

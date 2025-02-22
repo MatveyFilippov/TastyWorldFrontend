@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.displayed;
 
 import homer.tastyworld.frontend.starterpack.base.exceptions.DisplayedException;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.ErrorAlert;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 
 public class InternalServerException extends DisplayedException {
 
@@ -11,7 +11,7 @@ public class InternalServerException extends DisplayedException {
 
     @Override
     protected void action() {
-        ErrorAlert.showAlert(
+        AlertWindow.showError(
                 "Внешняя ошибка",
                 "Произошла ошибка на сервере, разработчики уже получили уведомление",
                 true

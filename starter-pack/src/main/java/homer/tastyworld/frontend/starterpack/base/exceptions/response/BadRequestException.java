@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.exceptions.response;
 
 import homer.tastyworld.frontend.starterpack.api.Response;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.ErrorAlert;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 
 public class BadRequestException extends ResponseException {
 
@@ -13,7 +13,7 @@ public class BadRequestException extends ResponseException {
     protected void action() {
         String text = (response.error != null ? "Error: " + response.error + "\n" : "")
                       + (response.note != null ? "Note: " + response.note : "");
-        ErrorAlert.showAlert("BadRequest", text, true);
+        AlertWindow.showError("BadRequest", text, true);
     }
 
 }

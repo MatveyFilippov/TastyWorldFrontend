@@ -2,7 +2,7 @@ package homer.tastyworld.frontend.starterpack.base;
 
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.ErrorAlert;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import org.apache.hc.core5.http.Method;
 import org.slf4j.Logger;
@@ -49,9 +49,9 @@ public class AppLogger {
     public void errorWithoutServerNotify(String msg, Throwable ex) {
         errorWithoutUserNotify(msg, ex);
         if (ex == null) {
-            ErrorAlert.showAlert("Произошла ошибка", msg, false);
+            AlertWindow.showError("Произошла ошибка", msg, false);
         } else {
-            ErrorAlert.showAlert("Произошла ошибка", ex.getLocalizedMessage(), false);
+            AlertWindow.showError("Произошла ошибка", ex.getLocalizedMessage(), false);
         }
     }
 
@@ -71,7 +71,7 @@ public class AppLogger {
         Response response = notifyServerAboutError(msg, ex);
         if (!response.status.equals("200 OK")) {
             errorWithoutUserNotify("Can't notify server about error --- " + response, null);
-            ErrorAlert.showAlert(
+            AlertWindow.showError(
                     "Срочно обратитесь к разработчикам",
                     "Приложению не удаётся самостоятельно оповестить о случившейся ошибке",
                     true
@@ -79,9 +79,9 @@ public class AppLogger {
             return;
         }
         if (ex == null) {
-            ErrorAlert.showAlert("Произошла ошибка, разработчики получили уведомление", msg, false);
+            AlertWindow.showError("Произошла ошибка, разработчики получили уведомление", msg, false);
         } else {
-            ErrorAlert.showAlert(
+            AlertWindow.showError(
                     "Произошла ошибка, разработчики получили уведомление",
                     ex.getLocalizedMessage(),
                     false

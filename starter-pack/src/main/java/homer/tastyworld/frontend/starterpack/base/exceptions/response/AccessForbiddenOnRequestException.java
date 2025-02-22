@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.exceptions.response;
 
 import homer.tastyworld.frontend.starterpack.api.Response;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.ErrorAlert;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 
 public class AccessForbiddenOnRequestException extends ResponseException {
 
@@ -11,7 +11,7 @@ public class AccessForbiddenOnRequestException extends ResponseException {
 
     @Override
     protected void action() {
-        ErrorAlert.showAlert("AccessForbidden", response.error, true);
+        AlertWindow.showError("AccessForbidden", response.error, true);
     }
 
 }
