@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.starterpack.api.engine;
 
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpected.CantParseRequestBodyException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantParseRequestBodyException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;

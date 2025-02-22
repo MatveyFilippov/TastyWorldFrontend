@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.starterpack.api.notifications;
 
-import homer.tastyworld.frontend.starterpack.utils.AppLogger;
+import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import java.time.Duration;

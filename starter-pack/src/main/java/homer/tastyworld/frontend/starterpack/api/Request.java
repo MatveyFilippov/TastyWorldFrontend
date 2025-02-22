@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.api;
 
 import homer.tastyworld.frontend.starterpack.api.engine.Requester;
-import homer.tastyworld.frontend.starterpack.utils.config.AppConfig;
+import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import org.apache.hc.core5.http.Method;
 import java.util.HashMap;
 import java.util.Map;

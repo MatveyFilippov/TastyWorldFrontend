@@ -1,10 +1,10 @@
 package homer.tastyworld.frontend.starterpack.api.notifications;
 
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpected.NotificatorConnectionException;
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpected.NotificatorSubscribeException;
-import homer.tastyworld.frontend.starterpack.utils.AppLogger;
-import homer.tastyworld.frontend.starterpack.utils.config.AppConfig;
-import homer.tastyworld.frontend.starterpack.utils.misc.SHA256;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.NotificatorConnectionException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.NotificatorSubscribeException;
+import homer.tastyworld.frontend.starterpack.base.AppLogger;
+import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
+import homer.tastyworld.frontend.starterpack.base.utils.misc.SHA256;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

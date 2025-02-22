@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.api.engine;
 
 import homer.tastyworld.frontend.starterpack.api.Response;
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpected.CantMakeRequestException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantMakeRequestException;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpHead;

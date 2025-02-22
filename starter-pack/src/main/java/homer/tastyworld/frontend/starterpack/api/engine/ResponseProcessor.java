@@ -1,14 +1,14 @@
 package homer.tastyworld.frontend.starterpack.api.engine;
 
 import homer.tastyworld.frontend.starterpack.api.Response;
-import homer.tastyworld.frontend.starterpack.exceptions.response.AccessForbiddenOnRequestException;
-import homer.tastyworld.frontend.starterpack.exceptions.response.BadRequestException;
-import homer.tastyworld.frontend.starterpack.exceptions.response.NotFoundRequestException;
-import homer.tastyworld.frontend.starterpack.exceptions.response.UnauthorizedRequestException;
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.displayed.InternalServerException;
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpected.CantParseResponseBodyException;
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpected.CantProcessResponseStreamException;
-import homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpected.UnknownResponseCodeException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.response.AccessForbiddenOnRequestException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.response.NotFoundRequestException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.response.UnauthorizedRequestException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.displayed.InternalServerException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantParseResponseBodyException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantProcessResponseStreamException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.UnknownResponseCodeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
