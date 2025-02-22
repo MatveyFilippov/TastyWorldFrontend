@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'homer.tastyworld.frontend'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 application {
     mainModule = 'homer.tastyworld.frontend.statusdisplay'
