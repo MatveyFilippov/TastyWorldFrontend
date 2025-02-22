@@ -1,1 +1,1 @@
-include 'starter-pack', 'status-display'
+include 'starter-pack', 'status-display', 'pos-creator'
