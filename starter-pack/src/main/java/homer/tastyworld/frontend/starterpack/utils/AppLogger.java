@@ -15,13 +15,19 @@ public class AppLogger {
     public static final AppLogger GLOBAL_LOGGER = AppLogger.getFor(AppLogger.class);
     private final Logger logger;
 
-//    static {
-//        LoggerConfig.configureLog4j();
-//        GLOBAL_LOGGER = AppLogger.getFor(AppLogger.class);
-//    }
-
     private AppLogger(Logger logger) {
         this.logger = logger;
+    }
+
+    private static String getErrorStackTrace(final Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        throwable.printStackTrace(printWriter);
+        return stringWriter.toString();
+    }
+
+    public static AppLogger getFor(Class<?> clazz) {
+        return new AppLogger(LoggerFactory.getLogger(clazz));
     }
 
     public void info(String msg) {
@@ -49,13 +55,6 @@ public class AppLogger {
         }
     }
 
-    private static String getErrorStackTrace(final Throwable throwable) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        throwable.printStackTrace(printWriter);
-        return stringWriter.toString();
-    }
-
     private Response notifyServerAboutError(String msg, Throwable ex) {
         Request request = new Request("/frontend_app/error", Method.POST);
         request.putInBody("app_name", AppConfig.getAppName());
@@ -80,22 +79,18 @@ public class AppLogger {
             return;
         }
         if (ex == null) {
-            ErrorAlert.showAlert(
-                    "Произошла ошибка, разработчики получили уведомление", msg, false
-            );
+            ErrorAlert.showAlert("Произошла ошибка, разработчики получили уведомление", msg, false);
         } else {
             ErrorAlert.showAlert(
-                    "Произошла ошибка, разработчики получили уведомление", ex.getLocalizedMessage(), false
+                    "Произошла ошибка, разработчики получили уведомление",
+                    ex.getLocalizedMessage(),
+                    false
             );
         }
     }
 
     public void error(String msg) {
         error(msg, null);
-    }
-
-    public static AppLogger getFor(Class<?> clazz) {
-        return new AppLogger(LoggerFactory.getLogger(clazz));
     }
 
 }

@@ -11,10 +11,7 @@ public class Response {
 
     @Override
     public String toString() {
-        return String.format(
-                "Response {status=%s ; error=%s ; note=%s ; result=%s}",
-                status, error, note, result
-        );
+        return String.format("Response {status=%s ; error=%s ; note=%s ; result=%s}", status, error, note, result);
     }
 
     public Map<String, Object> getResultAsJSON() {

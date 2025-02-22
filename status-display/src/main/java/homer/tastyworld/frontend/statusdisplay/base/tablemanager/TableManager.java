@@ -9,11 +9,11 @@ import java.awt.Point;
 public class TableManager {
 
     private final GridPane table;
-    private int rows = 0;
-    private int columns = 0;
     private final TableCursor nexFreeCell;
     private final TableItemCollection items = new TableItemCollection();
     private final TableNodeFactory nodeFactory = new TableNodeFactory();
+    private int rows = 0;
+    private int columns = 0;
 
     public TableManager(GridPane table) {
         this.table = table;
@@ -41,7 +41,7 @@ public class TableManager {
         if (cell.x == 0) {
             table.getRowConstraints().removeLast();
             rows--;
-        } else if(cell.y == 0) {
+        } else if (cell.y == 0) {
             table.getColumnConstraints().removeLast();
             columns--;
         }

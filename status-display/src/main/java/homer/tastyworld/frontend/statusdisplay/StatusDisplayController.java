@@ -1,8 +1,5 @@
 package homer.tastyworld.frontend.statusdisplay;
 
-import homer.tastyworld.frontend.starterpack.utils.AppLogger;
-import homer.tastyworld.frontend.starterpack.utils.config.AppConfig;
-import homer.tastyworld.frontend.starterpack.utils.misc.SHA256;
 import homer.tastyworld.frontend.statusdisplay.base.tablemanager.TableManager;
 import homer.tastyworld.frontend.statusdisplay.base.updater.OrderUpdatesListener;
 import javafx.beans.binding.Bindings;
@@ -28,11 +25,7 @@ public class StatusDisplayController {
     }
 
     private StringExpression getTopicFontSize(AnchorPane topic) {
-        return Bindings.concat(
-                "-fx-font-size: ",
-                topic.widthProperty().divide(10).asString(),
-                "px;"
-        );
+        return Bindings.concat("-fx-font-size: ", topic.widthProperty().divide(10).asString(), "px;");
     }
 
     private void setTopic(AnchorPane topic, String name, StringExpression fontSize) {

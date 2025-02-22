@@ -18,14 +18,9 @@ class TableNodeFactory {
 
     private static StringExpression getItemFontSize(AnchorPane pane) {
         return Bindings.concat(
-                Bindings.concat(
-                        "-fx-font-size: ",
-                        Bindings.min(
-                                pane.widthProperty().divide(3),
-                                pane.heightProperty().divide(3)
-                        ).asString(),
-                        "px;"
-                )
+                "-fx-font-size: ",
+                Bindings.min(pane.widthProperty().divide(3), pane.heightProperty().divide(3)).asString(),
+                "px;"
         );
     }
 

@@ -8,7 +8,8 @@ public class InternalServerException extends DisplayedException {
     public InternalServerException() {
         ErrorAlert.showAlert(
                 "Внешняя ошибка",
-                "Произошла ошибка на сервере, разработчики уже получили уведомление", true
+                "Произошла ошибка на сервере, разработчики уже получили уведомление",
+                true
         );
     }
 

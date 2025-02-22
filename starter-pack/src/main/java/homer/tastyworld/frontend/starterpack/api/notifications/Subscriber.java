@@ -17,7 +17,6 @@ public class Subscriber {
     private static final Set<String> queues = new HashSet<>();
     private static boolean isAliveChecking = false;
 
-
     public static void subscribe(Theme theme, NotificationProcessor processor) {
         String queue = theme.getQueueName();
         client.subscribe(queue, message -> Platform.runLater(() -> processor.process(message)));
