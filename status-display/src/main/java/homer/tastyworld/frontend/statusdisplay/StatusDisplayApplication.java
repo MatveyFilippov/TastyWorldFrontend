@@ -23,6 +23,7 @@ public class StatusDisplayApplication extends TastyWorldApplication {
         scene.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
                 stage.close();
+                System.exit(0);
             }
         });
         stage.setScene(scene);

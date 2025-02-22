@@ -29,6 +29,7 @@ public class OrderUpdatesListener {
             if (name != null) {
                 cooking.remove(name);
                 ready.remove(name);
+                orders.remove(orderID);
             }
         } else if (table == TableForOrder.COOKING) {
             cooking.append(name);
@@ -38,12 +39,16 @@ public class OrderUpdatesListener {
         }
     }
 
-    private static void process(long orderID) {
+    public static void process(long orderID) {
         Request request = new Request("order/read", Method.GET);
         request.putInBody("id", orderID);
         Response response = request.request();
         if (response.result == null) {
-            logger.error("Something wrong with order, response while reading info ('order/read'): " + response);
+            if (!response.error.equals("The Order with id '" + orderID + "' probably doesn't exist")) {
+                logger.error("Something wrong with order, response while reading info ('order/read'): " + response);
+            }
+            route("NOT_EXISTS", orderID);
+            return;
         }
         Map<String, Object> result = response.getResultAsJSON();
         orders.put(orderID, (String) result.get("NAME"));
