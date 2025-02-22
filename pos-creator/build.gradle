@@ -1,3 +1,5 @@
+import io.github.fvarrui.javapackager.gradle.PackageTask
+
 plugins {
     id 'application'
     id 'io.github.fvarrui.javapackager.plugin' version '1.7.6'
@@ -8,7 +10,7 @@ version '1.0-SNAPSHOT'
 
 application {
     mainModule = 'homer.tastyworld.frontend.poscreator'
-    mainClass = 'homer.tastyworld.frontend.poscreator.HelloApplication'
+    mainClass = 'homer.tastyworld.frontend.poscreator.POSCreatorApplication'
 }
 
 javafx {
@@ -17,3 +19,30 @@ javafx {
 }
 
 dependencies {}
+
+task packageToApp(type: PackageTask, dependsOn: build) {
+    mainClass = application.mainClass
+
+    outputDirectory = file(uri("$rootDir/packaged-apps/pos-creator"))
+    setAppName("TastyWorld-POS-Creator")
+    displayName = "TastyWorld-POS-Creator"
+    organizationName = "Homer"
+    jreMinVersion = targetCompatibility
+    additionalModulePaths = [file("$System.env.PATH_TO_FX_MODS")]
+//    administratorRequired = true
+//    fileAssociations =
+//    additionalResources = [ file('file path'), file('folder path'), ... ]
+//    platform = "auto"|"linux"|"mac"|"windows"  // Default is "auto"
+
+//    linuxConfig {
+//        ...
+//    }
+    macConfig {
+        icnsFile = file(uri("src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.icns"))
+    }
+    winConfig {
+        icoFile = file(uri("src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.ico"))
+        disableRunAfterInstall = false
+        removeOldLibs = true
+    }
+}

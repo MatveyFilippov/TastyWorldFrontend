@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.poscreator;
 
-import homer.tastyworld.frontend.starterpack.ui.TastyWorldApplication;
+import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -19,7 +19,7 @@ public class POSCreatorApplication extends TastyWorldApplication {
         FXMLLoader fxmlLoader = new FXMLLoader(POSCreatorApplication.class.getResource("tastyworld-pos-creator.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("TastyWorld-POS-Creator");
-        scene.setCursor(Cursor.NONE);
+//        scene.setCursor(Cursor.NONE);
         scene.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
                 stage.close();
@@ -27,9 +27,9 @@ public class POSCreatorApplication extends TastyWorldApplication {
             }
         });
         stage.setScene(scene);
-        stage.setFullScreen(true);
+//        stage.setFullScreen(true);
         stage.setAlwaysOnTop(true);
-        stage.setFullScreenExitHint("Press ESC to exit");
+//        stage.setFullScreenExitHint("Press ESC to exit");
         stage.show();
     }
 
