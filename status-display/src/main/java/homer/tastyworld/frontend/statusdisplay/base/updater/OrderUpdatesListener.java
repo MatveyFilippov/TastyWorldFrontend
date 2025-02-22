@@ -4,6 +4,7 @@ import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
+import homer.tastyworld.frontend.starterpack.exceptions.response.BadRequestException;
 import homer.tastyworld.frontend.starterpack.utils.AppLogger;
 import homer.tastyworld.frontend.statusdisplay.base.tablemanager.TableManager;
 import org.apache.hc.core5.http.Method;
@@ -42,11 +43,15 @@ public class OrderUpdatesListener {
     public static void process(long orderID) {
         Request request = new Request("order/read", Method.GET);
         request.putInBody("id", orderID);
-        Response response = request.request();
+        Response response;
+        try {
+            response = request.request();
+        } catch (BadRequestException ex) {
+            route("NOT_EXISTS", orderID);
+            return;
+        }
         if (response.result == null) {
-            if (!response.error.equals("The Order with id '" + orderID + "' probably doesn't exist")) {
-                logger.error("Something wrong with order, response while reading info ('order/read'): " + response);
-            }
+            logger.error("Something wrong with order, response while reading info ('order/read'): " + response);
             route("NOT_EXISTS", orderID);
             return;
         }
