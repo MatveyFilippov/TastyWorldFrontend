@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.statusdisplay;
 
 import homer.tastyworld.frontend.statusdisplay.base.tablemanager.TableManager;
+import homer.tastyworld.frontend.statusdisplay.base.updater.OnStartup;
 import homer.tastyworld.frontend.statusdisplay.base.updater.OrderUpdatesListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
@@ -22,6 +23,7 @@ public class StatusDisplayController {
         setTopic(cookingTopic, "Заказ готовится", topicFontSize);
         setTopic(readyTopic, "Готов к выдаче", topicFontSize);
         OrderUpdatesListener.init(new TableManager(cookingOrders), new TableManager(readyOrders));
+        OnStartup.setActiveOrders();
     }
 
     private StringExpression getTopicFontSize(AnchorPane topic) {
