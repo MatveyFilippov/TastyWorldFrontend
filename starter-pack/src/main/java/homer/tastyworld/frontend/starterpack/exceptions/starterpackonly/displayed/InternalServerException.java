@@ -6,6 +6,11 @@ import homer.tastyworld.frontend.starterpack.ui.ErrorAlert;
 public class InternalServerException extends DisplayedException {
 
     public InternalServerException() {
+        super();
+    }
+
+    @Override
+    protected void action() {
         ErrorAlert.showAlert(
                 "Внешняя ошибка",
                 "Произошла ошибка на сервере, разработчики уже получили уведомление",

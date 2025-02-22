@@ -9,10 +9,10 @@ import java.util.Map;
 public class Request {
 
     private static final Map<String, String> urlCache = new HashMap<>();
-    private final String endpoint;
-    private final Method method;
-    private final Map<String, Object> body = new HashMap<>();
-    private String token = AppConfig.getToken();
+    protected final String endpoint;
+    protected final Method method;
+    protected final Map<String, Object> body = new HashMap<>();
+    protected String token = AppConfig.getToken();
 
     public Request(String endpoint, Method method) {
         this.endpoint = endpoint;

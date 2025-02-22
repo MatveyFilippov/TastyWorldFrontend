@@ -11,8 +11,8 @@ module homer.tastyworld.frontend.starterpack {
 
     exports homer.tastyworld.frontend.starterpack.api;
     exports homer.tastyworld.frontend.starterpack.api.notifications;
-    exports homer.tastyworld.frontend.starterpack.api.photo;
     exports homer.tastyworld.frontend.starterpack.exceptions;
+    exports homer.tastyworld.frontend.starterpack.exceptions.response;
     exports homer.tastyworld.frontend.starterpack.ui;
     exports homer.tastyworld.frontend.starterpack.utils;
     exports homer.tastyworld.frontend.starterpack.utils.config;

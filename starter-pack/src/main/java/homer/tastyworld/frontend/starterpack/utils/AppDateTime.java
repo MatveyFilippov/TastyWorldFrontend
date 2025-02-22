@@ -12,9 +12,13 @@ public class AppDateTime {
     public static final ZoneId BACKEND_DATETIME_ZONE_ID;
 
     static {
-        Request request = new Request("/client_point/me", Method.GET);
+        Request request = new Request("/frontend_app/datetime_zone", Method.GET);
         Response response = request.request();
         BACKEND_DATETIME_ZONE_ID = ZoneId.of((String) response.result);
+    }
+
+    public static LocalDate parse(String date) {
+        return LocalDate.parse(date);
     }
 
     public static LocalDate getNowDate() {

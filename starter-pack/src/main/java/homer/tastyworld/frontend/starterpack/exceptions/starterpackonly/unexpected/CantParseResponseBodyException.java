@@ -2,9 +2,9 @@ package homer.tastyworld.frontend.starterpack.exceptions.starterpackonly.unexpec
 
 import homer.tastyworld.frontend.starterpack.exceptions.UnexpectedException;
 
-public class CantParseResponseException extends UnexpectedException {
+public class CantParseResponseBodyException extends UnexpectedException {
 
-    public CantParseResponseException(Exception ex) {
+    public CantParseResponseBodyException(Exception ex) {
         super(ex);
     }
 

@@ -14,6 +14,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Method;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 public class Requester {
@@ -53,7 +54,18 @@ public class Requester {
             HttpUriRequestBase request = createFullHttpRequest(
                     method, url, token, RequestBodyProcessor.getStrBody(jsonBody)
             );
-            return client.execute(request, ResponseProcessor.RESPONSE_HANDLER);
+            return client.execute(request, ResponseProcessor.JSON_RESPONSE_HANDLER);
+        } catch (IOException ex) {
+            throw new CantMakeRequestException(ex);
+        }
+    }
+
+    public static InputStream exchangeImage(String url, String token, Map<String, Object> jsonBody) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpUriRequestBase request = createFullHttpRequest(
+                    Method.GET, url, token, RequestBodyProcessor.getStrBody(jsonBody)
+            );
+            return client.execute(request, ResponseProcessor.STREAM_RESPONSE_HANDLER);
         } catch (IOException ex) {
             throw new CantMakeRequestException(ex);
         }

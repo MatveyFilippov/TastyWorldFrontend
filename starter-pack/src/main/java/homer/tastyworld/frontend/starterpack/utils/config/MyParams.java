@@ -2,7 +2,9 @@ package homer.tastyworld.frontend.starterpack.utils.config;
 
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
+import homer.tastyworld.frontend.starterpack.utils.AppDateTime;
 import org.apache.hc.core5.http.Method;
+import java.time.LocalDate;
 import java.util.Map;
 
 public class MyParams {
@@ -25,6 +27,11 @@ public class MyParams {
         Request request = new Request("/token/me", Method.GET);
         Response response = request.request();
         return response.getResultAsJSON();
+    }
+
+    public static long getAvailableDays() {
+        LocalDate paidTill = AppDateTime.parse((String) TOKEN_INFO.get("PAID_TILL"));
+        return AppDateTime.getNowDate().datesUntil(paidTill).count();
     }
 
 }

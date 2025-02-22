@@ -14,7 +14,7 @@ public class ErrorHandler {
 
     public static void appErrorHandler(Thread thread, Throwable throwable) {
         if (throwable instanceof DisplayedException) {
-            // ignored
+            ((DisplayedException) throwable).performAction();
         } else if (throwable instanceof UnexpectedException) {
             logger.error("An unexpected error (should never happen) occurred", throwable);
         } else if (throwable instanceof ControlledException) {
