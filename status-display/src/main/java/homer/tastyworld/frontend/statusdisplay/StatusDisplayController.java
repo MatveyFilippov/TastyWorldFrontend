@@ -1,9 +1,10 @@
 package homer.tastyworld.frontend.statusdisplay;
 
-import homer.tastyworld.frontend.statusdisplay.base.tablemanager.TableManager;
-import homer.tastyworld.frontend.statusdisplay.base.updater.OnStartup;
-import homer.tastyworld.frontend.statusdisplay.base.updater.OrderUpdatesListener;
-import javafx.beans.binding.Bindings;
+import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
+import homer.tastyworld.frontend.statusdisplay.base.OrderUpdatesListener;
+import homer.tastyworld.frontend.statusdisplay.base.StatusDisplayTableNodeFactory;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -19,15 +20,15 @@ public class StatusDisplayController {
 
     @FXML
     private void initialize() {
-        StringExpression topicFontSize = getTopicFontSize(cookingTopic);
+        StringExpression topicFontSize = Helper.getAdaptiveFontSize(cookingTopic, 10);
         setTopic(cookingTopic, "Заказ готовится", topicFontSize);
         setTopic(readyTopic, "Готов к выдаче", topicFontSize);
-        OrderUpdatesListener.init(new TableManager(cookingOrders), new TableManager(readyOrders));
-        OnStartup.setActiveOrders();
-    }
-
-    private StringExpression getTopicFontSize(AnchorPane topic) {
-        return Bindings.concat("-fx-font-size: ", topic.widthProperty().divide(10).asString(), "px;");
+        if (MyParams.getAvailableDays() >= 0) {
+            OrderUpdatesListener.init(
+                    new TableManager(cookingOrders, new StatusDisplayTableNodeFactory()),
+                    new TableManager(readyOrders, new StatusDisplayTableNodeFactory())
+            );
+        }
     }
 
     private void setTopic(AnchorPane topic, String name, StringExpression fontSize) {

@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.statusdisplay;
 
-import homer.tastyworld.frontend.starterpack.ui.TastyWorldApplication;
+import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;

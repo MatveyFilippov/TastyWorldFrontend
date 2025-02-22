@@ -1,14 +1,15 @@
-package homer.tastyworld.frontend.statusdisplay.base.updater;
+package homer.tastyworld.frontend.statusdisplay.base;
 
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
-import homer.tastyworld.frontend.starterpack.exceptions.response.BadRequestException;
-import homer.tastyworld.frontend.starterpack.utils.AppLogger;
-import homer.tastyworld.frontend.starterpack.utils.managers.tablemanager.TableManager;
-import homer.tastyworld.frontend.statusdisplay.base.table.TableForOrder;
+import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.AppLogger;
+import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
 import org.apache.hc.core5.http.Method;
+import java.util.Arrays;
 import java.util.Map;
 
 public class OrderUpdatesListener {
@@ -19,6 +20,7 @@ public class OrderUpdatesListener {
     public static void init(TableManager cooking, TableManager ready) {
         OrderUpdatesListener.cooking = cooking;
         OrderUpdatesListener.ready = ready;
+        Arrays.stream(MyParams.getActiveOrders()).forEach(OrderUpdatesListener::process);
         Subscriber.subscribe(Theme.ORDER_STATUS, orderID -> process(Long.parseLong(orderID)));
     }
 

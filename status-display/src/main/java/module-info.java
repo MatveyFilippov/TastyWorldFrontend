@@ -8,6 +8,6 @@ module homer.tastyworld.frontend.statusdisplay {
 
     opens homer.tastyworld.frontend.statusdisplay to javafx.fxml;
     exports homer.tastyworld.frontend.statusdisplay;
-    exports homer.tastyworld.frontend.statusdisplay.base.tablemanager;
-    opens homer.tastyworld.frontend.statusdisplay.base.tablemanager to javafx.fxml;
+    exports homer.tastyworld.frontend.statusdisplay.base;
+    opens homer.tastyworld.frontend.statusdisplay.base to javafx.fxml;
 }
