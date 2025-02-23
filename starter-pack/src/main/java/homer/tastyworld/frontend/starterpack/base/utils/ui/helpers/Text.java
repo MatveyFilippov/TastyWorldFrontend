@@ -19,7 +19,7 @@ public class Text {
 
     public static void setTextLeft(AnchorPane pane, String text, StringExpression fontSize) {
         Label label = new Label(text);
-        label.setWrapText(true);
+        label.setWrapText(false);
         AnchorPane.setTopAnchor(label, 0.0);
         AnchorPane.setBottomAnchor(label, 0.0);
         label.styleProperty().bind(fontSize);

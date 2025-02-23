@@ -22,7 +22,7 @@ public class MyParams {
         return response.getResultAsJSON();
     }
 
-    public static long getAvailableDays() {
+    public static long getTokenSubscriptionAvailableDays() {
         LocalDate paidTill = AppDateTime.parse((String) getTokenInfo().get("PAID_TILL"));
         return AppDateTime.getDaysDiff(AppDateTime.getNowDate(), paidTill);
     }
