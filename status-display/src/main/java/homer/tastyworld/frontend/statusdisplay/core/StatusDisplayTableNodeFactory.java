@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.statusdisplay.base;
+package homer.tastyworld.frontend.statusdisplay.core;
 
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;

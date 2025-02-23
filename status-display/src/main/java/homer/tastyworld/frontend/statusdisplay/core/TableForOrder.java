@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.statusdisplay.base;
+package homer.tastyworld.frontend.statusdisplay.core;
 
 public enum TableForOrder {
 

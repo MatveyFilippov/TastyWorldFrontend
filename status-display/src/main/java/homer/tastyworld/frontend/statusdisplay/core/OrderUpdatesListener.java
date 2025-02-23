@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.statusdisplay.base;
+package homer.tastyworld.frontend.statusdisplay.core;
 
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
