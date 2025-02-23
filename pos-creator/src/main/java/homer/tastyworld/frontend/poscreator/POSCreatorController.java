@@ -2,7 +2,9 @@ package homer.tastyworld.frontend.poscreator;
 
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
+import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
@@ -17,34 +19,38 @@ public class POSCreatorController {
     @FXML
     private AnchorPane mainPaneParent;
     @FXML
-    private GridPane mainPanePositions;
+    private GridPane mainPaneGridNodeContainer;
     @FXML
     private AnchorPane mainPaneDaysLeftAlert, mainPaneDaysLeftAlertTopic;
     @FXML
-    private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
+    private AnchorPane mainPaneSettingsImgBtn, mainPaneNewOrderImgBtn;
     @FXML
     private AnchorPane mainPaneCookingOrdersTopic, mainPaneReadyOrdersTopic;
+    @FXML
+    private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
 
     @FXML
     private void initialize() {
-        long availableDays = MyParams.getAvailableDays();
-        if (availableDays < 0) {
+        long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
+        if (subscriptionAvailableDays < 0) {
             throw new SubscriptionDaysAreOverError();
         }
-        initMainPane(availableDays);
+        initMainPane(subscriptionAvailableDays);
     }
 
-    private void initMainPane(long availableDays) {
-        initDaysLeftAlertInMainPane(availableDays);
+    private void initMainPane(long subscriptionAvailableDays) {
+        initDaysLeftAlertInMainPane(subscriptionAvailableDays);
+        initImgBtnsInMainPane();
         initTablesInMainPane();
     }
 
-    private void initDaysLeftAlertInMainPane(long availableDays) {
-        if (availableDays < 7) {
+    private void initDaysLeftAlertInMainPane(long subscriptionAvailableDays) {
+        if (subscriptionAvailableDays <= 7) {
             String text = String.format(
-                    "Если не оплатить подписку, то через %s дней программа перестанет работать", availableDays
+                    "Если не оплатить подписку, то через %s программа перестанет работать",
+                    TypeChanger.toDaysFormat(subscriptionAvailableDays)
             );
-            if (availableDays < 5) {
+            if (subscriptionAvailableDays <= 5) {
                 Text.setTextCentre(
                         mainPaneDaysLeftAlertTopic, text, Text.getAdaptiveFontSize(mainPaneDaysLeftAlertTopic, 45)
                 );
@@ -53,15 +59,26 @@ public class POSCreatorController {
             AlertWindow.showInfo("Близится окончание подписки", text, true);
         } else {
             mainPaneDaysLeftAlert.setVisible(false);
-            mainPanePositions.getRowConstraints().getFirst().setPercentHeight(0);
-            mainPanePositions.getRowConstraints().getLast().setPercentHeight(85);
+            mainPaneGridNodeContainer.getRowConstraints().getFirst().setPercentHeight(0);
+            mainPaneGridNodeContainer.getRowConstraints().getLast().setPercentHeight(85);
         }
+    }
+
+    private void initImgBtnsInMainPane() {
+        Helper.setAnchorPaneImageBackground(
+                mainPaneNewOrderImgBtn,
+                getClass().getResourceAsStream("images/buttons/MainPane/mainPaneNewOrderImgBtn.png")
+        );
+        Helper.setAnchorPaneImageBackground(
+                mainPaneSettingsImgBtn,
+                getClass().getResourceAsStream("images/buttons/MainPane/mainPaneSettingsImgBtn.png")
+        );
     }
 
     private void initTablesInMainPane() {
         StringExpression topicFontSize = Text.getAdaptiveFontSize(mainPaneCookingOrdersTopic, 17);
-        Text.setTextLeft(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize);
-        Text.setTextLeft(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize);
+        Text.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize);
+        Text.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize);
     }
 
 }
