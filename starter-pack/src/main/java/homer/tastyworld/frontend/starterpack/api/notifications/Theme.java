@@ -6,7 +6,8 @@ import homer.tastyworld.frontend.starterpack.base.utils.misc.SHA256;
 
 public enum Theme {
 
-    ORDER_STATUS;
+    ORDER_STATUS_CHANGED,
+    ORDER_PAID_MARKED;
 
     private static final String CLIENT_POINT_NAME = (String) MyParams.getClientPointInfo().get("NAME");
 

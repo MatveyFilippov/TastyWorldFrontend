@@ -57,7 +57,11 @@ public class AppConfig {
     }
 
     public static void setToken(String newToken) {
-        properties.setValue("api.token", newToken);
+        if (newToken == null) {
+            properties.deleteValue("api.token");
+        } else {
+            properties.setValue("api.token", newToken);
+        }
         token = newToken;
     }
 
