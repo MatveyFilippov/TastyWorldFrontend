@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.starterpack.base.utils.misc;
 
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantInitSHA256;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.init.CantInitSHA256;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;

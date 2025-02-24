@@ -30,67 +30,67 @@ public class AppLogger {
         return new AppLogger(LoggerFactory.getLogger(clazz));
     }
 
-    public void info(String msg) {
-        logger.info(msg);
-    }
-
-    public void warn(String msg) {
-        logger.warn(msg);
-    }
-
-    public void errorWithoutUserNotify(String msg, Throwable ex) {
-        if (ex == null) {
-            logger.error(msg);
+    public void errorOnlyWrite(String message, Throwable throwable) {
+        if (throwable == null) {
+            logger.error(message);
         } else {
-            logger.error(msg, ex);
+            logger.error(message, throwable);
         }
     }
 
-    public void errorWithoutServerNotify(String msg, Throwable ex) {
-        errorWithoutUserNotify(msg, ex);
-        if (ex == null) {
-            AlertWindow.showError("Произошла ошибка", msg, false);
+    private void notifyUserAboutError(String errorName, String message, Throwable throwable) {
+        if (throwable == null) {
+            AlertWindow.showError(errorName, message, true);
         } else {
-            AlertWindow.showError("Произошла ошибка", ex.getLocalizedMessage(), false);
+            AlertWindow.showError(errorName, throwable.getLocalizedMessage(), true);
         }
     }
 
-    private Response notifyServerAboutError(String msg, Throwable ex) {
+    public void notifyServerAboutError(String message, Throwable throwable) {
         Request request = new Request("/frontend_app/error", Method.POST);
         request.putInBody("app_name", AppConfig.getAppName());
         request.putInBody("app_version", AppConfig.getAppVersion());
-        request.putInBody("error", msg);
-        if (ex != null) {
-            request.putInBody("stack_trace", getErrorStackTrace(ex));
+        request.putInBody("error", message);
+        if (throwable != null) {
+            request.putInBody("stack_trace", getErrorStackTrace(throwable));
         }
-        return request.request();
-    }
-
-    public void error(String msg, Throwable ex) {
-        errorWithoutUserNotify(msg, ex);
-        Response response = notifyServerAboutError(msg, ex);
+        Response response = request.request();
         if (!response.status.equals("200 OK")) {
-            errorWithoutUserNotify("Can't notify server about error --- " + response, null);
-            AlertWindow.showError(
+            errorOnlyWrite("Can't notify server about error --- " + response, null);
+            notifyUserAboutError(
                     "Срочно обратитесь к разработчикам",
                     "Приложению не удаётся самостоятельно оповестить о случившейся ошибке",
-                    true
-            );
-            return;
-        }
-        if (ex == null) {
-            AlertWindow.showError("Произошла ошибка, разработчики получили уведомление", msg, false);
-        } else {
-            AlertWindow.showError(
-                    "Произошла ошибка, разработчики получили уведомление",
-                    ex.getLocalizedMessage(),
-                    false
+                    null
             );
         }
     }
 
-    public void error(String msg) {
-        error(msg, null);
+    public void errorOnlyServerNotify(String message, Throwable throwable) {
+        errorOnlyWrite(message, throwable);
+        notifyServerAboutError(message, throwable);
+    }
+
+    public void errorOnlyUserNotify(String message, Throwable throwable) {
+        errorOnlyWrite(message, throwable);
+        notifyUserAboutError("Произошла ошибка", message, throwable);
+    }
+
+    public void error(String message, Throwable throwable) {
+        errorOnlyWrite(message, throwable);
+        notifyServerAboutError(message, throwable);
+        notifyUserAboutError("Произошла ошибка", message, throwable);
+    }
+
+    public void error(String message) {
+        error(message, null);
+    }
+
+    public void warn(String message) {
+        logger.warn(message);
+    }
+
+    public void info(String message) {
+        logger.info(message);
     }
 
 }

@@ -5,11 +5,10 @@ import homer.tastyworld.frontend.starterpack.base.exceptions.response.AccessForb
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.NotFoundRequestException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.UnauthorizedRequestException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.displayed.InternalServerException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantParseResponseBodyException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantProcessResponseStreamException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.UnknownResponseCodeException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.rest.InternalServerException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.rest.CantProcessResponseException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.rest.UnknownResponseCodeException;
+import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
@@ -21,7 +20,6 @@ import java.io.InputStream;
 
 class ResponseProcessor {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     public static final HttpClientResponseHandler<InputStream> STREAM_RESPONSE_HANDLER = ResponseProcessor::processStreamResponse;
     public static final HttpClientResponseHandler<Response> JSON_RESPONSE_HANDLER = ResponseProcessor::processJSONResponse;
 
@@ -58,7 +56,7 @@ class ResponseProcessor {
 //            return new ByteArrayInputStream(imageBytes);
             return new ByteArrayInputStream(response.getEntity().getContent().readAllBytes());
         } catch (IOException ex) {
-            throw new CantProcessResponseStreamException(ex);
+            throw new CantProcessResponseException(ex);
         }
     }
 
@@ -69,9 +67,9 @@ class ResponseProcessor {
 
     private static Response jsonStrToResponse(HttpEntity response) {
         try {
-            return OBJECT_MAPPER.readValue(EntityUtils.toString(response), Response.class);
+            return TypeChanger.OBJECT_MAPPER.readValue(EntityUtils.toString(response), Response.class);
         } catch (IOException | ParseException ex) {
-            throw new CantParseResponseBodyException(ex);
+            throw new CantProcessResponseException(ex);
         }
     }
 

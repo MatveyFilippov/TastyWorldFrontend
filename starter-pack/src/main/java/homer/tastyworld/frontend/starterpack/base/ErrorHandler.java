@@ -2,6 +2,7 @@ package homer.tastyworld.frontend.starterpack.base;
 
 import homer.tastyworld.frontend.starterpack.base.exceptions.ControlledException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.DisplayedException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.SelfLoggedException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.UnexpectedException;
 
 public class ErrorHandler {
@@ -13,7 +14,9 @@ public class ErrorHandler {
     }
 
     public static void appErrorHandler(Thread thread, Throwable throwable) {
-        if (throwable instanceof DisplayedException) {
+        if (throwable instanceof SelfLoggedException) {
+            // ignore
+        } else if (throwable instanceof DisplayedException) {
             ((DisplayedException) throwable).performAction();
         } else if (throwable instanceof UnexpectedException) {
             logger.error("An unexpected error (should never happen) occurred", throwable);

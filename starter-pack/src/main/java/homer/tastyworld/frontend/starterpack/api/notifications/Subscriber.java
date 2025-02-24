@@ -39,7 +39,7 @@ public class Subscriber {
                     try {
                         Thread.sleep(Duration.ofMinutes(5));
                     } catch (InterruptedException ex) {
-                        logger.errorWithoutUserNotify("Thread for checking subscriptions alive is interrupted", ex);
+                        logger.errorOnlyServerNotify("Thread for checking subscriptions alive is interrupted", ex);
                         isAliveChecking = false;
                         return null;
                     }

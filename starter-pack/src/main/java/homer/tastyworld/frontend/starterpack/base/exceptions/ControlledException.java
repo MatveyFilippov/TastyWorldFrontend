@@ -8,8 +8,12 @@ public abstract class ControlledException extends IOException {
         super(message);
     }
 
-    protected ControlledException(Exception ex) {
-        super(ex);
+    protected ControlledException(Throwable throwable) {
+        super(throwable);
+    }
+
+    protected ControlledException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

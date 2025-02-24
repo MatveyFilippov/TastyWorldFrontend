@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.displayed;
+package homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.rest;
 
 import homer.tastyworld.frontend.starterpack.base.exceptions.DisplayedException;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;

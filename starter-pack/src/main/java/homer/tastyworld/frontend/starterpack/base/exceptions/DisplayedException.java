@@ -8,16 +8,16 @@ public abstract class DisplayedException extends RuntimeException {
         super();
     }
 
-    protected DisplayedException(String msg) {
-        super(msg);
+    protected DisplayedException(String message) {
+        super(message);
     }
 
     protected DisplayedException(Throwable throwable) {
         super(throwable);
     }
 
-    protected DisplayedException(String msg, Throwable cause) {
-        super(msg, cause);
+    protected DisplayedException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     protected abstract void action();

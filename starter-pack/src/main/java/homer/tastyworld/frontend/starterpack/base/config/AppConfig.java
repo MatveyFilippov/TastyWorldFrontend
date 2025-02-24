@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.starterpack.base.config;
 
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantInitAppConfigException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.init.CantInitAppConfigException;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import java.io.File;
 import java.io.IOException;

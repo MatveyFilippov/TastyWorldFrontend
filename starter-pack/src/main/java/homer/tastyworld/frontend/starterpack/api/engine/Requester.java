@@ -1,7 +1,8 @@
 package homer.tastyworld.frontend.starterpack.api.engine;
 
 import homer.tastyworld.frontend.starterpack.api.Response;
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.CantMakeRequestException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.rest.CantMakeRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpHead;
@@ -50,24 +51,22 @@ public class Requester {
     }
 
     public static Response exchange(Method method, String url, String token, Map<String, Object> jsonBody) {
+        String jsonBodyStr = TypeChanger.toJSON(jsonBody);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpUriRequestBase request = createFullHttpRequest(
-                    method, url, token, RequestBodyProcessor.getStrBody(jsonBody)
-            );
+            HttpUriRequestBase request = createFullHttpRequest(method, url, token, jsonBodyStr);
             return client.execute(request, ResponseProcessor.JSON_RESPONSE_HANDLER);
         } catch (IOException ex) {
-            throw new CantMakeRequestException(ex);
+            throw new CantMakeRequestException(method, url, token, jsonBodyStr, ex);
         }
     }
 
     public static InputStream exchangeImage(String url, String token, Map<String, Object> jsonBody) {
+        String jsonBodyStr = TypeChanger.toJSON(jsonBody);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpUriRequestBase request = createFullHttpRequest(
-                    Method.GET, url, token, RequestBodyProcessor.getStrBody(jsonBody)
-            );
+            HttpUriRequestBase request = createFullHttpRequest(Method.GET, url, token, jsonBodyStr);
             return client.execute(request, ResponseProcessor.STREAM_RESPONSE_HANDLER);
         } catch (IOException ex) {
-            throw new CantMakeRequestException(ex);
+            throw new CantMakeRequestException(Method.GET, url, token, jsonBodyStr, ex);
         }
     }
 

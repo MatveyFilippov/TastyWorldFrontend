@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.api.notifications;
 
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.NotificatorConnectionException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.unexpected.NotificatorSubscribeException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.notifications.NotificatorConnectionException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.notifications.NotificatorSubscribeException;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.SHA256;
@@ -71,7 +71,7 @@ class SubscribeClient {
 
     public void subscribe(String queue, AnswerProcessor processor) {
         if (channels.containsKey(queue)) {
-            throw new NotificatorSubscribeException("Client already subscribed on this queue");
+            throw new NotificatorSubscribeException("Client already subscribed on " + queue);
         }
         Channel channel;
         try {
@@ -89,7 +89,7 @@ class SubscribeClient {
             try {
                 channel.close();
             } catch (Exception ex) {
-                logger.errorWithoutUserNotify("Can't close notificator chanel", ex);
+                logger.errorOnlyServerNotify("Can't close notificator chanel", ex);
             }
         });
         channels.clear();
@@ -99,7 +99,7 @@ class SubscribeClient {
         try {
             connection.close();
         } catch (NullPointerException ignored) {} catch (Exception ex) {
-            logger.errorWithoutUserNotify("Can't close notificator connection", ex);
+            logger.errorOnlyServerNotify("Can't close notificator connection", ex);
         }
     }
 
