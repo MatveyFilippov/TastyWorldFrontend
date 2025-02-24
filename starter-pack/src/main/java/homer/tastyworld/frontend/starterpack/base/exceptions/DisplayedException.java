@@ -23,7 +23,11 @@ public abstract class DisplayedException extends RuntimeException {
     protected abstract void action();
 
     public void performAction() {
-        Platform.runLater(this::action);
+        if (Platform.isFxApplicationThread()) {
+            action();
+        } else {
+            Platform.runLater(this::action);
+        }
     }
 
 }

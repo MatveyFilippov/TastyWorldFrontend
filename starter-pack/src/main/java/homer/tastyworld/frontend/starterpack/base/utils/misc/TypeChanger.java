@@ -29,8 +29,16 @@ public class TypeChanger {
         return "{}";
     }
 
+    public static boolean toBool(Object object) {
+        return Boolean.parseBoolean(String.valueOf(object));
+    }
+
+    public static long toLong(Object object) {
+        return Long.parseLong(String.valueOf(object));
+    }
+
     public static Long[] toLongArray(Object object) {
-        return ((List<Object>) object).stream().map(obj -> Long.parseLong(String.valueOf(obj))).toArray(Long[]::new);
+        return ((List<Object>) object).stream().map(TypeChanger::toLong).toArray(Long[]::new);
     }
 
 }

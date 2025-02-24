@@ -4,6 +4,9 @@ import homer.tastyworld.frontend.starterpack.base.exceptions.ControlledException
 import homer.tastyworld.frontend.starterpack.base.exceptions.DisplayedException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SelfLoggedException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.UnexpectedException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 public class ErrorHandler {
 
@@ -14,17 +17,21 @@ public class ErrorHandler {
     }
 
     public static void appErrorHandler(Thread thread, Throwable throwable) {
-        if (throwable instanceof SelfLoggedException) {
-            // ignore
-        } else if (throwable instanceof DisplayedException) {
-            ((DisplayedException) throwable).performAction();
-        } else if (throwable instanceof UnexpectedException) {
-            logger.error("An unexpected error (should never happen) occurred", throwable);
-        } else if (throwable instanceof ControlledException) {
-            logger.error("An unexpected error (should be caught by developer)occurred", throwable);
-        } else {
-            logger.error("An unhandled error occurred", throwable);
+        for (Throwable temp = throwable; temp != null; temp = temp.getCause()) {
+            if (temp instanceof SelfLoggedException) {
+                return;
+            } else if (temp instanceof DisplayedException) {
+                ((DisplayedException) temp).performAction();
+                return;
+            } else if (temp instanceof UnexpectedException) {
+                logger.error("An unexpected error (should never happen) occurred", throwable);
+                return;
+            } else if (temp instanceof ControlledException) {
+                logger.error("An unexpected error (should be caught by developer) occurred", throwable);
+                return;
+            }
         }
+        logger.error("An unhandled error occurred", throwable);
     }
 
 }
