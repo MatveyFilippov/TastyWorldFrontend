@@ -21,7 +21,7 @@ public class OrderUpdatesListener {
         OrderUpdatesListener.cooking = cooking;
         OrderUpdatesListener.ready = ready;
         Arrays.stream(MyParams.getActiveOrders()).forEach(OrderUpdatesListener::process);
-        Subscriber.subscribe(Theme.ORDER_STATUS, orderID -> process(Long.parseLong(orderID)));
+        Subscriber.subscribe(Theme.ORDER_STATUS_CHANGED, orderID -> process(Long.parseLong(orderID)));
     }
 
     private static void route(String status, long orderID, String name) {
@@ -48,7 +48,10 @@ public class OrderUpdatesListener {
             return;
         }
         if (response.result == null) {
-            logger.error("Something wrong with order, response while reading info ('order/read'): " + response);
+            logger.errorOnlyServerNotify(
+                    "Something wrong with order, response while reading info ('order/read'): " + response,
+                    null
+            );
             route("NOT_EXISTS", orderID, null);
             return;
         }

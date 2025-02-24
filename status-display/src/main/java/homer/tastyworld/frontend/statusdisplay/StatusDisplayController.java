@@ -2,6 +2,7 @@ package homer.tastyworld.frontend.statusdisplay;
 
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import homer.tastyworld.frontend.statusdisplay.core.OrderUpdatesListener;
 import homer.tastyworld.frontend.statusdisplay.core.StatusDisplayTableNodeFactory;
@@ -23,10 +24,16 @@ public class StatusDisplayController {
         Text.setTextLeft(cookingTopic, "Заказ готовится", topicFontSize);
         Text.setTextLeft(readyTopic, "Готов к выдаче", topicFontSize);
         if (MyParams.getTokenSubscriptionAvailableDays() >= 0) {
+            TableNodeFactory tableNodeFactory = new StatusDisplayTableNodeFactory();
             OrderUpdatesListener.init(
-                    new TableManager(cookingOrders, new StatusDisplayTableNodeFactory()),
-                    new TableManager(readyOrders, new StatusDisplayTableNodeFactory())
+                    new TableManager(cookingOrders, tableNodeFactory),
+                    new TableManager(readyOrders, tableNodeFactory)
             );
+            // TODO: if node not displayed, problem may be with caching in factory -> make 2 factory
+            // OrderUpdatesListener.init(
+            //         new TableManager(cookingOrders, tableNodeFactory),
+            //         new TableManager(readyOrders, new StatusDisplayTableNodeFactory())
+            // );
         }
     }
 
