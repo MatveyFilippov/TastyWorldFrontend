@@ -1,6 +1,8 @@
 package homer.tastyworld.frontend.poscreator;
 
 import homer.tastyworld.frontend.poscreator.core.menu.ImageMenu;
+import homer.tastyworld.frontend.poscreator.core.menu.ImageProducts;
+import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderCreating;
 import homer.tastyworld.frontend.poscreator.core.orders.table.OrderStatusUpdatesListener;
 import homer.tastyworld.frontend.poscreator.core.orders.table.POSCreatorTableNodeFactory;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
@@ -13,7 +15,6 @@ import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -46,6 +47,17 @@ public class POSCreatorController {
     private GridPane menuPaneImgMenuContainer;
 
     @FXML
+    private AnchorPane productsPaneParent;
+    @FXML
+    private AnchorPane productsPaneBackInMenuImgBtn;
+    @FXML
+    private AnchorPane productsPaneMenuTopic;
+    @FXML
+    private GridPane productPaneImgProductsContainer;
+
+    private ImageProducts imageProducts;
+
+    @FXML
     private void initialize() {
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
         if (subscriptionAvailableDays < 0) {
@@ -59,6 +71,7 @@ public class POSCreatorController {
         initDaysLeftAlertInMainPane(subscriptionAvailableDays);
         initImgBtnsInMainPane();
         initTablesInMainPane();
+        initProductsPane();
     }
 
     private void initDaysLeftAlertInMainPane(long subscriptionAvailableDays) {
@@ -111,11 +124,17 @@ public class POSCreatorController {
 
     @FXML
     void mainPaneNewOrderImgBtnPressed(MouseEvent event) {
+        OrderCreating.newOrder();
         Helper.openParentPane(mainPaneParent, menuPaneParent);
     }
 
     private void initMenuPane() {
-        ImageMenu.fill(menuPaneImgMenuContainer, 1, 0);
+        imageProducts = new ImageProducts(
+                productsPaneMenuTopic, productPaneImgProductsContainer, 1, 0
+        );
+        ImageMenu.fill(
+                imageProducts, menuPaneImgMenuContainer, 1, 0, menuPaneParent, productsPaneParent
+        );
         initTopicInMenuPane();
         initImgBtnsInMenuPane();
     }
@@ -137,12 +156,26 @@ public class POSCreatorController {
 
     @FXML
     void menuPaneDeleteOrderImgBtnPressed(MouseEvent event) {
+        OrderCreating.delete();
         Helper.openParentPane(menuPaneParent, mainPaneParent);
     }
 
     @FXML
     void menuPaneLookOrderImgBtnPressed(MouseEvent event) {
 
+    }
+
+    private void initProductsPane() {
+        Helper.setAnchorPaneImageBackground(
+                productsPaneBackInMenuImgBtn,
+                getClass().getResourceAsStream("images/buttons/ProductsPane/productsPaneBackInMenuImgBtn.png")
+        );
+    }
+
+    @FXML
+    void productsPaneBackInMenuImgBtnPressed(MouseEvent event) {
+        Helper.openParentPane(productsPaneParent, menuPaneParent);
+        imageProducts.clean();
     }
 
 }

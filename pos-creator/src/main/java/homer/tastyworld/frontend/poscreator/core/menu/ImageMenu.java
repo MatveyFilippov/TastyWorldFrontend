@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class ImageMenu {
 
-    public static void fill(GridPane place, int column, int row) {
+    public static void fill(ImageProducts products, GridPane place, int column, int row, AnchorPane menuParent, AnchorPane productParent) {
         GridPane gridPane = new GridPane();
         gridPane.setHgap(25);
         gridPane.setVgap(25);
@@ -22,21 +22,21 @@ public class ImageMenu {
         ScrollPane scrollPane = new ScrollPane(gridPane);
         scrollPane.setFitToWidth(true);
 
-        iterateAndSetMenu(gridPane, scrollPane);
+        iterateAndSetMenu(gridPane, scrollPane, products, menuParent, productParent);
 
         place.add(scrollPane, column, row);
     }
 
-    private static void iterateAndSetMenu(GridPane parent, ScrollPane place) {
+    private static void iterateAndSetMenu(GridPane parent, ScrollPane place, ImageProducts products, AnchorPane menuParent, AnchorPane productParent) {
         Long[] menuIDs = MyParams.getMenu();
         for (int i = 0; i < menuIDs.length; i++) {
             int col = i % 3;
             int row = i / 3;
-            parent.add(getMenuImgBtn(place, menuIDs[i]), col, row);
+            parent.add(getMenuImgBtn(place, menuIDs[i], products, menuParent, productParent), col, row);
         }
     }
 
-    private static VBox getMenuImgBtn(ScrollPane scrollPane, long menuID) {
+    private static VBox getMenuImgBtn(ScrollPane scrollPane, long menuID, ImageProducts products, AnchorPane menuParent, AnchorPane productParent) {
         VBox root = new VBox();
         setImageAndName(root, menuID, 0.85, 0.15);
         root.prefWidthProperty().bind(
@@ -45,7 +45,7 @@ public class ImageMenu {
         root.prefHeightProperty().bind(
                 scrollPane.heightProperty().divide(3)
         );
-        setOnTouch(root, menuID);
+        setOnTouch(root, menuID, products, menuParent, productParent);
         return root;
     }
 
@@ -77,8 +77,11 @@ public class ImageMenu {
         return result;
     }
 
-    private static void setOnTouch(VBox menuBtn, long menuID) {
-        menuBtn.setOnMouseClicked(event -> System.out.println(menuID));
+    private static void setOnTouch(VBox menuBtn, long menuID, ImageProducts products, AnchorPane menuParent, AnchorPane productParent) {
+        menuBtn.setOnMouseClicked(event -> {
+            Helper.openParentPane(menuParent, productParent);
+            products.fill(menuID);
+        });
     }
 
 }
