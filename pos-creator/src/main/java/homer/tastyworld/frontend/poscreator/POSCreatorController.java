@@ -1,7 +1,11 @@
 package homer.tastyworld.frontend.poscreator;
 
+import homer.tastyworld.frontend.poscreator.core.orders.table.OrderStatusUpdatesListener;
+import homer.tastyworld.frontend.poscreator.core.orders.table.POSCreatorTableNodeFactory;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
@@ -52,7 +56,8 @@ public class POSCreatorController {
             );
             if (subscriptionAvailableDays <= 5) {
                 Text.setTextCentre(
-                        mainPaneDaysLeftAlertTopic, text, Text.getAdaptiveFontSize(mainPaneDaysLeftAlertTopic, 45)
+                        mainPaneDaysLeftAlertTopic, text,
+                        Text.getAdaptiveFontSize(mainPaneDaysLeftAlertTopic, 45), null
                 );
                 mainPaneDaysLeftAlert.setVisible(true);
             }
@@ -77,8 +82,13 @@ public class POSCreatorController {
 
     private void initTablesInMainPane() {
         StringExpression topicFontSize = Text.getAdaptiveFontSize(mainPaneCookingOrdersTopic, 17);
-        Text.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize);
-        Text.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize);
+        Text.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize, null);
+        Text.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, null);
+        TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory();
+        OrderStatusUpdatesListener.init(
+                new TableManager(mainPaneCookingOrdersTable, tableNodeFactory),
+                new TableManager(mainPaneReadyOrdersTable, tableNodeFactory)
+        );
     }
 
 }

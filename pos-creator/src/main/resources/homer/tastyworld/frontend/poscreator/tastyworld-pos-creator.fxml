@@ -51,7 +51,7 @@
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
-                      <RowConstraints percentHeight="65.0" vgrow="SOMETIMES" />
+                      <RowConstraints percentHeight="75.0" vgrow="SOMETIMES" />
                       <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
