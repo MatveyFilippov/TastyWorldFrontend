@@ -47,14 +47,6 @@ public class OrderUpdatesListener {
             route("NOT_EXISTS", orderID, null);
             return;
         }
-        if (response.result == null) {
-            logger.errorOnlyServerNotify(
-                    "Something wrong with order, response while reading info ('order/read'): " + response,
-                    null
-            );
-            route("NOT_EXISTS", orderID, null);
-            return;
-        }
         Map<String, Object> result = response.getResultAsJSON();
         route((String) result.get("STATUS"), orderID, (String) result.get("NAME"));
     }

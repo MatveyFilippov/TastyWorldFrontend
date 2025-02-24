@@ -11,8 +11,6 @@ public class StatusDisplayTableNodeFactory implements TableNodeFactory {
 
     private final Map<String, Node> nodeCache = new HashMap<>();
 
-    public StatusDisplayTableNodeFactory() {}
-
     public static AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
         Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 5));
