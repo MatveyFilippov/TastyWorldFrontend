@@ -5,6 +5,7 @@ import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 public class Text {
@@ -17,16 +18,19 @@ public class Text {
         );
     }
 
-    public static void setTextLeft(AnchorPane pane, String text, StringExpression fontSize) {
+    public static void setTextLeft(AnchorPane pane, String text, StringExpression fontSize, Color color) {
         Label label = new Label(text);
         label.setWrapText(false);
         AnchorPane.setTopAnchor(label, 0.0);
         AnchorPane.setBottomAnchor(label, 0.0);
+        if (color != null) {
+            label.setTextFill(color);
+        }
         label.styleProperty().bind(fontSize);
         pane.getChildren().add(label);
     }
 
-    public static void setTextCentre(AnchorPane pane, String text, StringExpression fontSize) {
+    public static void setTextCentre(AnchorPane pane, String text, StringExpression fontSize, Color color) {
         Label label = new Label(text);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setAlignment(Pos.CENTER);
@@ -35,6 +39,9 @@ public class Text {
         AnchorPane.setBottomAnchor(label, 0.0);
         AnchorPane.setLeftAnchor(label, 0.0);
         AnchorPane.setRightAnchor(label, 0.0);
+        if (color != null) {
+            label.setTextFill(color);
+        }
         label.styleProperty().bind(fontSize);
         pane.getChildren().add(label);
     }
