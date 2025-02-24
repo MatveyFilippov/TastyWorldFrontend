@@ -66,30 +66,3 @@ task cleanAll {
         new File(rootDir, "packaged-apps").deleteDir()
     }
 }
-
-task updateStarterPack {
-    group = 'Build'
-    description = 'Publishes starter-pack and rebuilds other modules'
-
-    dependsOn cleanAll, createLocalRepoDir
-    dependsOn ':starter-pack:publish'
-
-    allprojects.each { project ->
-        if (project.name != 'starter-pack' && project.name != rootProject.name) {
-            dependsOn "${project.path}:build"  // --refresh-dependencies
-        }
-    }
-}
-
-task packageAllApps {
-    group = 'Build'
-    description = 'Package javaFX app from all modules'
-
-    dependsOn updateStarterPack, createPackagedAppsDir
-
-    allprojects.each { project ->
-        if (project.name != 'starter-pack' && project.name != rootProject.name) {
-            dependsOn "${project.path}:packageToApp"
-        }
-    }
-}
