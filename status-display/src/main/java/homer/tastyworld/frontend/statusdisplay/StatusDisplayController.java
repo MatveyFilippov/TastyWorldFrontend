@@ -21,8 +21,8 @@ public class StatusDisplayController {
     @FXML
     private void initialize() {
         StringExpression topicFontSize = Text.getAdaptiveFontSize(cookingTopic, 10);
-        Text.setTextLeft(cookingTopic, "Заказ готовится", topicFontSize);
-        Text.setTextLeft(readyTopic, "Готов к выдаче", topicFontSize);
+        Text.setTextLeft(cookingTopic, "Заказ готовится", topicFontSize, null);
+        Text.setTextLeft(readyTopic, "Готов к выдаче", topicFontSize, null);
         if (MyParams.getTokenSubscriptionAvailableDays() >= 0) {
             TableNodeFactory tableNodeFactory = new StatusDisplayTableNodeFactory();
             OrderUpdatesListener.init(

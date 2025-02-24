@@ -13,7 +13,7 @@ public class StatusDisplayTableNodeFactory implements TableNodeFactory {
 
     public static AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
-        Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 5));
+        Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 5), null);
         return pane;
     }
 
