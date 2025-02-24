@@ -1,5 +1,6 @@
 package homer.tastyworld.frontend.poscreator;
 
+import homer.tastyworld.frontend.poscreator.core.menu.ImageMenu;
 import homer.tastyworld.frontend.poscreator.core.orders.table.OrderStatusUpdatesListener;
 import homer.tastyworld.frontend.poscreator.core.orders.table.POSCreatorTableNodeFactory;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
@@ -12,6 +13,8 @@ import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
@@ -34,12 +37,22 @@ public class POSCreatorController {
     private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
 
     @FXML
+    private AnchorPane menuPaneParent;
+    @FXML
+    private AnchorPane menuPaneDeleteOrderImgBtn, menuPaneLookOrderImgBtn;
+    @FXML
+    private AnchorPane menuPaneTopic;
+    @FXML
+    private GridPane menuPaneImgMenuContainer;
+
+    @FXML
     private void initialize() {
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
         if (subscriptionAvailableDays < 0) {
             throw new SubscriptionDaysAreOverError();
         }
         initMainPane(subscriptionAvailableDays);
+        initMenuPane();
     }
 
     private void initMainPane(long subscriptionAvailableDays) {
@@ -89,6 +102,47 @@ public class POSCreatorController {
                 new TableManager(mainPaneCookingOrdersTable, tableNodeFactory),
                 new TableManager(mainPaneReadyOrdersTable, tableNodeFactory)
         );
+    }
+
+    @FXML
+    void mainPaneSettingsImgBtnPressed(MouseEvent event) {
+
+    }
+
+    @FXML
+    void mainPaneNewOrderImgBtnPressed(MouseEvent event) {
+        Helper.openParentPane(mainPaneParent, menuPaneParent);
+    }
+
+    private void initMenuPane() {
+        ImageMenu.fill(menuPaneImgMenuContainer, 1, 0);
+        initTopicInMenuPane();
+        initImgBtnsInMenuPane();
+    }
+
+    private void initTopicInMenuPane() {
+        Text.setTextCentre(menuPaneTopic, "Меню", Text.getAdaptiveFontSize(menuPaneTopic, 25), null);
+    }
+
+    private void initImgBtnsInMenuPane() {
+        Helper.setAnchorPaneImageBackground(
+                menuPaneDeleteOrderImgBtn,
+                getClass().getResourceAsStream("images/buttons/MenuPane/menuPaneDeleteOrderImgBtn.png")
+        );
+        Helper.setAnchorPaneImageBackground(
+                menuPaneLookOrderImgBtn,
+                getClass().getResourceAsStream("images/buttons/MenuPane/menuPaneLookOrderImgBtn.png")
+        );
+    }
+
+    @FXML
+    void menuPaneDeleteOrderImgBtnPressed(MouseEvent event) {
+        Helper.openParentPane(menuPaneParent, mainPaneParent);
+    }
+
+    @FXML
+    void menuPaneLookOrderImgBtnPressed(MouseEvent event) {
+
     }
 
 }

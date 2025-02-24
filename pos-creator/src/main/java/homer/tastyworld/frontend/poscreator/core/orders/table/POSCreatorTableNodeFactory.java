@@ -9,6 +9,10 @@ import javafx.scene.paint.Color;
 
 public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
+    private static void setOnTouch(Node node, long orderID) {
+        node.setOnMouseClicked(event -> System.out.println(orderID));
+    }
+
     public static AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
         Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 5), Color.web("#FF4040"));
@@ -18,6 +22,7 @@ public class POSCreatorTableNodeFactory implements TableNodeFactory {
     @Override
     public Node getNode(long orderID, String name) {
         AnchorPane node = createNode(name);
+        setOnTouch(node, orderID);
         OrderPaidMarkUpdateListener.addWaiter(orderID, (Label) node.getChildren().getLast());
         return node;
     }

@@ -12,7 +12,7 @@ public class Request {
     protected final String endpoint;
     protected final Method method;
     protected final Map<String, Object> body = new HashMap<>();
-    protected String token = null;
+    private String token = null;
 
     public Request(String endpoint, Method method) {
         this.endpoint = endpoint;
@@ -34,8 +34,12 @@ public class Request {
         this.token = token;
     }
 
+    public String getToken() {
+        return token == null ? AppConfig.getToken() : token;
+    }
+
     public Response request() {
-        return Requester.exchange(method, getURL(endpoint), token == null ? AppConfig.getToken() : token, body);
+        return Requester.exchange(method, getURL(endpoint), getToken(), body);
     }
 
 }

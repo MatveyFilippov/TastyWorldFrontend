@@ -45,4 +45,10 @@ public class MyParams {
         return TypeChanger.toLongArray(response.result);
     }
 
+    public static Long[] getMenu() {
+        Request request = new Request("/client_point/menu", Method.GET);
+        Response response = request.request();
+        return TypeChanger.toLongArray(response.result);
+    }
+
 }

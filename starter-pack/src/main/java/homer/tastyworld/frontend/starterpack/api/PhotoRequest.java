@@ -10,7 +10,7 @@ public class PhotoRequest extends Request {
     }
 
     public InputStream read() {
-        return Requester.exchangeImage(getURL(endpoint), token, body);
+        return Requester.exchangeImage(getURL(endpoint), getToken(), body);
     }
 
     @Override
