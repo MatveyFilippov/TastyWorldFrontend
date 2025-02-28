@@ -8,10 +8,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public abstract class DynamicParentPane extends StableParentPane {
 
-    public abstract void cacheAll(Long[] ids);
+    public abstract void cacheAll(Long[] ids);  // TODO: cache in thread
 
     public abstract void fill(long id);
 
-    public abstract void clean();
+    public abstract void clean();  // TODO: clean in thread
 
 }
