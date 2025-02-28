@@ -1,6 +1,9 @@
 package homer.tastyworld.frontend.poscreator;
 
+import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderCreating;
 import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
+import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -23,6 +26,8 @@ public class POSCreatorApplication extends TastyWorldApplication {
         scene.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ESCAPE)) {
                 stage.close();
+                stop();
+                Platform.exit();
                 System.exit(0);
             }
         });
@@ -31,6 +36,13 @@ public class POSCreatorApplication extends TastyWorldApplication {
         stage.setAlwaysOnTop(true);
         stage.setFullScreenExitHint(null);
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        try {
+            OrderCreating.delete();
+        } catch (BadRequestException ignored) {}
     }
 
 }
