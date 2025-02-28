@@ -19,12 +19,40 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Getter
 @SuperBuilder
 public class AddProductParentPane extends DynamicParentPane {
+
+    public static class Product {
+
+        public static Long menuID;
+        public static Long productID;
+        public static String name;
+        public static Integer pieceStep;
+        public static String pieceType;
+        public static BigDecimal price;
+        public static Integer qty;
+        public static final Map<Long, Integer> notDefaultAdditives = new ConcurrentHashMap<>();
+
+        public static void clean() {
+            menuID = null;
+            productID = null;
+            name = null;
+            pieceStep = null;
+            pieceType = null;
+            price = null;
+            qty = null;
+            notDefaultAdditives.clear();
+        }
+
+    }
 
     private AnchorPane addProductCloseImgBtn, addProductSubmitImgBtn;
     private AnchorPane addProductNameTopic;
@@ -36,42 +64,11 @@ public class AddProductParentPane extends DynamicParentPane {
     private GridPane addProductNumbersKeyboard;
     private AnchorPane addProductAdditivesTopic;
     private GridPane addProductAdditivesContainer;
-    private static GridPane additivesTable = new GridPane();
-    private static ScrollPane scrollAdditives = new ScrollPane(additivesTable);
-    private static final Map<Long, Map<String, Object>> additivesCache = new ConcurrentHashMap<>();
-    private static StringExpression topicFontSize;
-    private static Integer onePiece;
-    private static BigDecimal pricePerPiece;
-    public static Long productID;
-    public static Integer qty;
-    public static final Map<Long, Integer> notDefaultAdditives = new ConcurrentHashMap<>();
-
-
-    @Override
-    public void fill(long productID) {
-        Request request = new Request("/product/read", Method.GET);
-        request.putInBody("id", productID);
-        Map<String, Object> response = request.request().getResultAsJSON();
-        Text.setTextCentre(addProductNameTopic, (String) response.get("NAME"), topicFontSize, null);
-        addProductQTYFiled.setText(String.valueOf(response.get("DEFAULT_PEACE_QTY")));
-        String priceType;
-        if (response.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
-            onePiece = 100;
-            priceType = "Гр";
-        } else {
-            onePiece = 1;
-            priceType = "Шт";
-        }
-        Text.setTextCentre(addProductQTYTypeTopic, priceType, Text.getAdaptiveFontSize(addProductQTYTypeTopic, 5), null);
-        pricePerPiece = TypeChanger.toBigDecimal(response.get("PRICE_PEER_PEACE")).divide(BigDecimal.valueOf(onePiece));
-        recalculatePrice();
-        Long[] additiveIDs = TypeChanger.toSortedLongArray(response.get("ADDITIVE_IDs"));
-        for (int i = 0; i < additiveIDs.length; i++) {
-            additivesTable.add(getAdditivesLine(additiveIDs[i]), 0, i);
-        }
-        AddProductParentPane.productID = productID;
-        AddProductParentPane.qty = TypeChanger.toInt(response.get("DEFAULT_PEACE_QTY"));
-    }
+    private static StringExpression productNameTopicFontSize;
+    private static StringExpression productQTYTopicFontSize;
+    private static final ScrollPane scroll = new ScrollPane();
+    private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
+    private static final Map<Long, List<Map<String, Object>>> additiveCache = new ConcurrentHashMap<>();
 
     @Override
     public void cacheAll(Long[] productIDs) {
@@ -79,35 +76,88 @@ public class AddProductParentPane extends DynamicParentPane {
         Request additiveRequest = new Request("/product/read_additive", Method.GET);
         for (long productID : productIDs) {
             productRequest.putInBody("id", productID);
-            Map<String, Object> response = productRequest.request().getResultAsJSON();
-            for (long additiveID : TypeChanger.toSortedLongArray(response.get("ADDITIVE_IDs"))) {
+            Map<String, Object> productInfo = productRequest.request().getResultAsJSON();
+            productCache.put(productID, productInfo);
+            List<Map<String, Object>> additivesInfo = new ArrayList<>();
+            for (long additiveID : TypeChanger.toSortedLongArray(productInfo.get("ADDITIVE_IDs"))) {
                 additiveRequest.putInBody("id", additiveID);
-                additivesCache.put(additiveID, additiveRequest.request().getResultAsJSON());
+                additivesInfo.add(additiveRequest.request().getResultAsJSON());
             }
+            additiveCache.put(productID, additivesInfo);
         }
     }
 
-    private HBox getAdditivesLine(long additiveID) {
-        Map<String, Object> info = additivesCache.computeIfAbsent(additiveID, id -> {
-            Request request = new Request("/product/read_additive", Method.GET);
-            request.putInBody("id", additiveID);
-            return request.request().getResultAsJSON();
-        });
-        return createAdditivesLine(additiveID, info);
+    private void setProduct(Map<String, Object> productInfo) {
+        Product.menuID = TypeChanger.toLong(productInfo.get("MENU_ID"));
+        Product.productID = TypeChanger.toLong(productInfo.get("ID"));
+        Product.name = (String) productInfo.get("NAME");
+        if (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
+            Product.pieceStep = 100;
+            Product.pieceType = "Гр";
+        } else {
+            Product.pieceStep = 1;
+            Product.pieceType = "Шт";
+        }
+        Product.price = TypeChanger.toBigDecimal(productInfo.get("PRICE_PEER_PEACE")).divide(BigDecimal.valueOf(Product.pieceStep));
+        Product.qty = TypeChanger.toInt(productInfo.get("DEFAULT_PEACE_QTY"));
+        Product.notDefaultAdditives.clear();
     }
 
-    private HBox createAdditivesLine(long additiveID, Map<String, Object> info) {
+    @Override
+    public void fill(long productID) {
+        Map<String, Object> productInfo = productCache.computeIfAbsent(productID, id -> {
+            Request request = new Request("/product/read", Method.GET);
+            request.putInBody("id", productID);
+            return request.request().getResultAsJSON();
+        });
+        setProduct(productInfo);
+
+        Text.setTextCentre(addProductNameTopic, Product.name, productNameTopicFontSize, null);
+        Text.setTextCentre(addProductQTYTypeTopic, Product.pieceType, productQTYTopicFontSize, null);
+        addProductQTYFiled.setText(String.valueOf(Product.qty));
+        recalculatePrice();
+
+        scroll.setContent(computeAdditivesTable(productID, TypeChanger.toSortedLongArray(productInfo.get("ADDITIVE_IDs"))));
+    }
+
+    private void recalculatePrice() {
+        BigDecimal totalPrice = Product.price.multiply(BigDecimal.valueOf(Product.qty));
+        addProductTotalPriceField.setText(totalPrice.toString());
+    }
+
+    private GridPane computeAdditivesTable(long productID, Long[] additiveIDs) {
+        GridPane table = new GridPane();
+        table.setGridLinesVisible(true);
+        table.setVgap(5);
+        table.setAlignment(Pos.CENTER);
+        List<Map<String, Object>> additivesInfo = additiveCache.computeIfAbsent(productID, ignored -> {
+            Request request = new Request("/product/read_additive", Method.GET);
+            return Arrays.stream(additiveIDs).map(additiveID -> {
+                request.putInBody("id", additiveID);
+                return request.request().getResultAsJSON();
+            }).collect(Collectors.toList());
+        });
+        for (int i = 0; i < additivesInfo.size(); i++) {
+            table.add(getAdditiveLine(additivesInfo.get(i)), 0, i);
+        }
+        return table;
+    }
+
+    private HBox getAdditiveLine(Map<String, Object> additiveInfo) {
         HBox row = new HBox();
         row.setSpacing(10);
-        row.prefWidthProperty().bind(scrollAdditives.widthProperty());
-        row.prefHeightProperty().bind(scrollAdditives.heightProperty().divide(4));
+        row.prefWidthProperty().bind(scroll.widthProperty());
+        row.prefHeightProperty().bind(scroll.heightProperty().divide(4));
         row.setAlignment(Pos.CENTER);
 
-        AnchorPane name = getAdditiveName(info);
-        TextField qty = getAdditiveQTY(row, info);
-        AnchorPane minus = getAdditiveMinusImgBtn(qty, additiveID, info);
-        AnchorPane plus = getAdditivePlusImgBtn(qty, additiveID, info);
+        AnchorPane name = getAdditiveName(additiveInfo);
+        TextField qty = getAdditiveQTY(row, additiveInfo);
+        AnchorPane minus = new AnchorPane();
+        AnchorPane plus = new AnchorPane();
         AnchorPane space = new AnchorPane();
+
+        setPlusMinusAdditiveImgBtnsClickable(plus, minus, qty, additiveInfo);
+
         row.getChildren().addAll(name, minus, qty, plus, space);
         HBox.setHgrow(qty, Priority.ALWAYS);
         HBox.setHgrow(minus, Priority.ALWAYS);
@@ -123,15 +173,15 @@ public class AddProductParentPane extends DynamicParentPane {
         return row;
     }
 
-    private AnchorPane getAdditiveName(Map<String, Object> info) {
+    private AnchorPane getAdditiveName(Map<String, Object> additiveInfo) {
         AnchorPane name = new AnchorPane();
-        Text.setTextCentre(name, (String) info.get("NAME"), Text.getAdaptiveFontSize(name, 8), null);
+        Text.setTextCentre(name, (String) additiveInfo.get("NAME"), Text.getAdaptiveFontSize(name, 8), null);
         return name;
     }
 
-    private TextField getAdditiveQTY(HBox row, Map<String, Object> info) {
+    private TextField getAdditiveQTY(HBox row, Map<String, Object> additiveInfo) {
         TextField qty = new TextField();
-        qty.setText(String.valueOf(info.get("DEFAULT_PEACE_QTY")));
+        qty.setText(String.valueOf(additiveInfo.get("DEFAULT_PEACE_QTY")));
         qty.setAlignment(Pos.CENTER);
         qty.fontProperty().bind(Bindings.createObjectBinding(
                 () -> Font.font(Math.min(row.getWidth() / 10, row.getHeight() / 6)),
@@ -141,62 +191,38 @@ public class AddProductParentPane extends DynamicParentPane {
         return qty;
     }
 
-    private AnchorPane getAdditiveMinusImgBtn(TextField qty, long additiveID, Map<String, Object> info) {
-        int step;
-        if (info.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
-            step = 100;
-        } else {
-            step = 1;
-        }
-        AnchorPane minus = new AnchorPane();
-        Helper.setAnchorPaneImageBackgroundCentre(minus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png"));
-        minus.setOnMouseClicked(event -> {
-            int additiveQTY = Integer.parseInt(qty.getText()) - step;
-            if (additiveQTY <= 0) {
-                additiveQTY = 0;
-            }
-            AddProductParentPane.notDefaultAdditives.put(additiveID, additiveQTY);
-            qty.setText(String.valueOf(additiveQTY));
-        });
-        return minus;
-    }
-
-    private AnchorPane getAdditivePlusImgBtn(TextField qty, long additiveID, Map<String, Object> info) {
-        int step;
-        if (info.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
-            step = 100;
-        } else {
-            step = 1;
-        }
-        AnchorPane plus = new AnchorPane();
+    private void setPlusMinusAdditiveImgBtnsClickable(AnchorPane plus, AnchorPane minus, TextField additiveQTY, Map<String, Object> additiveInfo) {
         Helper.setAnchorPaneImageBackgroundCentre(plus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png"));
+        Helper.setAnchorPaneImageBackgroundCentre(minus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png"));
+        int step;
+        if (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
+            step = 100;
+        } else {
+            step = 1;
+        }
+        long additiveID = TypeChanger.toLong(additiveInfo.get("ID"));
         plus.setOnMouseClicked(event -> {
-            int additiveQTY = Integer.parseInt(qty.getText()) + step;
-            AddProductParentPane.notDefaultAdditives.put(additiveID, additiveQTY);
-            qty.setText(String.valueOf(additiveQTY));
+            int qty = Integer.parseInt(additiveQTY.getText()) + step;
+            Product.notDefaultAdditives.put(additiveID, qty);
+            additiveQTY.setText(String.valueOf(qty));
         });
-        return plus;
+        minus.setOnMouseClicked(event -> {
+            int qty = Integer.parseInt(additiveQTY.getText()) - step;
+            if (qty < step) {
+                qty = step;
+            }
+            Product.notDefaultAdditives.put(additiveID, qty);
+            additiveQTY.setText(String.valueOf(qty));
+        });
     }
 
     @Override
     public void clean() {
-        productID = null;
-        qty = null;
-        notDefaultAdditives.clear();
-
-        additivesTable.getChildren().clear();
+        Product.clean();
         addProductQTYTypeTopic.getChildren().clear();
         addProductNameTopic.getChildren().clear();
-        onePiece = null;
-        pricePerPiece = null;
         addProductQTYFiled.setText("0");
-        addProductTotalPriceField.setText("");
-    }
-
-    private void recalculatePrice() {
-        int qty = Integer.parseInt(addProductQTYFiled.getText());
-        BigDecimal totalPrice = pricePerPiece.multiply(BigDecimal.valueOf(qty));
-        addProductTotalPriceField.setText(totalPrice.toString());
+        addProductTotalPriceField.setText("0");
     }
 
     private void initImgBtnsInAddProductPane() {
@@ -218,22 +244,18 @@ public class AddProductParentPane extends DynamicParentPane {
         );
     }
 
-    private void setPlusMinusImgBtnsClickable() {
+    private void setPlusMinusProductImgBtnsClickable() {
         addProductMinusQTYImgBtn.setOnMouseClicked(event -> {
-            int qty = Integer.parseInt(addProductQTYFiled.getText());
-            qty -= onePiece;
-            if (qty < onePiece) {
-                qty = onePiece;
+            Product.qty = Integer.parseInt(addProductQTYFiled.getText()) - Product.pieceStep;
+            if (Product.qty < Product.pieceStep) {
+                Product.qty = Product.pieceStep;
             }
-            AddProductParentPane.qty = qty;
-            addProductQTYFiled.setText(String.valueOf(qty));
+            addProductQTYFiled.setText(String.valueOf(Product.qty));
             recalculatePrice();
         });
         addProductPlusQTYImgBtn.setOnMouseClicked(event -> {
-            int qty = Integer.parseInt(addProductQTYFiled.getText());
-            qty += onePiece;
-            AddProductParentPane.qty = qty;
-            addProductQTYFiled.setText(String.valueOf(qty));
+            Product.qty = Integer.parseInt(addProductQTYFiled.getText()) + Product.pieceStep;
+            addProductQTYFiled.setText(String.valueOf(Product.qty));
             recalculatePrice();
         });
     }
@@ -283,23 +305,21 @@ public class AddProductParentPane extends DynamicParentPane {
         addProductQTYFiled.setText("0");
     }
 
-    private void initTopicFontSize() {
-        topicFontSize = Text.getAdaptiveFontSize(addProductNameTopic, 20);
+    private void initTopicFontSizes() {
+        productNameTopicFontSize = Text.getAdaptiveFontSize(addProductNameTopic, 20);
+        productQTYTopicFontSize = Text.getAdaptiveFontSize(addProductQTYTypeTopic, 5);
     }
 
     private void initAdditiveLines() {
-        additivesTable.setGridLinesVisible(true);
-        additivesTable.setVgap(5);
-        additivesTable.setAlignment(Pos.CENTER);
-        scrollAdditives.setFitToWidth(true);
-        addProductAdditivesContainer.add(scrollAdditives, 0, 1);
+        scroll.setFitToWidth(true);
+        addProductAdditivesContainer.add(scroll, 0, 1);
     }
 
     @Override
     public void initialize() {
-        initTopicFontSize();
+        initTopicFontSizes();
         initImgBtnsInAddProductPane();
-        setPlusMinusImgBtnsClickable();
+        setPlusMinusProductImgBtnsClickable();
         initTopicsInAddProductPane();
         initNumbersKeyboardInAddProductPane();
         initAdditiveLines();
