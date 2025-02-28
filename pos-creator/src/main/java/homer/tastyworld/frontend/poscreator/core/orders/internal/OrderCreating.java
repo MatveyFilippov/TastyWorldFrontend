@@ -4,6 +4,7 @@ import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import org.apache.hc.core5.http.Method;
+import java.util.Map;
 
 public class OrderCreating {
 
@@ -36,10 +37,14 @@ public class OrderCreating {
         id = TypeChanger.toLong(request.request().result);
     }
 
-    public static void appendProduct(long productID) {
+    public static void appendProduct(long productID, int pieceQTY, Map<Long, Integer> notDefaultAdditives) {
         Request request = new Request("/order/append_item", Method.POST);
-        request.putInBody("id", id);
-        request.putInBody("new_status", "CREATED");
+        request.putInBody("order_id", id);
+        request.putInBody("product_id", productID);
+        request.putInBody("piece_qty", pieceQTY);
+        if (notDefaultAdditives != null && !notDefaultAdditives.isEmpty()) {
+            request.putInBody("not_default_additives", notDefaultAdditives);
+        }
         request.request();
     }
 

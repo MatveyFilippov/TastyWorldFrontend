@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,8 +61,8 @@ public class MenuParentPane extends StableParentPane {
         AnchorPane topPaneWithImage = getMenuImage(menuID);
         AnchorPane bottomPaneWithName = getMenuName(menuID);
         root.getChildren().addAll(topPaneWithImage, bottomPaneWithName);
-        VBox.setVgrow(topPaneWithImage, javafx.scene.layout.Priority.ALWAYS);
-        VBox.setVgrow(bottomPaneWithName, javafx.scene.layout.Priority.ALWAYS);
+        VBox.setVgrow(topPaneWithImage, Priority.ALWAYS);
+        VBox.setVgrow(bottomPaneWithName, Priority.ALWAYS);
         topPaneWithImage.prefHeightProperty().bind(root.heightProperty().multiply(0.90));
         bottomPaneWithName.prefHeightProperty().bind(root.heightProperty().multiply(0.10));
 

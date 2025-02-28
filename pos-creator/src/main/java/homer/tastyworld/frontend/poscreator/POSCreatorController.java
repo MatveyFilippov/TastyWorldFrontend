@@ -34,7 +34,7 @@ public class POSCreatorController {
     @FXML
     private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
 
-    private AddProductParentPane addProductPane;
+    private DynamicParentPane addProductPane;
     @FXML
     private AnchorPane addProductPaneParent;
     @FXML
@@ -53,6 +53,10 @@ public class POSCreatorController {
     private TextField addProductQTYFiled;
     @FXML
     private GridPane addProductNumbersKeyboard;
+    @FXML
+    private AnchorPane addProductAdditivesTopic;
+    @FXML
+    private GridPane addProductAdditivesContainer;
 
     private DynamicParentPane productsPane;
     @FXML
@@ -106,6 +110,8 @@ public class POSCreatorController {
                 .addProductQTYFiled(addProductQTYFiled)
                 .addProductQTYTypeTopic(addProductQTYTypeTopic)
                 .addProductNumbersKeyboard(addProductNumbersKeyboard)
+                .addProductAdditivesTopic(addProductAdditivesTopic)
+                .addProductAdditivesContainer(addProductAdditivesContainer)
                 .build();
         addProductPane.initialize();
     }
@@ -184,7 +190,7 @@ public class POSCreatorController {
 
     @FXML
     void addProductSubmitImgBtnPressed() {
-        // TODO: add product
+        OrderCreating.appendProduct(AddProductParentPane.productID, AddProductParentPane.qty, AddProductParentPane.notDefaultAdditives);
         addProductCloseImgBtnPressed();
     }
 
