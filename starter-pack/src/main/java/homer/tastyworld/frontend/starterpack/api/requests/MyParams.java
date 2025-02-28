@@ -42,13 +42,13 @@ public class MyParams {
     public static Long[] getActiveOrders() {
         Request request = new Request("/client_point/orders", Method.GET);
         Response response = request.request();
-        return TypeChanger.toLongArray(response.result);
+        return TypeChanger.toSortedLongArray(response.result);
     }
 
     public static Long[] getMenu() {
         Request request = new Request("/client_point/menu", Method.GET);
         Response response = request.request();
-        return TypeChanger.toLongArray(response.result);
+        return TypeChanger.toSortedLongArray(response.result);
     }
 
 }

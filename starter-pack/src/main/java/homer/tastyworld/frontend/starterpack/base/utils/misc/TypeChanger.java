@@ -41,4 +41,8 @@ public class TypeChanger {
         return ((List<Object>) object).stream().map(TypeChanger::toLong).toArray(Long[]::new);
     }
 
+    public static Long[] toSortedLongArray(Object object) {
+        return ((List<Object>) object).stream().map(TypeChanger::toLong).sorted().toArray(Long[]::new);
+    }
+
 }

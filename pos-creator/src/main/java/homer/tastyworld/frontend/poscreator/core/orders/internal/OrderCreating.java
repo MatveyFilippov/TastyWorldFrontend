@@ -14,7 +14,7 @@ public class OrderCreating {
         Request request = new Request("/order/is_name_in_active_order", Method.GET);
         while (true) {
             last_used_name_index++;
-            if (last_used_name_index > 100) {
+            if (last_used_name_index >= 100) {
                 last_used_name_index = 1;
             }
             String name = String.valueOf(last_used_name_index);

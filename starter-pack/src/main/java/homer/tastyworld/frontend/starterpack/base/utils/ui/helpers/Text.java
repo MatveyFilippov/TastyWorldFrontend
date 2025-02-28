@@ -13,7 +13,7 @@ public class Text {
     public static StringExpression getAdaptiveFontSize(AnchorPane pane, int divide) {
         return Bindings.concat(
                 "-fx-font-size: ",
-                Bindings.max(pane.widthProperty().divide(divide), pane.heightProperty().divide(divide)).asString(),
+                Bindings.max(pane.widthProperty().divide(divide), pane.heightProperty().divide(divide)).asString("%.0f"),
                 "px;"
         );
     }
