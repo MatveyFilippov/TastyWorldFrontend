@@ -37,6 +37,14 @@ public class OrderCreating {
         id = TypeChanger.toLong(request.request().result);
     }
 
+    public static void newOrderIfNotOpened() {
+        if (id == null) {
+            Request request = new Request("/order/create", Method.POST);
+            request.putInBody("name", findFreeName());
+            id = TypeChanger.toLong(request.request().result);
+        }
+    }
+
     public static void appendProduct(long productID, int pieceQTY, Map<Long, Integer> notDefaultAdditives) {
         Request request = new Request("/order/append_item", Method.POST);
         request.putInBody("order_id", id);
@@ -57,11 +65,13 @@ public class OrderCreating {
     }
 
     public static void delete() {
-        Request request = new Request("/order/delete", Method.POST);
-        request.putInBody("id", id);
-        request.request();
-        id = null;
-        last_used_name_index--;
+        if (id != null) {
+            Request request = new Request("/order/delete", Method.POST);
+            request.putInBody("id", id);
+            request.request();
+            id = null;
+            last_used_name_index--;
+        }
     }
 
 }

@@ -161,7 +161,7 @@ public class POSCreatorController {
 
     @FXML
     void mainPaneNewOrderImgBtnPressed() {
-        OrderCreating.newOrder();
+        // OrderCreating.newOrder();
         menuPane.openAndCloseFrom(mainPaneParent);
     }
 
@@ -173,7 +173,9 @@ public class POSCreatorController {
 
     @FXML
     void menuPaneLookOrderImgBtnPressed() {
-
+        // TODO: rewrite temp instructions
+        OrderCreating.create();
+        mainPane.openAndCloseFrom(menuPaneParent);
     }
 
     @FXML
@@ -184,14 +186,21 @@ public class POSCreatorController {
 
     @FXML
     void addProductCloseImgBtnPressed() {
+        productsPane.fill(AddProductParentPane.Product.menuID);
         addProductPane.clean();
-        menuPane.openAndCloseFrom(addProductPaneParent);
+        productsPane.openAndCloseFrom(addProductPaneParent);
     }
 
     @FXML
     void addProductSubmitImgBtnPressed() {
-        OrderCreating.appendProduct(AddProductParentPane.productID, AddProductParentPane.qty, AddProductParentPane.notDefaultAdditives);
-        addProductCloseImgBtnPressed();
+        OrderCreating.newOrderIfNotOpened();
+        OrderCreating.appendProduct(
+                AddProductParentPane.Product.productID,
+                AddProductParentPane.Product.qty,
+                AddProductParentPane.Product.notDefaultAdditives
+        );
+        addProductPane.clean();
+        menuPane.openAndCloseFrom(addProductPaneParent);
     }
 
 }
