@@ -26,47 +26,49 @@ public class ProductsParentPane extends DynamicParentPane {
     private AnchorPane productsPaneMenuTopic;
     private GridPane productPaneImgProductsContainer;
     private DynamicParentPane addProductParentPane;
-    private static GridPane clickableItemsTable = new GridPane();
-    private static ScrollPane scroll = new ScrollPane(clickableItemsTable);
     private static StringExpression topicFontSize;
-    private static final Map<Long, VBox> productsCache = new ConcurrentHashMap<>();
-
-    @Override
-    public void fill(long menuID) {
-        Request request = new Request("/menu/read", Method.GET);
-        request.putInBody("id", menuID);
-        Map<String, Object> response = request.request().getResultAsJSON();
-        Text.setTextCentre(productsPaneMenuTopic, (String) response.get("NAME"), topicFontSize, null);
-        Long[] productIDs = TypeChanger.toSortedLongArray(response.get("PRODUCT_IDs"));
-        for (int i = 0; i < productIDs.length; i++) {
-            clickableItemsTable.add(getProductImgBtn(productIDs[i]), i % 3, i / 3);
-        }
-        addProductParentPane.cacheAll(productIDs);
-    }
+    private static final ScrollPane scroll = new ScrollPane();
+    private static final Map<Long, GridPane> productsCache = new ConcurrentHashMap<>();
 
     @Override
     public void cacheAll(Long[] menuIDs) {
         Request request = new Request("/menu/read", Method.GET);
         for (long menuID : menuIDs) {
             request.putInBody("id", menuID);
-            Map<String, Object> response = request.request().getResultAsJSON();
-            for (long productID : TypeChanger.toSortedLongArray(response.get("PRODUCT_IDs"))) {
-                productsCache.put(productID, createProductImgBtn(productID));
-            }
+            Map<String, Object> menuInfo = request.request().getResultAsJSON();
+            productsCache.put(menuID, computeTable(menuInfo));
+            addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(menuInfo.get("PRODUCT_IDs")));
         }
     }
 
-    private VBox getProductImgBtn(long productID) {
-        return productsCache.computeIfAbsent(productID, this::createProductImgBtn);
+    @Override
+    public void fill(long menuID) {
+        Request request = new Request("/menu/read", Method.GET);
+        request.putInBody("id", menuID);
+        Map<String, Object> menuInfo = request.request().getResultAsJSON();
+        Text.setTextCentre(productsPaneMenuTopic, (String) menuInfo.get("NAME"), topicFontSize, null);
+        scroll.setContent(productsCache.computeIfAbsent(menuID, ignored -> computeTable(menuInfo)));
     }
 
-    private VBox createProductImgBtn(long productID) {
-        VBox root = new VBox();
-        root.setFillWidth(true);
-        root.prefWidthProperty().bind(scroll.widthProperty());
-        root.prefHeightProperty().bind(scroll.heightProperty().divide(2));
+    private GridPane computeTable(Map<String, Object> menuInfo) {
+        GridPane table = new GridPane();
+        table.setHgap(25);
+        table.setVgap(25);
+        table.setAlignment(Pos.CENTER);
+        Long[] productIDs = TypeChanger.toSortedLongArray(menuInfo.get("PRODUCT_IDs"));
+        for (int i = 0; i < productIDs.length; i++) {
+            table.add(getProductImgBtn(productIDs[i]), i % 3, i / 3);
+        }
+        return table;
+    }
 
-        root.setOnMouseClicked(event -> {
+    private VBox getProductImgBtn(long productID) {
+        VBox product = new VBox();
+        product.setFillWidth(true);
+        product.prefWidthProperty().bind(scroll.widthProperty());
+        product.prefHeightProperty().bind(scroll.heightProperty().divide(2));
+
+        product.setOnMouseClicked(event -> {
             addProductParentPane.fill(productID);
             addProductParentPane.openAndCloseFrom(parent);
             clean();
@@ -74,13 +76,13 @@ public class ProductsParentPane extends DynamicParentPane {
 
         AnchorPane topPaneWithImage = getProductImage(productID);
         AnchorPane bottomPaneWithName = getProductName(productID);
-        root.getChildren().addAll(topPaneWithImage, bottomPaneWithName);
+        product.getChildren().addAll(topPaneWithImage, bottomPaneWithName);
         VBox.setVgrow(topPaneWithImage, javafx.scene.layout.Priority.ALWAYS);
         VBox.setVgrow(bottomPaneWithName, javafx.scene.layout.Priority.ALWAYS);
-        topPaneWithImage.prefHeightProperty().bind(root.heightProperty().multiply(0.90));
-        bottomPaneWithName.prefHeightProperty().bind(root.heightProperty().multiply(0.10));
+        topPaneWithImage.prefHeightProperty().bind(product.heightProperty().multiply(0.90));
+        bottomPaneWithName.prefHeightProperty().bind(product.heightProperty().multiply(0.10));
 
-        return root;
+        return product;
     }
 
     private AnchorPane getProductImage(long productID) {
@@ -103,7 +105,6 @@ public class ProductsParentPane extends DynamicParentPane {
     @Override
     public void clean() {
         productsPaneMenuTopic.getChildren().clear();
-        clickableItemsTable.getChildren().clear();
     }
 
     private void initTopicFontSize() {
@@ -111,9 +112,6 @@ public class ProductsParentPane extends DynamicParentPane {
     }
 
     private void initItemsTable() {
-        clickableItemsTable.setHgap(25);
-        clickableItemsTable.setVgap(25);
-        clickableItemsTable.setAlignment(Pos.CENTER);
         scroll.setFitToWidth(true);
         productPaneImgProductsContainer.add(scroll, 1, 0);
     }
