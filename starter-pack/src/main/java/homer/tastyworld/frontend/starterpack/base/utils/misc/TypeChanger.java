@@ -3,6 +3,7 @@ package homer.tastyworld.frontend.starterpack.base.utils.misc;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,14 @@ public class TypeChanger {
 
     public static long toLong(Object object) {
         return Long.parseLong(String.valueOf(object));
+    }
+
+    public static int toInt(Object object) {
+        return Integer.parseInt(String.valueOf(object));
+    }
+
+    public static BigDecimal toBigDecimal(Object object) {
+        return new BigDecimal(String.valueOf(object));
     }
 
     public static Long[] toLongArray(Object object) {

@@ -10,14 +10,11 @@ import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +25,7 @@ public class ProductsParentPane extends DynamicParentPane {
     private AnchorPane productsPaneBackInMenuImgBtn;
     private AnchorPane productsPaneMenuTopic;
     private GridPane productPaneImgProductsContainer;
+    private DynamicParentPane addProductParentPane;
     private static GridPane clickableItemsTable = new GridPane();
     private static ScrollPane scroll = new ScrollPane(clickableItemsTable);
     private static StringExpression topicFontSize;
@@ -43,6 +41,7 @@ public class ProductsParentPane extends DynamicParentPane {
         for (int i = 0; i < productIDs.length; i++) {
             clickableItemsTable.add(getProductImgBtn(productIDs[i]), i % 3, i / 3);
         }
+        addProductParentPane.cacheAll(productIDs);
     }
 
     @Override
@@ -67,8 +66,10 @@ public class ProductsParentPane extends DynamicParentPane {
         root.prefWidthProperty().bind(scroll.widthProperty());
         root.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        root.setOnMouseClicked(event -> {  // TODO...
-            System.out.println(productID);
+        root.setOnMouseClicked(event -> {
+            addProductParentPane.fill(productID);
+            addProductParentPane.openAndCloseFrom(parent);
+            clean();
         });
 
         AnchorPane topPaneWithImage = getProductImage(productID);

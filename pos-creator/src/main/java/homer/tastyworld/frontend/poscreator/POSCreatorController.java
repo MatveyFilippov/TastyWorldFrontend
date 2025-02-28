@@ -2,6 +2,7 @@ package homer.tastyworld.frontend.poscreator;
 
 import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderCreating;
 import homer.tastyworld.frontend.poscreator.panes.ParentPane;
+import homer.tastyworld.frontend.poscreator.panes.dynamic.AddProductParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.ProductsParentPane;
 import homer.tastyworld.frontend.poscreator.panes.stable.StableParentPane;
@@ -10,6 +11,7 @@ import homer.tastyworld.frontend.poscreator.panes.stable.MenuParentPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
@@ -31,6 +33,26 @@ public class POSCreatorController {
     private AnchorPane mainPaneCookingOrdersTopic, mainPaneReadyOrdersTopic;
     @FXML
     private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
+
+    private AddProductParentPane addProductPane;
+    @FXML
+    private AnchorPane addProductPaneParent;
+    @FXML
+    private AnchorPane addProductCloseImgBtn, addProductSubmitImgBtn;
+    @FXML
+    private AnchorPane addProductNameTopic;
+    @FXML
+    private AnchorPane addProductPriceTopic;
+    @FXML
+    private TextField addProductTotalPriceField;
+    @FXML
+    private AnchorPane addProductMinusQTYImgBtn, addProductPlusQTYImgBtn;
+    @FXML
+    private AnchorPane addProductQTYTypeTopic;
+    @FXML
+    private TextField addProductQTYFiled;
+    @FXML
+    private GridPane addProductNumbersKeyboard;
 
     private DynamicParentPane productsPane;
     @FXML
@@ -70,10 +92,29 @@ public class POSCreatorController {
         mainPane.initialize();
     }
 
+    private void initAddProductPane() {
+        addProductPane = AddProductParentPane
+                .builder()
+                .parent(addProductPaneParent)
+                .addProductCloseImgBtn(addProductCloseImgBtn)
+                .addProductSubmitImgBtn(addProductSubmitImgBtn)
+                .addProductNameTopic(addProductNameTopic)
+                .addProductPriceTopic(addProductPriceTopic)
+                .addProductTotalPriceField(addProductTotalPriceField)
+                .addProductMinusQTYImgBtn(addProductMinusQTYImgBtn)
+                .addProductPlusQTYImgBtn(addProductPlusQTYImgBtn)
+                .addProductQTYFiled(addProductQTYFiled)
+                .addProductQTYTypeTopic(addProductQTYTypeTopic)
+                .addProductNumbersKeyboard(addProductNumbersKeyboard)
+                .build();
+        addProductPane.initialize();
+    }
+
     private void initProductsPane() {
         productsPane = ProductsParentPane
                 .builder()
                 .parent(productsPaneParent)
+                .addProductParentPane(addProductPane)
                 .productsPaneBackInMenuImgBtn(productsPaneBackInMenuImgBtn)
                 .productsPaneMenuTopic(productsPaneMenuTopic)
                 .productPaneImgProductsContainer(productPaneImgProductsContainer)
@@ -102,6 +143,7 @@ public class POSCreatorController {
         }
         ParentPane.setBase(base);
         initMainPane();
+        initAddProductPane();
         initProductsPane();
         initMenuPane();
     }
@@ -132,6 +174,18 @@ public class POSCreatorController {
     void productsPaneBackInMenuImgBtnPressed() {
         productsPane.clean();
         menuPane.openAndCloseFrom(productsPaneParent);
+    }
+
+    @FXML
+    void addProductCloseImgBtnPressed() {
+        addProductPane.clean();
+        menuPane.openAndCloseFrom(addProductPaneParent);
+    }
+
+    @FXML
+    void addProductSubmitImgBtnPressed() {
+        // TODO: add product
+        addProductCloseImgBtnPressed();
     }
 
 }
