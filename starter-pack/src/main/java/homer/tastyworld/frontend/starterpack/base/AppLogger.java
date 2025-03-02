@@ -2,18 +2,91 @@ package homer.tastyworld.frontend.starterpack.base;
 
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.init.CantInitAppLoggerException;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import org.apache.hc.core5.http.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.SimpleFormatter;
 
 public class AppLogger {
 
-    public static final AppLogger GLOBAL_LOGGER = AppLogger.getFor(AppLogger.class);
+    public static final AppLogger GLOBAL_LOGGER;
     private final Logger logger;
+
+    static {
+        ConsoleHandler defaultConsoleHandler = new ConsoleHandler();
+        defaultConsoleHandler.setLevel(Level.ALL);
+        defaultConsoleHandler.setFormatter(new SimpleFormatter() {
+            @Override
+            public String format(LogRecord record) {
+                String message = record.getMessage();
+                Throwable thrown = record.getThrown();
+                if (thrown != null) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    thrown.printStackTrace(pw);
+                    message += "\n" + sw;
+                }
+                return String.format(
+                        "%s %tT - %s%n",
+                        record.getLevel() == Level.SEVERE ? "ERROR" : record.getLevel().toString(),
+                        record.getMillis(),
+                        message
+                );
+            }
+        });
+
+        FileHandler defaultFileHandler;
+        try {
+            defaultFileHandler = new FileHandler(
+                    AppConfig.APP_DATA_DIR.getAbsolutePath() + File.separator + "TastyWorldApp.log",
+                    Long.MAX_VALUE, 1, true
+            );
+        } catch (IOException e) {
+            throw new CantInitAppLoggerException(e);
+        }
+        defaultFileHandler.setLevel(Level.ALL);
+        defaultFileHandler.setFormatter(new SimpleFormatter() {
+            @Override
+            public String format(LogRecord record) {
+                String message = record.getMessage();
+                Throwable thrown = record.getThrown();
+                if (thrown != null) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    thrown.printStackTrace(pw);
+                    message += "\n" + sw;
+                }
+                return String.format(
+                        "%1$s %2$tY-%2$tm-%2$td %2$tT %3$s [%4$s] - %5$s%n",
+                        record.getLevel() == Level.SEVERE ? "ERROR" : record.getLevel().toString(),
+                        record.getMillis(),
+                        record.getLoggerName(),
+                        Thread.currentThread().getName(),
+                        message
+                );
+            }
+        });
+
+        java.util.logging.Logger root = java.util.logging.Logger.getLogger("");
+        Arrays.stream(root.getHandlers()).forEach(root::removeHandler);
+        root.addHandler(defaultConsoleHandler);
+        root.addHandler(defaultFileHandler);
+        root.setLevel(Level.INFO);
+
+        GLOBAL_LOGGER = getFor(AppLogger.class);
+    }
 
     private AppLogger(Logger logger) {
         this.logger = logger;

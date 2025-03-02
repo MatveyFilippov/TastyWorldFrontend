@@ -4,8 +4,6 @@ module homer.tastyworld.frontend.starterpack {
     requires org.apache.httpcomponents.client5.httpclient5;
     requires com.fasterxml.jackson.databind;
     requires org.slf4j;
-    requires org.apache.logging.log4j.core;
-    requires org.apache.logging.log4j;
     requires com.rabbitmq.client;
     requires java.sql;
     requires java.desktop;
