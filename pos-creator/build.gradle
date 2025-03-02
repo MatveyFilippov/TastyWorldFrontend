@@ -1,8 +1,3 @@
-plugins {
-    id 'application'
-    id 'org.beryx.jlink' version '3.1.1'
-}
-
 group 'homer.tastyworld.frontend'
 version '1.0-SNAPSHOT'
 
@@ -33,11 +28,19 @@ jar {
 }
 
 jlink {
+    forceMerge 'slf4j'
     mergedModule {
         requires "java.xml"
+        requires "java.desktop"
+        requires "java.sql"
     }
-    imageZip = project.file("${buildDir}/distributions/TastyWorld-v${version}-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--no-header-files', '--no-man-pages']
+    addExtraDependencies("javafx")
+    imageZip = project.file("$rootDir/packaged-apps/pos-creator/TastyWorld-POS-Creator-v${version}-${javafx.platform.classifier}.zip")
+    options = [
+            '--strip-debug', '--no-header-files', '--no-man-pages',
+//            '--module-path', "$System.env.PATH_TO_FX_MODS",
+//            '--add-modules', 'javafx.controls,javafx.fxml'
+    ]
     launcher {
         name = 'TastyWorld-POS-Creator'
     }
