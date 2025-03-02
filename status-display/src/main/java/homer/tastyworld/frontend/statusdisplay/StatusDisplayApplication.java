@@ -39,10 +39,10 @@ public class StatusDisplayApplication extends TastyWorldApplication {
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
         if (subscriptionAvailableDays < 0) {
             return "Подписка закончилась. Оплатите для возобновления работы...";
-        } else if (subscriptionAvailableDays <=7 ) {
+        } else if (subscriptionAvailableDays <= 7) {
             return "До окончания подписки осталось " + TypeChanger.toDaysFormat(subscriptionAvailableDays);
         }
-        return null;
+        return "";
     }
 
 }
