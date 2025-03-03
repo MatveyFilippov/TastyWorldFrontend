@@ -2,6 +2,7 @@ package homer.tastyworld.frontend.starterpack.base.config;
 
 import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.init.CantInitAppConfigException;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
+import javafx.application.Platform;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,12 +28,12 @@ public class AppConfig {
         if (inputStream == null) {
             throw new CantInitAppConfigException("Can't read app properties from resources");
         }
-        PropertiesProcessor properties = new PropertiesProcessor(inputStream);
+        PropertiesProcessor appProperties = new PropertiesProcessor(inputStream);
         try {
             inputStream.close();
         } catch (IOException ignored) {}
-        appName = properties.getValue("app.name");
-        appVersion = properties.getValue("app.version");
+        appName = appProperties.getValue("app.name");
+        appVersion = appProperties.getValue("app.version");
         if (appName == null || appName.replace(" ", "").isEmpty()) {
             throw new CantInitAppConfigException("Can't find property 'app.name'");
         }
@@ -45,12 +46,16 @@ public class AppConfig {
         if (token == null) {
             token = properties.getValue("api.token");
             if (token == null) {
-                setToken(DialogWindow.askTillGood(
+                String tempToken = DialogWindow.getOrNull(
                         "TastyWorld API token",
                         "Прежде чем пользовать программой введите токен доступа",
-                        "Токен:",
-                        token -> token != null && !token.replace(" ", "").isEmpty()
-                ));
+                        "Токен:"
+                );
+                if (tempToken == null) {
+                    Platform.exit();
+                    System.exit(0);
+                }
+                setToken(tempToken);
             }
         }
         return token;
