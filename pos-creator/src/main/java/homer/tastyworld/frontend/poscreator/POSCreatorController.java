@@ -4,13 +4,16 @@ import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderCreating;
 import homer.tastyworld.frontend.poscreator.panes.ParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.AddProductParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
+import homer.tastyworld.frontend.poscreator.panes.dynamic.EndOrderCreatingParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.ProductsParentPane;
 import homer.tastyworld.frontend.poscreator.panes.stable.StableParentPane;
 import homer.tastyworld.frontend.poscreator.panes.stable.MainParentPane;
 import homer.tastyworld.frontend.poscreator.panes.stable.MenuParentPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -78,6 +81,20 @@ public class POSCreatorController {
     @FXML
     private GridPane menuPaneImgMenuContainer;
 
+    private DynamicParentPane endOrderPane;
+    @FXML
+    private AnchorPane endOrderCreatingPaneParent;
+    @FXML
+    private AnchorPane endOrderCreatingOpenMenuImgBtn, endOrderCreatingCommitImgBtn;
+    @FXML
+    private AnchorPane endOrderCreatingTopic;
+    @FXML
+    private GridPane endOrderCreatingItemsContainer;
+    @FXML
+    private TextField endOrderCreatingDeliveryField;
+    @FXML
+    private CheckBox endOrderCreatingIsPaidCheckBox;
+
 
     private void initMainPane() {
         mainPane = MainParentPane
@@ -141,6 +158,20 @@ public class POSCreatorController {
         menuPane.initialize();
     }
 
+    private void initEndOrderPane() {
+        endOrderPane = EndOrderCreatingParentPane
+                .builder()
+                .parent(endOrderCreatingPaneParent)
+                .endOrderCreatingOpenMenuImgBtn(endOrderCreatingOpenMenuImgBtn)
+                .endOrderCreatingCommitImgBtn(endOrderCreatingCommitImgBtn)
+                .endOrderCreatingTopic(endOrderCreatingTopic)
+                .endOrderCreatingItemsContainer(endOrderCreatingItemsContainer)
+                .endOrderCreatingDeliveryField(endOrderCreatingDeliveryField)
+                .endOrderCreatingIsPaidCheckBox(endOrderCreatingIsPaidCheckBox)
+                .build();
+        endOrderPane.initialize();
+    }
+
     @FXML
     private void initialize() {
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
@@ -152,6 +183,32 @@ public class POSCreatorController {
         initAddProductPane();
         initProductsPane();
         initMenuPane();
+        initEndOrderPane();
+    }
+
+    @FXML
+    void addProductCloseImgBtnPressed() {
+        productsPane.fill(AddProductParentPane.Product.menuID);
+        addProductPane.clean();
+        productsPane.openAndCloseFrom(addProductPaneParent);
+    }
+
+    @FXML
+    void addProductSubmitImgBtnPressed() {
+        OrderCreating.start(true);
+        OrderCreating.appendProduct(
+                AddProductParentPane.Product.productID,
+                AddProductParentPane.Product.qty,
+                AddProductParentPane.Product.notDefaultAdditives
+        );
+        addProductPane.clean();
+        menuPane.openAndCloseFrom(addProductPaneParent);
+    }
+
+    @FXML
+    void productsPaneBackInMenuImgBtnPressed() {
+        productsPane.clean();
+        menuPane.openAndCloseFrom(productsPaneParent);
     }
 
     @FXML
@@ -173,34 +230,34 @@ public class POSCreatorController {
 
     @FXML
     void menuPaneLookOrderImgBtnPressed() {
-        // TODO: rewrite temp instructions
-        OrderCreating.create();
-        mainPane.openAndCloseFrom(menuPaneParent);
+        if (OrderCreating.id == null) {
+            AlertWindow.showInfo(
+                    "Заказ пуст", "Добавьте хотя бы один продукт, прежде чем завершить создание заказа", true
+            );
+        } else {
+            endOrderPane.fill(OrderCreating.id);
+            endOrderPane.openAndCloseFrom(menuPaneParent);
+        }
     }
 
     @FXML
-    void productsPaneBackInMenuImgBtnPressed() {
-        productsPane.clean();
-        menuPane.openAndCloseFrom(productsPaneParent);
+    void endOrderCreatingOpenMenuImgBtnPressed() {
+        endOrderPane.clean();
+        menuPane.openAndCloseFrom(endOrderCreatingPaneParent);
     }
 
     @FXML
-    void addProductCloseImgBtnPressed() {
-        productsPane.fill(AddProductParentPane.Product.menuID);
-        addProductPane.clean();
-        productsPane.openAndCloseFrom(addProductPaneParent);
-    }
-
-    @FXML
-    void addProductSubmitImgBtnPressed() {
-        OrderCreating.newOrderIfNotOpened();
-        OrderCreating.appendProduct(
-                AddProductParentPane.Product.productID,
-                AddProductParentPane.Product.qty,
-                AddProductParentPane.Product.notDefaultAdditives
-        );
-        addProductPane.clean();
-        menuPane.openAndCloseFrom(addProductPaneParent);
+    void endOrderCreatingCommitImgBtnPressed() {
+        String address = endOrderCreatingDeliveryField.getText().trim();
+        if (!address.equals("")) {
+            OrderCreating.editDeliveryAddress(address);
+        }
+        OrderCreating.finish();
+        if (endOrderCreatingIsPaidCheckBox.isSelected()) {
+            OrderCreating.setPaid();
+        }
+        endOrderPane.clean();
+        mainPane.openAndCloseFrom(endOrderCreatingPaneParent);
     }
 
 }

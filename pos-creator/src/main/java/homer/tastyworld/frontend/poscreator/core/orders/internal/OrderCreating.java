@@ -26,8 +26,11 @@ public class OrderCreating {
         }
     }
 
-    public static void newOrder() {
+    public static void start(boolean ignoreIfExists) {
         if (id != null) {
+            if (ignoreIfExists) {
+                return;
+            }
             try {
                 delete();
             } catch (BadRequestException ignore) {}
@@ -35,14 +38,6 @@ public class OrderCreating {
         Request request = new Request("/order/create", Method.POST);
         request.putInBody("name", findFreeName());
         id = TypeChanger.toLong(request.request().result);
-    }
-
-    public static void newOrderIfNotOpened() {
-        if (id == null) {
-            Request request = new Request("/order/create", Method.POST);
-            request.putInBody("name", findFreeName());
-            id = TypeChanger.toLong(request.request().result);
-        }
     }
 
     public static void appendProduct(long productID, int pieceQTY, Map<Long, Integer> notDefaultAdditives) {
@@ -56,7 +51,24 @@ public class OrderCreating {
         request.request();
     }
 
-    public static void create() {
+    public static void setPaid() {
+        Request request = new Request("/order/mark_as_paid", Method.POST);
+        request.putInBody("id", id);
+        request.request();
+    }
+
+    public static void editDeliveryAddress(String address) {
+        Request request = new Request("/order/edit_delivery_address", Method.POST);
+        request.putInBody("id", id);
+        if (address != null) {
+            request.putInBody("address", address);
+        } else {
+            request.putInBody("not_for_delivery", true);
+        }
+        request.request();
+    }
+
+    public static void finish() {
         Request request = new Request("/order/set_status", Method.POST);
         request.putInBody("id", id);
         request.putInBody("new_status", "CREATED");

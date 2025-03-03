@@ -127,7 +127,6 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private GridPane computeAdditivesTable(long productID, Long[] additiveIDs) {
         GridPane table = new GridPane();
-        table.setGridLinesVisible(true);
         table.setVgap(5);
         table.setAlignment(Pos.CENTER);
         List<Map<String, Object>> additivesInfo = additiveCache.computeIfAbsent(productID, ignored -> {
@@ -145,6 +144,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private HBox getAdditiveLine(Map<String, Object> additiveInfo) {
         HBox row = new HBox();
+        row.setStyle("-fx-border-color: #000000;");
         row.setSpacing(10);
         row.prefWidthProperty().bind(scroll.widthProperty());
         row.prefHeightProperty().bind(scroll.heightProperty().divide(4));
