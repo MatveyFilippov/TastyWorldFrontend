@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.poscreator;
 
 import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderCreating;
+import homer.tastyworld.frontend.poscreator.core.vkb.VirtualKeyboardPrompts;
 import homer.tastyworld.frontend.poscreator.panes.ParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.AddProductParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
@@ -12,11 +13,14 @@ import homer.tastyworld.frontend.poscreator.panes.stable.MenuParentPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.VirtualKeyboard;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 public class POSCreatorController {
 
@@ -87,13 +91,21 @@ public class POSCreatorController {
     @FXML
     private AnchorPane endOrderCreatingOpenMenuImgBtn, endOrderCreatingCommitImgBtn;
     @FXML
-    private AnchorPane endOrderCreatingTopic;
+    private AnchorPane endOrderCreatingNameTopic, endOrderCreatingTotalPriceTopic;
     @FXML
     private GridPane endOrderCreatingItemsContainer;
     @FXML
     private TextField endOrderCreatingDeliveryField;
     @FXML
     private CheckBox endOrderCreatingIsPaidCheckBox;
+
+    private VirtualKeyboard virtualKeyboard;
+    @FXML
+    private AnchorPane virtualKeyboardPaneParent;
+    @FXML
+    private HBox virtualKeyboardPrompts;
+    @FXML
+    private AnchorPane virtualKeyboardPlace;
 
 
     private void initMainPane() {
@@ -164,12 +176,19 @@ public class POSCreatorController {
                 .parent(endOrderCreatingPaneParent)
                 .endOrderCreatingOpenMenuImgBtn(endOrderCreatingOpenMenuImgBtn)
                 .endOrderCreatingCommitImgBtn(endOrderCreatingCommitImgBtn)
-                .endOrderCreatingTopic(endOrderCreatingTopic)
+                .endOrderCreatingNameTopic(endOrderCreatingNameTopic)
+                .endOrderCreatingTotalPriceTopic(endOrderCreatingTotalPriceTopic)
                 .endOrderCreatingItemsContainer(endOrderCreatingItemsContainer)
                 .endOrderCreatingDeliveryField(endOrderCreatingDeliveryField)
                 .endOrderCreatingIsPaidCheckBox(endOrderCreatingIsPaidCheckBox)
                 .build();
         endOrderPane.initialize();
+    }
+
+    private void initVirtualKeyboard() {
+        virtualKeyboard = new VirtualKeyboard(virtualKeyboardPlace);
+        VirtualKeyboardPrompts.setPromptsContainer(virtualKeyboardPrompts);
+        VirtualKeyboardPrompts.setInputField(endOrderCreatingDeliveryField);
     }
 
     @FXML
@@ -184,6 +203,8 @@ public class POSCreatorController {
         initProductsPane();
         initMenuPane();
         initEndOrderPane();
+        initVirtualKeyboard();
+        mainPane.openAndCloseOther();
     }
 
     @FXML
@@ -251,6 +272,7 @@ public class POSCreatorController {
         String address = endOrderCreatingDeliveryField.getText().trim();
         if (!address.equals("")) {
             OrderCreating.editDeliveryAddress(address);
+            VirtualKeyboardPrompts.appendVar(endOrderCreatingDeliveryField);
         }
         OrderCreating.finish();
         if (endOrderCreatingIsPaidCheckBox.isSelected()) {
@@ -258,6 +280,17 @@ public class POSCreatorController {
         }
         endOrderPane.clean();
         mainPane.openAndCloseFrom(endOrderCreatingPaneParent);
+    }
+
+    @FXML
+    void hideVirtualKeyboardParentPane() {
+        virtualKeyboardPaneParent.setVisible(false);
+    }
+
+    @FXML
+    void showVirtualKeyboardParentPane() {
+        VirtualKeyboardPrompts.clean();
+        virtualKeyboardPaneParent.setVisible(true);
     }
 
 }

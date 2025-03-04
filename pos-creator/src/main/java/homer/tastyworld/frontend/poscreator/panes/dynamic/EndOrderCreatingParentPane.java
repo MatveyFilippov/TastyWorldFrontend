@@ -3,6 +3,7 @@ package homer.tastyworld.frontend.poscreator.panes.dynamic;
 import homer.tastyworld.frontend.poscreator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.beans.binding.StringExpression;
@@ -20,7 +21,6 @@ import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,11 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     private AnchorPane endOrderCreatingOpenMenuImgBtn, endOrderCreatingCommitImgBtn;
-    private AnchorPane endOrderCreatingTopic;
+    private AnchorPane endOrderCreatingNameTopic, endOrderCreatingTotalPriceTopic;
     private GridPane endOrderCreatingItemsContainer;
     private TextField endOrderCreatingDeliveryField;
     private CheckBox endOrderCreatingIsPaidCheckBox;
-    private static StringExpression topicFontSize;
+    private static StringExpression nameTopicFontSize, priceTopicFontSize;
     private static final ScrollPane scroll = new ScrollPane();
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
 
@@ -49,7 +49,8 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         if (!deliveryAddress.equals("NOT FOR DELIVERY")) {
             endOrderCreatingDeliveryField.setText(deliveryAddress);
         }
-        Text.setTextCentre(endOrderCreatingTopic, (String) orderInfo.get("NAME"), topicFontSize, null);
+        Text.setTextCentre(endOrderCreatingNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, null);
+        Text.setTextCentre(endOrderCreatingTotalPriceTopic, "Стоимость: " + orderInfo.get("TOTAL_PRICE"), priceTopicFontSize, null);
         endOrderCreatingIsPaidCheckBox.setSelected(TypeChanger.toBool(orderInfo.get("IS_PAID")));
         scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
     }
@@ -66,10 +67,17 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         return table;
     }
 
+    private Map<String, Object> getProductInfo(long productID) {
+        return productCache.computeIfAbsent(productID, id -> {
+            Request request = new Request("/product/read", Method.GET);
+            request.putInBody("id", id);
+            return request.request().getResultAsJSON();
+        });
+    }
+
     private HBox getItemLine(Map<String, Object> itemInfo, ObservableList<Node> lines) {
-        HBox row = new HBox();
+        HBox row = new HBox(7);
         row.setStyle("-fx-border-color: #000000;");
-        row.setSpacing(7);
         row.prefWidthProperty().bind(scroll.widthProperty());
         row.prefHeightProperty().bind(scroll.heightProperty().divide(7));
         row.setAlignment(Pos.CENTER);
@@ -102,33 +110,38 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         AnchorPane delete = new AnchorPane();
         Helper.setAnchorPaneImageBackgroundCentre(delete, POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png"));
         delete.setOnMouseClicked(event -> {
-            // TODO: ask for sure
-            Request request = new Request("/order/remove_item", Method.POST);
-            request.putInBody("id", TypeChanger.toLong(itemInfo.get("ID")));
-            request.request();
+            Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+            if (!DialogWindow.askBool(
+                    "Да", "Нет", "Редактирование заказа",
+                    String.format("Вы уверены что хотите удалить '%s' из заказа?", productInfo.get("NAME")),
+                    "Продолжить?"
+            )) {
+                return;
+            }
+            Request deleteRequest = new Request("/order/remove_item", Method.POST);
+            deleteRequest.putInBody("id", TypeChanger.toLong(itemInfo.get("ID")));
+            deleteRequest.request();
             deleteFrom.remove(toDelete);
+            Request infoRequest = new Request("/order/read", Method.GET);
+            infoRequest.putInBody("id", TypeChanger.toLong(itemInfo.get("ORDER_ID")));
+            endOrderCreatingTotalPriceTopic.getChildren().clear();
+            Text.setTextCentre(
+                    endOrderCreatingTotalPriceTopic, "Стоимость: " + infoRequest.request().getResultAsJSON().get("TOTAL_PRICE"), priceTopicFontSize, null
+            );
         });
         return delete;
     }
 
     private AnchorPane getItemName(Map<String, Object> itemInfo) {
         AnchorPane name = new AnchorPane();
-        Map<String, Object> productInfo = productCache.computeIfAbsent(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")), productID -> {
-            Request request = new Request("/product/read", Method.GET);
-            request.putInBody("id", productID);
-            return request.request().getResultAsJSON();
-        });
+        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         Text.setTextCentre(name, (String) productInfo.get("NAME"), Text.getAdaptiveFontSize(name, 15), null);
         return name;
     }
 
     private AnchorPane getItemQTY(Map<String, Object> itemInfo) {
         AnchorPane qty = new AnchorPane();
-        Map<String, Object> productInfo = productCache.computeIfAbsent(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")), productID -> {
-            Request request = new Request("/product/read", Method.GET);
-            request.putInBody("id", productID);
-            return request.request().getResultAsJSON();
-        });
+        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         String peaceType;
         if (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
             peaceType = "Гр";
@@ -151,7 +164,8 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     @Override
     public void clean() {
-        endOrderCreatingTopic.getChildren().clear();
+        endOrderCreatingNameTopic.getChildren().clear();
+        endOrderCreatingTotalPriceTopic.getChildren().clear();
         endOrderCreatingDeliveryField.clear();
         endOrderCreatingIsPaidCheckBox.setSelected(false);
     }
@@ -161,8 +175,9 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         endOrderCreatingItemsContainer.add(scroll, 1, 1);
     }
 
-    private void initTopicFontSize() {
-        topicFontSize = Text.getAdaptiveFontSize(endOrderCreatingTopic, 20);
+    private void initTopicsFontSize() {
+        nameTopicFontSize = Text.getAdaptiveFontSize(endOrderCreatingNameTopic, 6);
+        priceTopicFontSize = Text.getAdaptiveFontSize(endOrderCreatingTotalPriceTopic, 10);
     }
 
     private void initImgBtnsInEndOrderCreatingPane() {
@@ -180,7 +195,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     public void initialize() {
         initItemsTable();
         initImgBtnsInEndOrderCreatingPane();
-        initTopicFontSize();
+        initTopicsFontSize();
     }
 
 }
