@@ -4,6 +4,7 @@ import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,19 @@ public class TypeChanger {
 
     public static Long[] toSortedLongArray(Object object) {
         return ((List<Object>) object).stream().map(TypeChanger::toLong).sorted().toArray(Long[]::new);
+    }
+
+    public static <K, V> Map<K, V> toMap(Object object, Class<K> keyType, Class<V> valueType) {
+        Map<K, V> result = new HashMap<>();
+        ((Map<Object, Object>) object).forEach(
+                (k, v) -> result.put(
+                        valueType == String.class ? (K) String.valueOf(k)
+                                                  : OBJECT_MAPPER.convertValue(String.valueOf(k), keyType),
+                        valueType == Object.class ? (V) v
+                                                  : OBJECT_MAPPER.convertValue(String.valueOf(v), valueType)
+                )
+        );
+        return result;
     }
 
 }

@@ -36,6 +36,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private static StringExpression nameTopicFontSize, priceTopicFontSize;
     private static final ScrollPane scroll = new ScrollPane();
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
+    private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
 
     @Override
     public void cacheAll(Long[] ignored) {}
@@ -97,10 +98,10 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         HBox.setHgrow(price, Priority.ALWAYS);
         HBox.setHgrow(space, Priority.ALWAYS);
         delete.prefWidthProperty().bind(row.widthProperty().multiply(0.1));
-        name.prefWidthProperty().bind(row.widthProperty().multiply(0.4));
-        qty.prefWidthProperty().bind(row.widthProperty().multiply(0.09));
-        additives.prefWidthProperty().bind(row.widthProperty().multiply(0.30));
-        price.prefWidthProperty().bind(row.widthProperty().multiply(0.09));
+        name.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
+        qty.prefWidthProperty().bind(row.widthProperty().multiply(0.12));
+        additives.prefWidthProperty().bind(row.widthProperty().multiply(0.29));
+        price.prefWidthProperty().bind(row.widthProperty().multiply(0.12));
         space.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
 
         return row;
@@ -142,18 +143,37 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private AnchorPane getItemQTY(Map<String, Object> itemInfo) {
         AnchorPane qty = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        String peaceType;
-        if (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
-            peaceType = "Гр";
-        } else {
-            peaceType = "Шт";
-        }
+        String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
         Text.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, Text.getAdaptiveFontSize(qty, 4), null);
         return qty;
     }
 
     private VBox getAdditives(Map<String, Object> itemInfo) {
-        return new VBox();  // TODO: (also cache)
+        VBox result = new VBox();
+        result.setFillWidth(true);
+        result.setAlignment(Pos.CENTER);
+        Map<Long, Integer> notDefaultAdditives = TypeChanger.toMap(
+                itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class
+        );
+        for (Map.Entry<Long, Integer> pair : notDefaultAdditives.entrySet()) {
+            Map<String, Object> additiveInfo = additiveCache.computeIfAbsent(pair.getKey(), additiveID -> {
+                Request request = new Request("/product/read_additive", Method.GET);
+                request.putInBody("id", additiveID);
+                return request.request().getResultAsJSON();
+            });
+            result.getChildren().add(getAdditiveLine(additiveInfo, pair.getValue()));
+        }
+        return result;
+    }
+
+    private AnchorPane getAdditiveLine(Map<String, Object> additiveInfo, int qty) {
+        AnchorPane additiveLine = new AnchorPane();
+        additiveLine.setStyle("-fx-border-color: #000000;");
+        String line = additiveInfo.get("NAME") + " " + qty + (
+                additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
+        );
+        Text.setTextCentre(additiveLine, line, Text.getAdaptiveFontSize(additiveLine, 17), null);
+        return additiveLine;
     }
 
     private AnchorPane getItemPrice(Map<String, Object> itemInfo) {

@@ -193,12 +193,7 @@ public class AddProductParentPane extends DynamicParentPane {
     private void setPlusMinusAdditiveImgBtnsClickable(AnchorPane plus, AnchorPane minus, TextField additiveQTY, Map<String, Object> additiveInfo) {
         Helper.setAnchorPaneImageBackgroundCentre(plus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png"));
         Helper.setAnchorPaneImageBackgroundCentre(minus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png"));
-        int step;
-        if (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")) {
-            step = 100;
-        } else {
-            step = 1;
-        }
+        int step = additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? 100 : 1;
         long additiveID = TypeChanger.toLong(additiveInfo.get("ID"));
         plus.setOnMouseClicked(event -> {
             int qty = Integer.parseInt(additiveQTY.getText()) + step;

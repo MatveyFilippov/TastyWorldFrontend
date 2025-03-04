@@ -17,7 +17,6 @@ import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.VirtualKeyboa
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -251,7 +250,7 @@ public class POSCreatorController {
 
     @FXML
     void menuPaneLookOrderImgBtnPressed() {
-        if (OrderCreating.id == null) {
+        if (OrderCreating.id == null || OrderCreating.isEmpty()) {
             AlertWindow.showInfo(
                     "Заказ пуст", "Добавьте хотя бы один продукт, прежде чем завершить создание заказа", true
             );
@@ -269,6 +268,12 @@ public class POSCreatorController {
 
     @FXML
     void endOrderCreatingCommitImgBtnPressed() {
+        if (OrderCreating.id == null || OrderCreating.isEmpty()) {
+            AlertWindow.showInfo(
+                    "Заказ пуст", "Добавьте хотя бы один продукт, прежде чем завершить создание заказа", true
+            );
+            return;
+        }
         String address = endOrderCreatingDeliveryField.getText().trim();
         if (!address.equals("")) {
             OrderCreating.editDeliveryAddress(address);

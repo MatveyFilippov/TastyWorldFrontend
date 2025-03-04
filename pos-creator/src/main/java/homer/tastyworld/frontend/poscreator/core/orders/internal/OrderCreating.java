@@ -40,6 +40,12 @@ public class OrderCreating {
         id = TypeChanger.toLong(request.request().result);
     }
 
+    public static boolean isEmpty() {
+        Request request = new Request("/order/read", Method.GET);
+        request.putInBody("id", id);
+        return TypeChanger.toLongArray(request.request().getResultAsJSON().get("ITEM_IDs")).length == 0;
+    }
+
     public static void appendProduct(long productID, int pieceQTY, Map<Long, Integer> notDefaultAdditives) {
         Request request = new Request("/order/append_item", Method.POST);
         request.putInBody("order_id", id);

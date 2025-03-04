@@ -1,5 +1,6 @@
 package homer.tastyworld.frontend.starterpack.api;
 
+import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import java.util.Map;
 
 public class Response {
@@ -18,7 +19,7 @@ public class Response {
         if (result == null) {
             return null;
         }
-        return (Map<String, Object>) result;
+        return TypeChanger.toMap(result, String.class, Object.class);
     }
 
 }
