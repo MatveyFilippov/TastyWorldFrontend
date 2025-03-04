@@ -143,9 +143,8 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private HBox getAdditiveLine(Map<String, Object> additiveInfo) {
-        HBox row = new HBox();
+        HBox row = new HBox(10);
         row.setStyle("-fx-border-color: #000000;");
-        row.setSpacing(10);
         row.prefWidthProperty().bind(scroll.widthProperty());
         row.prefHeightProperty().bind(scroll.heightProperty().divide(4));
         row.setAlignment(Pos.CENTER);
@@ -305,7 +304,7 @@ public class AddProductParentPane extends DynamicParentPane {
         addProductQTYFiled.setText("0");
     }
 
-    private void initTopicFontSizes() {
+    private void initTopicsFontSize() {
         productNameTopicFontSize = Text.getAdaptiveFontSize(addProductNameTopic, 20);
         productQTYTopicFontSize = Text.getAdaptiveFontSize(addProductQTYTypeTopic, 5);
     }
@@ -317,7 +316,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     @Override
     public void initialize() {
-        initTopicFontSizes();
+        initTopicsFontSize();
         initImgBtnsInAddProductPane();
         setPlusMinusProductImgBtnsClickable();
         initTopicsInAddProductPane();

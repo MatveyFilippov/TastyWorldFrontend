@@ -34,7 +34,7 @@ public class POSCreatorApplication extends TastyWorldApplication {
         stage.setScene(scene);
 //        stage.setFullScreen(true);
         stage.setAlwaysOnTop(true);
-        stage.setFullScreenExitHint(null);
+        stage.setFullScreenExitHint("");
         stage.show();
     }
 
