@@ -30,7 +30,7 @@ public class TableManager {
     private void extendIfRequired() {
         if (rows < nexFreeCell.rows() || rows < minimumRows) {
             RowConstraints row = new RowConstraints();
-            row.setVgrow(Priority.SOMETIMES);
+            row.setVgrow(Priority.ALWAYS);
             row.setPercentHeight(-1);
             row.setValignment(VPos.CENTER);
             row.setFillHeight(true);
@@ -39,7 +39,7 @@ public class TableManager {
         }
         if (columns < nexFreeCell.columns() || columns < minimumColumns) {
             ColumnConstraints column = new ColumnConstraints();
-            column.setHgrow(Priority.SOMETIMES);
+            column.setHgrow(Priority.ALWAYS);
             column.setPercentWidth(-1);
             column.setHalignment(HPos.CENTER);
             column.setFillWidth(true);
