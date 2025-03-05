@@ -8,10 +8,25 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public abstract class DynamicParentPane extends StableParentPane {
 
-    public abstract void cacheAll(Long[] ids);  // TODO: cache in thread
+    protected abstract String getCacheProcess(int total, int actual);
+
+    protected abstract void cacheTask(Long id);
+
+    public void cacheAll(Long[] ids) {  // TODO: cache in thread
+        int total = ids.length;
+        for (int i = 0; i < total; i++) {
+            System.out.print("\r" + getCacheProcess(total, i));
+            cacheTask(ids[i]);
+        }
+        System.out.println("\r" + getCacheProcess(total, total));
+    };
 
     public abstract void fill(long id);
 
-    public abstract void clean();  // TODO: clean in thread
+    protected abstract void cleanTask();
+
+    public void clean() {  // TODO: clean in thread
+        cleanTask();
+    }
 
 }

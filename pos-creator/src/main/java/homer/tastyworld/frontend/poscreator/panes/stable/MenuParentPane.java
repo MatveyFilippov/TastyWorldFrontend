@@ -30,7 +30,7 @@ public class MenuParentPane extends StableParentPane {
     @Builder.Default
     private GridPane clickableItemsTable = new GridPane();
 
-    private void initClickableItemsTableInMenu() {
+    private void initClickableItemsTableInMenu() {  // TODO: init in thread
         clickableItemsTable.setHgap(5);
         clickableItemsTable.setVgap(25);
         clickableItemsTable.setAlignment(Pos.CENTER);
@@ -40,8 +40,10 @@ public class MenuParentPane extends StableParentPane {
 
         Long[] menuIDs = MyParams.getMenu();
         for (int i = 0; i < menuIDs.length; i++) {
+            System.out.printf("\rGetting menu category (%s/%s)", i, menuIDs.length);
             clickableItemsTable.add(getMenuImgBtn(menuIDs[i], scroll), i % 3, i / 3);
         }
+        System.out.printf("\rGetting menu category (%s/%s)%n", menuIDs.length, menuIDs.length);
         productsParentPane.cacheAll(menuIDs);
 
         menuPaneImgMenuContainer.add(scroll, 1, 0);

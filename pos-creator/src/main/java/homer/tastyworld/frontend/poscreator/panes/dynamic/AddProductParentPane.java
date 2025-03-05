@@ -71,20 +71,23 @@ public class AddProductParentPane extends DynamicParentPane {
     private static final Map<Long, List<Map<String, Object>>> additiveCache = new ConcurrentHashMap<>();
 
     @Override
-    public void cacheAll(Long[] productIDs) {
+    protected String getCacheProcess(int total, int actual) {
+        return String.format("Getting products (%s/%s)", actual, total);
+    }
+
+    @Override
+    protected void cacheTask(Long productID) {
         Request productRequest = new Request("/product/read", Method.GET);
         Request additiveRequest = new Request("/product/read_additive", Method.GET);
-        for (long productID : productIDs) {
-            productRequest.putInBody("id", productID);
-            Map<String, Object> productInfo = productRequest.request().getResultAsJSON();
-            productCache.put(productID, productInfo);
-            List<Map<String, Object>> additivesInfo = new ArrayList<>();
-            for (long additiveID : TypeChanger.toSortedLongArray(productInfo.get("ADDITIVE_IDs"))) {
-                additiveRequest.putInBody("id", additiveID);
-                additivesInfo.add(additiveRequest.request().getResultAsJSON());
-            }
-            additiveCache.put(productID, additivesInfo);
+        productRequest.putInBody("id", productID);
+        Map<String, Object> productInfo = productRequest.request().getResultAsJSON();
+        productCache.put(productID, productInfo);
+        List<Map<String, Object>> additivesInfo = new ArrayList<>();
+        for (long additiveID : TypeChanger.toSortedLongArray(productInfo.get("ADDITIVE_IDs"))) {
+            additiveRequest.putInBody("id", additiveID);
+            additivesInfo.add(additiveRequest.request().getResultAsJSON());
         }
+        additiveCache.put(productID, additivesInfo);
     }
 
     private void setProduct(Map<String, Object> productInfo) {
@@ -211,7 +214,7 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     @Override
-    public void clean() {
+    protected void cleanTask() {
         Product.clean();
         addProductQTYTypeTopic.getChildren().clear();
         addProductNameTopic.getChildren().clear();

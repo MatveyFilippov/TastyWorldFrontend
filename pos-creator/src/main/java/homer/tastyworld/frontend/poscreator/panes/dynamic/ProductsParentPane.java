@@ -31,14 +31,17 @@ public class ProductsParentPane extends DynamicParentPane {
     private static final Map<Long, GridPane> productsCache = new ConcurrentHashMap<>();
 
     @Override
-    public void cacheAll(Long[] menuIDs) {
+    protected String getCacheProcess(int total, int actual) {
+        return String.format("Getting menu (%s/%s)", actual, total);
+    }
+
+    @Override
+    protected void cacheTask(Long menuID) {
         Request request = new Request("/menu/read", Method.GET);
-        for (long menuID : menuIDs) {
-            request.putInBody("id", menuID);
-            Map<String, Object> menuInfo = request.request().getResultAsJSON();
-            productsCache.put(menuID, computeTable(menuInfo));
-            addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(menuInfo.get("PRODUCT_IDs")));
-        }
+        request.putInBody("id", menuID);
+        Map<String, Object> menuInfo = request.request().getResultAsJSON();
+        productsCache.put(menuID, computeTable(menuInfo));
+        addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(menuInfo.get("PRODUCT_IDs")));
     }
 
     @Override
@@ -103,7 +106,7 @@ public class ProductsParentPane extends DynamicParentPane {
     }
 
     @Override
-    public void clean() {
+    protected void cleanTask() {
         productsPaneMenuTopic.getChildren().clear();
     }
 

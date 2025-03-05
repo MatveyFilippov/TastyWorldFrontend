@@ -39,7 +39,10 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
 
     @Override
-    public void cacheAll(Long[] ignored) {}
+    protected String getCacheProcess(int ignored1, int ignored2) { return ""; }
+
+    @Override
+    protected void cacheTask(Long id) {}
 
     @Override
     public void fill(long orderID) {
@@ -183,7 +186,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     }
 
     @Override
-    public void clean() {
+    protected void cleanTask() {
         endOrderCreatingNameTopic.getChildren().clear();
         endOrderCreatingTotalPriceTopic.getChildren().clear();
         endOrderCreatingDeliveryField.clear();

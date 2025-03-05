@@ -65,8 +65,8 @@ public class MainParentPane extends StableParentPane {
         Text.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, null);
         TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory();
         OrderStatusUpdatesListener.init(
-                new TableManager(mainPaneCookingOrdersTable, tableNodeFactory),
-                new TableManager(mainPaneReadyOrdersTable, tableNodeFactory)
+                new TableManager(mainPaneCookingOrdersTable, tableNodeFactory, 5, 3),
+                new TableManager(mainPaneReadyOrdersTable, tableNodeFactory, 5, 2)
         );
     }
 

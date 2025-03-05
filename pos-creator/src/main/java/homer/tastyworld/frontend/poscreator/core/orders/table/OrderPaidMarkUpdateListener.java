@@ -39,7 +39,7 @@ public class OrderPaidMarkUpdateListener {
             return;
         }
         if ((Boolean) response.result) {
-            waiter.setTextFill(Color.web("#FFFFFF"));
+            waiter.setTextFill(Color.BLACK);
             waiters.remove(orderID);
         }
     }
