@@ -26,8 +26,8 @@ public class StatusDisplayController {
         if (MyParams.getTokenSubscriptionAvailableDays() >= 0) {
             TableNodeFactory tableNodeFactory = new StatusDisplayTableNodeFactory();
             OrderUpdatesListener.init(
-                    new TableManager(cookingOrders, tableNodeFactory),
-                    new TableManager(readyOrders, tableNodeFactory)
+                    new TableManager(cookingOrders, tableNodeFactory, 5, 3),
+                    new TableManager(readyOrders, tableNodeFactory, 5, 2)
             );
             // TODO: if node not displayed, problem may be with caching in factory -> make 2 factory
             // OrderUpdatesListener.init(

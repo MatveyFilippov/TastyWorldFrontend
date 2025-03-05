@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #FFA500;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homer.tastyworld.frontend.statusdisplay.StatusDisplayController">
+<AnchorPane disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #F5F5F5;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homer.tastyworld.frontend.statusdisplay.StatusDisplayController">
    <children>
       <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -23,45 +23,9 @@
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
          <children>
-            <AnchorPane style="-fx-background-color: #FFDD45; -fx-background-radius: 25;" GridPane.rowIndex="2">
+            <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-border-color: #999999; -fx-border-radius: 15;">
                <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-               <children>
-                  <GridPane fx:id="cookingOrders" layoutX="33.0" layoutY="75.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints vgrow="ALWAYS" />
-                    </rowConstraints>
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </padding>
-                  </GridPane>
-               </children>
-            </AnchorPane>
-            <AnchorPane style="-fx-background-color: #FFDD45; -fx-background-radius: 25;" GridPane.columnIndex="2" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-               <children>
-                  <GridPane fx:id="readyOrders" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="ALWAYS" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints vgrow="ALWAYS" />
-                    </rowConstraints>
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </padding>
-                  </GridPane>
-               </children>
-            </AnchorPane>
-            <AnchorPane style="-fx-background-color: #FFFFF0; -fx-background-radius: 25;">
-               <GridPane.margin>
-                  <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                </GridPane.margin>
                <children>
                   <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -82,9 +46,9 @@
                   </GridPane>
                </children>
             </AnchorPane>
-            <AnchorPane style="-fx-background-color: #FFFFF0; -fx-background-radius: 25;" GridPane.columnIndex="2">
+            <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-border-color: #999999; -fx-border-radius: 15;" GridPane.columnIndex="2">
                <GridPane.margin>
-                  <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                </GridPane.margin>
                <children>
                   <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -102,6 +66,42 @@
                      <children>
                         <AnchorPane fx:id="readyTopic" GridPane.columnIndex="1" />
                      </children>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-color: #D7D6D2; -fx-border-radius: 25;" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+               <children>
+                  <GridPane fx:id="cookingOrders" layoutX="33.0" layoutY="75.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints vgrow="ALWAYS" />
+                    </rowConstraints>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-color: #D7D6D2; -fx-border-radius: 25;" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+               <children>
+                  <GridPane fx:id="readyOrders" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints vgrow="ALWAYS" />
+                    </rowConstraints>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
                   </GridPane>
                </children>
             </AnchorPane>

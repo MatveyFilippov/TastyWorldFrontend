@@ -4,16 +4,23 @@ import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.Ta
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.layout.Region;
 
 public class StatusDisplayTableNodeFactory implements TableNodeFactory {
 
     private final Map<String, Node> nodeCache = new HashMap<>();
 
-    public static AnchorPane createNode(String name) {
+    private AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
-        Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 5), null);
+        Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 3), Color.BLACK);
+        pane.setOpacity(1.0);
+        pane.getChildren().getFirst().setOpacity(1.0);
+        pane.setMinSize(0, 0);
+        pane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+        pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         return pane;
     }
 
