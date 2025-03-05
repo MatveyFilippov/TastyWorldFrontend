@@ -16,15 +16,17 @@ public class TableManager {
     private final TableNodeFactory nodeFactory;
     private final int minimumRows;
     private final int minimumColumns;
-    private int rows = 0;
-    private int columns = 0;
+    private int rows = 1;
+    private int columns = 1;
 
     public TableManager(GridPane table, TableNodeFactory nodeFactory, int minimumRows, int minimumColumns) {
         this.table = table;
         this.nodeFactory = nodeFactory;
         this.minimumRows = minimumRows;
         this.minimumColumns = minimumColumns;
-        extendIfRequired();
+        while (rows < minimumRows || columns < minimumColumns) {
+            extendIfRequired();
+        }
     }
 
     private void extendIfRequired() {

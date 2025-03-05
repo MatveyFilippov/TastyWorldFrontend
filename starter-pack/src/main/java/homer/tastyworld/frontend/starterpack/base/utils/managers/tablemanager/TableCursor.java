@@ -55,11 +55,11 @@ class TableCursor {
     }
 
     public int columns() {
-        return columns;
+        return columns + 1;
     }
 
     public int rows() {
-        return rows;
+        return rows + 1;
     }
 
 }
