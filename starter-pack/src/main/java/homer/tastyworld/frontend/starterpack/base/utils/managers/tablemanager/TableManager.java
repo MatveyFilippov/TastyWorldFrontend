@@ -1,5 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager;
 
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -12,36 +14,46 @@ public class TableManager {
     private final TableCursor nexFreeCell = new TableCursor();
     private final TableItemCollection items = new TableItemCollection();
     private final TableNodeFactory nodeFactory;
+    private final int minimumRows;
+    private final int minimumColumns;
     private int rows = 0;
     private int columns = 0;
 
-    public TableManager(GridPane table, TableNodeFactory nodeFactory) {
+    public TableManager(GridPane table, TableNodeFactory nodeFactory, int minimumRows, int minimumColumns) {
         this.table = table;
         this.nodeFactory = nodeFactory;
+        this.minimumRows = minimumRows;
+        this.minimumColumns = minimumColumns;
+        extendIfRequired();
     }
 
     private void extendIfRequired() {
-        if (rows < nexFreeCell.rows()) {
+        if (rows < nexFreeCell.rows() || rows < minimumRows) {
             RowConstraints row = new RowConstraints();
-            row.setVgrow(Priority.ALWAYS);
+            row.setVgrow(Priority.SOMETIMES);
             row.setPercentHeight(-1);
+            row.setValignment(VPos.CENTER);
+            row.setFillHeight(true);
             table.getRowConstraints().add(row);
             rows++;
-        } else if (columns < nexFreeCell.columns()) {
+        }
+        if (columns < nexFreeCell.columns() || columns < minimumColumns) {
             ColumnConstraints column = new ColumnConstraints();
-            column.setHgrow(Priority.ALWAYS);
+            column.setHgrow(Priority.SOMETIMES);
             column.setPercentWidth(-1);
+            column.setHalignment(HPos.CENTER);
+            column.setFillWidth(true);
             table.getColumnConstraints().add(column);
             columns++;
         }
     }
 
     private void reduceIfRequired() {
-        Point cell = nexFreeCell.cell();
-        if (cell.x == 0) {
+        if (rows >= nexFreeCell.rows() && rows > minimumRows) {
             table.getRowConstraints().removeLast();
             rows--;
-        } else if (cell.y == 0) {
+        }
+        if (columns >= nexFreeCell.columns() && columns > minimumColumns) {
             table.getColumnConstraints().removeLast();
             columns--;
         }
@@ -79,7 +91,7 @@ public class TableManager {
         remove(item);
     }
 
-    private void shiftBackCellsFromRemoved(Point removed) {  // TODO: optimize me
+    private void shiftBackCellsFromRemoved(Point removed) {
         TableCursor to = new TableCursor(removed);
         TableCursor from = new TableCursor(removed);
         TableItem itemToMove;
