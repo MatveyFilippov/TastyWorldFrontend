@@ -2,53 +2,17 @@ package homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager;
 
 import java.awt.Point;
 
-class TableCursor {
+public abstract class TableCursor {
 
-    private final Point cell = new Point();
-    private int columns = 0;
-    private int rows = 0;
+    protected final Point cell = new Point();
+    protected int columns = 0;
+    protected int rows = 0;
 
-    public TableCursor() {}
+    public abstract void forward();
 
-    public TableCursor(Point cell) {
-        while (!this.cell.equals(cell)) {  // TODO: optimize me
-            forward();
-        }
-    }
+    public abstract void back();
 
-    public void forward() {
-        if (cell.x == cell.y) {
-            columns++;
-            cell.move(columns, 0);
-        } else if (cell.x == columns) {
-            if (cell.y == rows) {
-                rows++;
-                cell.move(0, rows);
-            } else {
-                cell.move(cell.x, cell.y + 1);
-            }
-        } else {
-            cell.move(cell.x + 1, cell.y);
-        }
-    }
-
-    public void back() {
-        if (columns == rows) {
-            if (cell.x == 0) {
-                rows--;
-                cell.move(columns, rows);
-            } else {
-                cell.move(cell.x - 1, cell.y);
-            }
-        } else {
-            if (cell.y == 0) {
-                columns--;
-                cell.move(columns, rows);
-            } else {
-                cell.move(cell.x, cell.y - 1);
-            }
-        }
-    }
+    public abstract TableCursor newCursorFrom(Point cell);
 
     public Point cell() {
         return new Point(cell);

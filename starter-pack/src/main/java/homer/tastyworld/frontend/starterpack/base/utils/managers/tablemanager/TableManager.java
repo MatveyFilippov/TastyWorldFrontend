@@ -11,26 +11,21 @@ import java.awt.Point;
 public class TableManager {
 
     private final GridPane table;
-    private final TableCursor nexFreeCell = new TableCursor();
+    private final TableCursor nexFreeCell;
     private final TableItemCollection items = new TableItemCollection();
     private final TableNodeFactory nodeFactory;
-    private final int minimumRows;
-    private final int minimumColumns;
     private int rows = 1;
     private int columns = 1;
 
-    public TableManager(GridPane table, TableNodeFactory nodeFactory, int minimumRows, int minimumColumns) {
+    public TableManager(GridPane table, TableCursor tableCursor, TableNodeFactory nodeFactory) {
         this.table = table;
+        this.nexFreeCell = tableCursor;
         this.nodeFactory = nodeFactory;
-        this.minimumRows = minimumRows;
-        this.minimumColumns = minimumColumns;
-        while (rows < minimumRows || columns < minimumColumns) {
-            extendIfRequired();
-        }
+        extendIfRequired();
     }
 
     private void extendIfRequired() {
-        if (rows < nexFreeCell.rows() || rows < minimumRows) {
+        while (rows < nexFreeCell.rows()) {
             RowConstraints row = new RowConstraints();
             row.setVgrow(Priority.ALWAYS);
             row.setPercentHeight(-1);
@@ -39,7 +34,7 @@ public class TableManager {
             table.getRowConstraints().add(row);
             rows++;
         }
-        if (columns < nexFreeCell.columns() || columns < minimumColumns) {
+        while (columns < nexFreeCell.columns()) {
             ColumnConstraints column = new ColumnConstraints();
             column.setHgrow(Priority.ALWAYS);
             column.setPercentWidth(-1);
@@ -51,11 +46,11 @@ public class TableManager {
     }
 
     private void reduceIfRequired() {
-        if (rows >= nexFreeCell.rows() && rows > minimumRows) {
+        while (rows >= nexFreeCell.rows()) {
             table.getRowConstraints().removeLast();
             rows--;
         }
-        if (columns >= nexFreeCell.columns() && columns > minimumColumns) {
+        while (columns >= nexFreeCell.columns()) {
             table.getColumnConstraints().removeLast();
             columns--;
         }
@@ -94,8 +89,8 @@ public class TableManager {
     }
 
     private void shiftBackCellsFromRemoved(Point removed) {
-        TableCursor to = new TableCursor(removed);
-        TableCursor from = new TableCursor(removed);
+        TableCursor to = nexFreeCell.newCursorFrom(removed);
+        TableCursor from = nexFreeCell.newCursorFrom(removed);
         TableItem itemToMove;
         while (true) {
             from.forward();
