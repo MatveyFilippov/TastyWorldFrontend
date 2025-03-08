@@ -18,6 +18,7 @@ public class DefaultTableCursor extends TableCursor {
 
     public DefaultTableCursor(Point cell, int addColumnAfterRow, int addRowAfterColumn) {
         this(addColumnAfterRow, addRowAfterColumn);
+        cell.setLocation(Math.max(cell.x, 0), Math.max(cell.y, 0));
         while (!this.cell.equals(cell)) {  // TODO: optimize me
             forward();
         }
@@ -47,6 +48,9 @@ public class DefaultTableCursor extends TableCursor {
 
     @Override
     public void back() {  // TODO: optimize me
+        if (cell.x == 0 && cell.y == 0) {
+            return;
+        }
         if (cell.x == columns && cell.y == rows) {
             if (columns < initAddRowAfterColumn) {
                 if (cell.y > 0) {
@@ -105,7 +109,7 @@ public class DefaultTableCursor extends TableCursor {
     }
 
     @Override
-    public TableCursor newCursorFrom(Point cell) {
+    public TableCursor copyFrom(Point cell) {
         return new DefaultTableCursor(cell, initAddColumnAfterRow, initAddRowAfterColumn);
     }
 

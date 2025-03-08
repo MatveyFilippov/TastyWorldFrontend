@@ -28,31 +28,39 @@ public class TableManager {
         while (rows < nexFreeCell.rows()) {
             RowConstraints row = new RowConstraints();
             row.setVgrow(Priority.ALWAYS);
-            row.setPercentHeight(-1);
             row.setValignment(VPos.CENTER);
             row.setFillHeight(true);
             table.getRowConstraints().add(row);
             rows++;
+            final int percent = 100 / rows;
+            table.getRowConstraints().forEach(r -> r.setPercentHeight(percent));
         }
         while (columns < nexFreeCell.columns()) {
             ColumnConstraints column = new ColumnConstraints();
             column.setHgrow(Priority.ALWAYS);
-            column.setPercentWidth(-1);
             column.setHalignment(HPos.CENTER);
             column.setFillWidth(true);
             table.getColumnConstraints().add(column);
             columns++;
+            final int percent = 100 / columns;
+            table.getColumnConstraints().forEach(c -> c.setPercentWidth(percent));
         }
     }
 
     private void reduceIfRequired() {
-        while (rows >= nexFreeCell.rows()) {
+        TableCursor actual = nexFreeCell.copyFrom(nexFreeCell.cell());
+        actual.back();
+        while (rows > actual.rows()) {
             table.getRowConstraints().removeLast();
             rows--;
+            final int percent = 100 / rows;
+            table.getRowConstraints().forEach(r -> r.setPercentHeight(percent));
         }
-        while (columns >= nexFreeCell.columns()) {
+        while (columns > actual.columns()) {
             table.getColumnConstraints().removeLast();
             columns--;
+            final int percent = 100 / columns;
+            table.getColumnConstraints().forEach(c -> c.setPercentWidth(percent));
         }
     }
 
@@ -89,8 +97,8 @@ public class TableManager {
     }
 
     private void shiftBackCellsFromRemoved(Point removed) {
-        TableCursor to = nexFreeCell.newCursorFrom(removed);
-        TableCursor from = nexFreeCell.newCursorFrom(removed);
+        TableCursor to = nexFreeCell.copyFrom(removed);
+        TableCursor from = nexFreeCell.copyFrom(removed);
         TableItem itemToMove;
         while (true) {
             from.forward();
@@ -99,9 +107,9 @@ public class TableManager {
                 return;
             }
             table.getChildren().remove(itemToMove.node);
-            Point temp = to.cell();
-            table.add(itemToMove.node, temp.x, temp.y);
-            items.updateCell(itemToMove.cell, temp);
+            Point newCell = to.cell();
+            table.add(itemToMove.node, newCell.x, newCell.y);
+            items.updateCell(itemToMove.cell, newCell);
             to.forward();
         }
     }

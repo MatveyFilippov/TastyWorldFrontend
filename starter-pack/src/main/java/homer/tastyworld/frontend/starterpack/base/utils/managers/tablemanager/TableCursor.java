@@ -12,7 +12,7 @@ public abstract class TableCursor {
 
     public abstract void back();
 
-    public abstract TableCursor newCursorFrom(Point cell);
+    public abstract TableCursor copyFrom(Point cell);
 
     public Point cell() {
         return new Point(cell);

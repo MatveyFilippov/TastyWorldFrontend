@@ -8,6 +8,7 @@ public class SelfExtendedTableCursor extends TableCursor {
     public SelfExtendedTableCursor() {}
 
     public SelfExtendedTableCursor(Point cell) {
+        cell.setLocation(Math.max(cell.x, 0), Math.max(cell.y, 0));
         while (!this.cell.equals(cell)) {  // TODO: optimize me
             forward();
         }
@@ -30,6 +31,9 @@ public class SelfExtendedTableCursor extends TableCursor {
     }
 
     public void back() {
+        if (cell.x == 0 && cell.y == 0) {
+            return;
+        }
         if (columns == rows) {
             if (cell.x == 0) {
                 rows--;
@@ -48,7 +52,7 @@ public class SelfExtendedTableCursor extends TableCursor {
     }
 
     @Override
-    public TableCursor newCursorFrom(Point cell) {
+    public TableCursor copyFrom(Point cell) {
         return new SelfExtendedTableCursor(cell);
     }
 
