@@ -27,6 +27,7 @@ public class Text {
         AnchorPane.setBottomAnchor(label, 0.0);
         if (color != null) {
             label.setTextFill(color);
+            label.setOpacity(1.0);
         }
         label.styleProperty().bind(fontSize);
         pane.getChildren().add(label);
@@ -44,6 +45,7 @@ public class Text {
         AnchorPane.setRightAnchor(label, 0.0);
         if (color != null) {
             label.setTextFill(color);
+            label.setOpacity(1.0);
         }
         label.styleProperty().bind(fontSize);
         pane.getChildren().add(label);

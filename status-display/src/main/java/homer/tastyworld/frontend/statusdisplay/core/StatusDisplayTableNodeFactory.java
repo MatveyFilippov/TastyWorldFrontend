@@ -18,7 +18,6 @@ public class StatusDisplayTableNodeFactory implements TableNodeFactory {
         AnchorPane pane = new AnchorPane();
         Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 3), Color.BLACK);
         pane.setOpacity(1.0);
-        pane.getChildren().getFirst().setOpacity(1.0);
         pane.setMinSize(0, 0);
         pane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
