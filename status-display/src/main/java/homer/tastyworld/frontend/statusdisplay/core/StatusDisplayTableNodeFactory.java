@@ -4,6 +4,7 @@ import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.Ta
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,8 @@ public class StatusDisplayTableNodeFactory implements TableNodeFactory {
         pane.setMinSize(0, 0);
         pane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        GridPane.setFillHeight(pane, true);
+        GridPane.setFillWidth(pane, true);
         return pane;
     }
 
