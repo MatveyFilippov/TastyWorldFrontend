@@ -12,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
@@ -71,7 +72,7 @@ public class ProductsParentPane extends DynamicParentPane {
         product.prefWidthProperty().bind(scroll.widthProperty());
         product.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        product.setOnMouseClicked(event -> {
+        Helper.setOnMouseClickedWithPressingTimeChecking(product, Duration.millis(100), event -> {
             addProductParentPane.fill(productID);
             addProductParentPane.openAndCloseFrom(parent);
             clean();

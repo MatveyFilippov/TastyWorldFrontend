@@ -1,7 +1,10 @@
 package homer.tastyworld.frontend.starterpack.base.utils.ui.helpers;
 
+import javafx.animation.PauseTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -13,6 +16,7 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import java.io.InputStream;
+import javafx.util.Duration;
 
 public class Helper {
 
@@ -49,6 +53,13 @@ public class Helper {
                 //new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)
         );
         pane.setBackground(new Background(backgroundImage));
+    }
+
+    public static void setOnMouseClickedWithPressingTimeChecking(Node node, Duration requiredPressingTime, EventHandler<ActionEvent> event) {
+        PauseTransition delay = new PauseTransition(requiredPressingTime);
+        node.setOnMousePressed(ignored -> delay.playFromStart());
+        node.setOnMouseReleased(ignored -> delay.stop());
+        delay.setOnFinished(event);
     }
 
 }

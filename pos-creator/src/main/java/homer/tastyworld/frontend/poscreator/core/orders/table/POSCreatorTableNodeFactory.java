@@ -1,17 +1,21 @@
 package homer.tastyworld.frontend.poscreator.core.orders.table;
 
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
+import javafx.util.Duration;
 
 public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
     private void setOnTouch(Node node, long orderID) {
-        node.setOnMouseClicked(event -> System.out.println(orderID));
+        Helper.setOnMouseClickedWithPressingTimeChecking(node, Duration.millis(100), event -> {
+            // TODO
+        });
     }
 
     private AnchorPane createNode(String name) {

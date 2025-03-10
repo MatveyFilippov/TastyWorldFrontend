@@ -13,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -50,25 +51,25 @@ public class MenuParentPane extends StableParentPane {
     }
 
     private VBox getMenuImgBtn(long menuID, ScrollPane scroll) {
-        VBox root = new VBox();
-        root.setFillWidth(true);
-        root.prefWidthProperty().bind(scroll.widthProperty());
-        root.prefHeightProperty().bind(scroll.heightProperty().divide(2));
+        VBox menu = new VBox();
+        menu.setFillWidth(true);
+        menu.prefWidthProperty().bind(scroll.widthProperty());
+        menu.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        root.setOnMouseClicked(event -> {
+        Helper.setOnMouseClickedWithPressingTimeChecking(menu, Duration.millis(100), event -> {
             productsParentPane.fill(menuID);
             productsParentPane.openAndCloseFrom(parent);
         });
 
         AnchorPane topPaneWithImage = getMenuImage(menuID);
         AnchorPane bottomPaneWithName = getMenuName(menuID);
-        root.getChildren().addAll(topPaneWithImage, bottomPaneWithName);
+        menu.getChildren().addAll(topPaneWithImage, bottomPaneWithName);
         VBox.setVgrow(topPaneWithImage, Priority.ALWAYS);
         VBox.setVgrow(bottomPaneWithName, Priority.ALWAYS);
-        topPaneWithImage.prefHeightProperty().bind(root.heightProperty().multiply(0.90));
-        bottomPaneWithName.prefHeightProperty().bind(root.heightProperty().multiply(0.10));
+        topPaneWithImage.prefHeightProperty().bind(menu.heightProperty().multiply(0.90));
+        bottomPaneWithName.prefHeightProperty().bind(menu.heightProperty().multiply(0.10));
 
-        return root;
+        return menu;
     }
 
     private AnchorPane getMenuImage(long menuID) {
