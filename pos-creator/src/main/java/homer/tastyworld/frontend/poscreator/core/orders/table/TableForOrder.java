@@ -1,18 +1,24 @@
 package homer.tastyworld.frontend.poscreator.core.orders.table;
 
+import java.util.Set;
+
 public enum TableForOrder {
 
-    COOKING,
-    READY,
-    NOT_IN_TABLE;
+    COOKING (Set.of("PROCESSING")),
+    READY (Set.of("PROCESSED")),
+    NOT_IN_TABLE (Set.of());
+
+    public final Set<String> statuses;
+
+    TableForOrder(Set<String> statuses) {
+        this.statuses = statuses;
+    }
 
     public static TableForOrder get(String status) {
-        if (status == null) {
-            return NOT_IN_TABLE;
-        } else if (status.equals("CREATED") || status.equals("PROCESSING")) {
-            return COOKING;
-        } else if (status.equals("PROCESSED")) {
-            return READY;
+        for (TableForOrder table : TableForOrder.values()) {
+            if (table.statuses.contains(status)) {
+                return table;
+            }
         }
         return NOT_IN_TABLE;
     }
