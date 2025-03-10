@@ -13,6 +13,13 @@ import java.util.Map;
 
 public class OrderPaidMarkUpdateListener {
 
+    public static class MarkColors {
+
+        public static final Color UNPAID = Color.web("#FF4040");
+        public static final Color PAID = Color.BLACK;
+
+    }
+
     private static final Map<Long, Label> waiters = new HashMap<>();
 
     static {
@@ -39,8 +46,10 @@ public class OrderPaidMarkUpdateListener {
             return;
         }
         if ((Boolean) response.result) {
-            waiter.setTextFill(Color.BLACK);
+            waiter.setTextFill(MarkColors.PAID);
             waiters.remove(orderID);
+        } else {
+            waiter.setTextFill(MarkColors.UNPAID);
         }
     }
 

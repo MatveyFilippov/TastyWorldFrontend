@@ -6,11 +6,13 @@ import homer.tastyworld.frontend.poscreator.core.orders.table.POSCreatorTableNod
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.cursors.DefaultTableCursor;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.beans.binding.StringExpression;
+import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import lombok.Getter;
@@ -63,10 +65,12 @@ public class MainParentPane extends StableParentPane {
         StringExpression topicFontSize = Text.getAdaptiveFontSize(mainPaneCookingOrdersTopic, 17);
         Text.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize, null);
         Text.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, null);
+        mainPaneCookingOrdersTable.setAlignment(Pos.CENTER);
+        mainPaneReadyOrdersTable.setAlignment(Pos.CENTER);
         TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory();
         OrderStatusUpdatesListener.init(
-                new TableManager(mainPaneCookingOrdersTable, tableNodeFactory, 5, 3),
-                new TableManager(mainPaneReadyOrdersTable, tableNodeFactory, 5, 2)
+                new TableManager(mainPaneCookingOrdersTable, new DefaultTableCursor(4, 3), tableNodeFactory),
+                new TableManager(mainPaneReadyOrdersTable, new DefaultTableCursor(4, 2), tableNodeFactory)
         );
     }
 
