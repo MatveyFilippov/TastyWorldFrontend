@@ -1,13 +1,16 @@
-package homer.tastyworld.frontend.poscreator.panes.dynamic;
+package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
-import homer.tastyworld.frontend.poscreator.POSCreatorApplication;
+import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
 import javafx.beans.binding.StringExpression;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -23,13 +26,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @SuperBuilder
-public class LookOrderParentPane extends DynamicParentPane {
+public class EndOrderCreatingParentPane extends DynamicParentPane {
 
-    private AnchorPane lookOrderNameTopic, lookOrderTotalPriceTopic;
-    private AnchorPane lookOrderClosePaneImgBtn, lookOrderSetDoneImgBtn;
-    private GridPane lookOrderItemsContainer;
-    private TextField lookOrderDeliveryField;
-    private Button lookOrderSetPaidBtn;
+    private AnchorPane endOrderCreatingOpenMenuImgBtn, endOrderCreatingCommitImgBtn;
+    private AnchorPane endOrderCreatingNameTopic, endOrderCreatingTotalPriceTopic;
+    private GridPane endOrderCreatingItemsContainer;
+    private TextField endOrderCreatingDeliveryField;
+    private CheckBox endOrderCreatingIsPaidCheckBox;
     private static StringExpression nameTopicFontSize, priceTopicFontSize;
     private static final ScrollPane scroll = new ScrollPane();
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
@@ -48,11 +51,11 @@ public class LookOrderParentPane extends DynamicParentPane {
         Map<String, Object> orderInfo = request.request().getResultAsJSON();
         String deliveryAddress = (String) orderInfo.get("DELIVERY_ADDRESS");
         if (!deliveryAddress.equals("NOT FOR DELIVERY")) {
-            lookOrderDeliveryField.setText(deliveryAddress);
+            endOrderCreatingDeliveryField.setText(deliveryAddress);
         }
-        Text.setTextCentre(lookOrderNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, null);
-        Text.setTextCentre(lookOrderTotalPriceTopic, "Стоимость: " + orderInfo.get("TOTAL_PRICE"), priceTopicFontSize, null);
-        lookOrderSetPaidBtn.setDisable(TypeChanger.toBool(orderInfo.get("IS_PAID")));
+        Text.setTextCentre(endOrderCreatingNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, null);
+        Text.setTextCentre(endOrderCreatingTotalPriceTopic, "Стоимость: " + orderInfo.get("TOTAL_PRICE"), priceTopicFontSize, null);
+        endOrderCreatingIsPaidCheckBox.setSelected(TypeChanger.toBool(orderInfo.get("IS_PAID")));
         scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
     }
 
@@ -60,10 +63,11 @@ public class LookOrderParentPane extends DynamicParentPane {
         GridPane table = new GridPane();
         table.setVgap(5);
         table.setAlignment(Pos.CENTER);
+        ObservableList<Node> lines = table.getChildren();
         Request request = new Request("/order/read_item", Method.GET);
         for (int i = 0; i < itemIDs.length; i++) {
             request.putInBody("id", itemIDs[i]);
-            table.add(getItemLine(request.request().getResultAsJSON()), 0, i);
+            table.add(getItemLine(request.request().getResultAsJSON(), lines), 0, i);
         }
         return table;
     }
@@ -76,41 +80,67 @@ public class LookOrderParentPane extends DynamicParentPane {
         });
     }
 
-    private HBox getItemLine(Map<String, Object> itemInfo) {
+    private HBox getItemLine(Map<String, Object> itemInfo, ObservableList<Node> lines) {
         HBox row = new HBox(7);
         row.setStyle("-fx-border-color: #000000;");
         row.prefWidthProperty().bind(scroll.widthProperty());
-        row.prefHeightProperty().bind(scroll.heightProperty().divide(5));
+        row.prefHeightProperty().bind(scroll.heightProperty().divide(7));
         row.setAlignment(Pos.CENTER);
 
-        AnchorPane space1 = new AnchorPane();
+        AnchorPane delete = getDeleteItem(itemInfo, lines, row);
         AnchorPane name = getItemName(itemInfo);
         AnchorPane qty = getItemQTY(itemInfo);
         VBox additives = getAdditives(itemInfo);
         AnchorPane price = getItemPrice(itemInfo);
-        AnchorPane space2 = new AnchorPane();
+        AnchorPane space = new AnchorPane();
 
-        row.getChildren().addAll(space1, name, qty, additives, price, space2);
-        HBox.setHgrow(space1, Priority.ALWAYS);
+        row.getChildren().addAll(delete, name, qty, additives, price, space);
+        HBox.setHgrow(delete, Priority.ALWAYS);
         HBox.setHgrow(name, Priority.ALWAYS);
         HBox.setHgrow(qty, Priority.ALWAYS);
         HBox.setHgrow(additives, Priority.ALWAYS);
         HBox.setHgrow(price, Priority.ALWAYS);
-        HBox.setHgrow(space2, Priority.ALWAYS);
-        space1.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
+        HBox.setHgrow(space, Priority.ALWAYS);
+        delete.prefWidthProperty().bind(row.widthProperty().multiply(0.1));
         name.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
-        qty.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
-        additives.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
-        price.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
-        space2.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
+        qty.prefWidthProperty().bind(row.widthProperty().multiply(0.12));
+        additives.prefWidthProperty().bind(row.widthProperty().multiply(0.29));
+        price.prefWidthProperty().bind(row.widthProperty().multiply(0.12));
+        space.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
 
         return row;
+    }
+
+    private AnchorPane getDeleteItem(Map<String, Object> itemInfo, ObservableList<Node> deleteFrom, Node toDelete) {
+        AnchorPane delete = new AnchorPane();
+        Helper.setAnchorPaneImageBackgroundCentre(delete, POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png"));
+        delete.setOnMouseClicked(event -> {
+            Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+            if (!DialogWindow.askBool(
+                    "Да", "Нет", "Редактирование заказа",
+                    String.format("Вы уверены что хотите удалить '%s' из заказа?", productInfo.get("NAME")),
+                    "Продолжить?"
+            )) {
+                return;
+            }
+            Request deleteRequest = new Request("/order/remove_item", Method.POST);
+            deleteRequest.putInBody("id", TypeChanger.toLong(itemInfo.get("ID")));
+            deleteRequest.request();
+            deleteFrom.remove(toDelete);
+            Request infoRequest = new Request("/order/read", Method.GET);
+            infoRequest.putInBody("id", TypeChanger.toLong(itemInfo.get("ORDER_ID")));
+            endOrderCreatingTotalPriceTopic.getChildren().clear();
+            Text.setTextCentre(
+                    endOrderCreatingTotalPriceTopic, "Стоимость: " + infoRequest.request().getResultAsJSON().get("TOTAL_PRICE"), priceTopicFontSize, null
+            );
+        });
+        return delete;
     }
 
     private AnchorPane getItemName(Map<String, Object> itemInfo) {
         AnchorPane name = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        Text.setTextCentre(name, (String) productInfo.get("NAME"), Text.getAdaptiveFontSize(name, 13), null);
+        Text.setTextCentre(name, (String) productInfo.get("NAME"), Text.getAdaptiveFontSize(name, 15), null);
         return name;
     }
 
@@ -146,7 +176,7 @@ public class LookOrderParentPane extends DynamicParentPane {
         String line = additiveInfo.get("NAME") + " " + qty + (
                 additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
         );
-        Text.setTextCentre(additiveLine, line, Text.getAdaptiveFontSize(additiveLine, 15), null);
+        Text.setTextCentre(additiveLine, line, Text.getAdaptiveFontSize(additiveLine, 17), null);
         return additiveLine;
     }
 
@@ -158,37 +188,37 @@ public class LookOrderParentPane extends DynamicParentPane {
 
     @Override
     protected void cleanTask() {
-        lookOrderNameTopic.getChildren().clear();
-        lookOrderTotalPriceTopic.getChildren().clear();
-        lookOrderDeliveryField.clear();
-        lookOrderSetPaidBtn.setDisable(true);
+        endOrderCreatingNameTopic.getChildren().clear();
+        endOrderCreatingTotalPriceTopic.getChildren().clear();
+        endOrderCreatingDeliveryField.clear();
+        endOrderCreatingIsPaidCheckBox.setSelected(false);
     }
 
     private void initItemsTable() {
         scroll.setFitToWidth(true);
-        lookOrderItemsContainer.add(scroll, 1, 1);
+        endOrderCreatingItemsContainer.add(scroll, 1, 1);
     }
 
     private void initTopicsFontSize() {
-        nameTopicFontSize = Text.getAdaptiveFontSize(lookOrderNameTopic, 6);
-        priceTopicFontSize = Text.getAdaptiveFontSize(lookOrderTotalPriceTopic, 10);
+        nameTopicFontSize = Text.getAdaptiveFontSize(endOrderCreatingNameTopic, 6);
+        priceTopicFontSize = Text.getAdaptiveFontSize(endOrderCreatingTotalPriceTopic, 10);
     }
 
-    private void initImgBtnsInLookOrderPane() {
+    private void initImgBtnsInEndOrderCreatingPane() {
         Helper.setAnchorPaneImageBackgroundCentre(
-                lookOrderClosePaneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderClosePaneImgBtn.png")
+                endOrderCreatingOpenMenuImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingOpenMenuImgBtn.png")
         );
         Helper.setAnchorPaneImageBackgroundCentre(
-                lookOrderSetDoneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderSetDoneImgBtn.png")
+                endOrderCreatingCommitImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingCommitImgBtn.png")
         );
     }
 
     @Override
     public void initialize() {
         initItemsTable();
-        initImgBtnsInLookOrderPane();
+        initImgBtnsInEndOrderCreatingPane();
         initTopicsFontSize();
     }
 

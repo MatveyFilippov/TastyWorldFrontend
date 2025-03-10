@@ -1,7 +1,7 @@
-package homer.tastyworld.frontend.poscreator.panes.stable;
+package homer.tastyworld.frontend.pos.creator.panes.stable;
 
-import homer.tastyworld.frontend.poscreator.POSCreatorApplication;
-import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
+import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
+import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
@@ -45,7 +45,7 @@ public class MenuParentPane extends StableParentPane {
             clickableItemsTable.add(getMenuImgBtn(menuIDs[i], scroll), i % 3, i / 3);
         }
         System.out.printf("\rGetting menu category (%s/%s)%n", menuIDs.length, menuIDs.length);
-        productsParentPane.cacheAll(menuIDs);
+        //productsParentPane.cacheAll(menuIDs);
 
         menuPaneImgMenuContainer.add(scroll, 1, 0);
     }

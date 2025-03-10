@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.poscreator.panes;
+package homer.tastyworld.frontend.pos.creator.panes;
 
 import javafx.scene.layout.AnchorPane;
 import lombok.Getter;

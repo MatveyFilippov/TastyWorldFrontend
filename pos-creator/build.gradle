@@ -1,9 +1,9 @@
-group 'homer.tastyworld.frontend'
+group 'homer.tastyworld.frontend.pos'
 version '1.0-SNAPSHOT'
 
 application {
-    mainModule = 'homer.tastyworld.frontend.poscreator'
-    mainClass = 'homer.tastyworld.frontend.poscreator.POSCreatorApplication'
+    mainModule = 'homer.tastyworld.frontend.pos.creator'
+    mainClass = 'homer.tastyworld.frontend.pos.creator.POSCreatorApplication'
 }
 
 javafx {

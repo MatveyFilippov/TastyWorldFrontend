@@ -1,6 +1,6 @@
-package homer.tastyworld.frontend.poscreator.panes.dynamic;
+package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
-import homer.tastyworld.frontend.poscreator.POSCreatorApplication;
+import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;

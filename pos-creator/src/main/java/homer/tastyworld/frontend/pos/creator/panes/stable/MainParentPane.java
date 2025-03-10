@@ -1,9 +1,9 @@
-package homer.tastyworld.frontend.poscreator.panes.stable;
+package homer.tastyworld.frontend.pos.creator.panes.stable;
 
-import homer.tastyworld.frontend.poscreator.POSCreatorApplication;
-import homer.tastyworld.frontend.poscreator.core.orders.table.OrderStatusUpdatesListener;
-import homer.tastyworld.frontend.poscreator.core.orders.table.POSCreatorTableNodeFactory;
-import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
+import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
+import homer.tastyworld.frontend.pos.creator.core.orders.table.OrderStatusUpdatesListener;
+import homer.tastyworld.frontend.pos.creator.core.orders.table.POSCreatorTableNodeFactory;
+import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;

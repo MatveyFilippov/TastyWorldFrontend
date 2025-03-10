@@ -1,7 +1,7 @@
-package homer.tastyworld.frontend.poscreator.core.orders.table;
+package homer.tastyworld.frontend.pos.creator.core.orders.table;
 
-import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderLooking;
-import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
+import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
+import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderLooking;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;

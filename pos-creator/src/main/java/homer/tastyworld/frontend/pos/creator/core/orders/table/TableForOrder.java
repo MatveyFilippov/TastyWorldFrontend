@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.poscreator.core.orders.table;
+package homer.tastyworld.frontend.pos.creator.core.orders.table;
 
 import java.util.Set;
 

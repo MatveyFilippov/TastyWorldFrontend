@@ -1,6 +1,6 @@
-package homer.tastyworld.frontend.poscreator.panes.dynamic;
+package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
-import homer.tastyworld.frontend.poscreator.panes.stable.StableParentPane;
+import homer.tastyworld.frontend.pos.creator.panes.stable.StableParentPane;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 

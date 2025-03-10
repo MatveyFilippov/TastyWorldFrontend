@@ -1,6 +1,6 @@
-package homer.tastyworld.frontend.poscreator;
+package homer.tastyworld.frontend.pos.creator;
 
-import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderCreating;
+import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderCreating;
 import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
 import javafx.application.Platform;

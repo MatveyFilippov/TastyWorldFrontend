@@ -1,4 +1,4 @@
-module homer.tastyworld.frontend.poscreator {
+module homer.tastyworld.frontend.pos.creator {
     requires javafx.controls;
     requires javafx.fxml;
     requires homer.tastyworld.frontend.starterpack;
@@ -6,6 +6,6 @@ module homer.tastyworld.frontend.poscreator {
     requires static lombok;
 
 
-    opens homer.tastyworld.frontend.poscreator to javafx.fxml;
-    exports homer.tastyworld.frontend.poscreator;
+    opens homer.tastyworld.frontend.pos.creator to javafx.fxml;
+    exports homer.tastyworld.frontend.pos.creator;
 }

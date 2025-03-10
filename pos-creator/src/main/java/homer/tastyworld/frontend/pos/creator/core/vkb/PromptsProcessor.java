@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.poscreator.core.vkb;
+package homer.tastyworld.frontend.pos.creator.core.vkb;
 
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import java.io.FileInputStream;

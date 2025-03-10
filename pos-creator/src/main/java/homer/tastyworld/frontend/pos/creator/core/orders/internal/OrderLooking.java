@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.poscreator.core.orders.internal;
+package homer.tastyworld.frontend.pos.creator.core.orders.internal;
 
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
