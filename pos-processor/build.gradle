@@ -1,0 +1,48 @@
+group 'homer.tastyworld.frontend.pos'
+version '1.0-SNAPSHOT'
+
+application {
+    mainModule = 'homer.tastyworld.frontend.pos.processor'
+    mainClass = 'homer.tastyworld.frontend.pos.processor.POSProcessorApplication'
+}
+
+javafx {
+    version = '21.0.2'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass,
+                "Class-Path": '.'
+        )
+    }
+}
+
+jlink {
+    forceMerge 'slf4j'
+    mergedModule {
+        requires "java.xml"
+        requires "java.desktop"
+        requires "java.sql"
+    }
+    addExtraDependencies("javafx")
+    imageZip = project.file("$rootDir/packaged-apps/pos-creator/TastyWorld-POS-Processor-v${version}-${javafx.platform.classifier}.zip")
+    options = [
+            '--strip-debug', '--no-header-files', '--no-man-pages',
+//            '--module-path', "$System.env.PATH_TO_FX_MODS",
+//            '--add-modules', 'javafx.controls,javafx.fxml'
+    ]
+    launcher {
+        name = 'TastyWorld-POS-Processor'
+    }
+}
+
+jlinkZip {
+    group = 'distribution'
+}

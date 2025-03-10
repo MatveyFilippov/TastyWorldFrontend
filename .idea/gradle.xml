@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/pos-creator" />
+            <option value="$PROJECT_DIR$/pos-processor" />
             <option value="$PROJECT_DIR$/starter-pack" />
             <option value="$PROJECT_DIR$/status-display" />
           </set>
