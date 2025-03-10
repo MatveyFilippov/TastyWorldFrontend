@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class OrderCreating {
 
-    public static Long id;
+    public static Long id = null;
     private static int last_used_name_index = 0;
 
     private static String findFreeName() {

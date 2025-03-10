@@ -3,6 +3,7 @@ package homer.tastyworld.frontend.poscreator.panes.stable;
 import homer.tastyworld.frontend.poscreator.POSCreatorApplication;
 import homer.tastyworld.frontend.poscreator.core.orders.table.OrderStatusUpdatesListener;
 import homer.tastyworld.frontend.poscreator.core.orders.table.POSCreatorTableNodeFactory;
+import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
@@ -27,6 +28,7 @@ public class MainParentPane extends StableParentPane {
     private AnchorPane mainPaneSettingsImgBtn, mainPaneNewOrderImgBtn;
     private AnchorPane mainPaneCookingOrdersTopic, mainPaneReadyOrdersTopic;
     private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
+    private DynamicParentPane lookOrderParentPane;
 
     private void initDaysLeftAlertInMainPane() {
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
@@ -67,7 +69,7 @@ public class MainParentPane extends StableParentPane {
         Text.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, null);
         mainPaneCookingOrdersTable.setAlignment(Pos.CENTER);
         mainPaneReadyOrdersTable.setAlignment(Pos.CENTER);
-        TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory();
+        TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory(lookOrderParentPane);
         OrderStatusUpdatesListener.init(
                 new TableManager(mainPaneCookingOrdersTable, new DefaultTableCursor(4, 3), tableNodeFactory),
                 new TableManager(mainPaneReadyOrdersTable, new DefaultTableCursor(4, 2), tableNodeFactory)

@@ -1,11 +1,13 @@
 package homer.tastyworld.frontend.poscreator;
 
 import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderCreating;
+import homer.tastyworld.frontend.poscreator.core.orders.internal.OrderLooking;
 import homer.tastyworld.frontend.poscreator.core.vkb.VirtualKeyboardPrompts;
 import homer.tastyworld.frontend.poscreator.panes.ParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.AddProductParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.EndOrderCreatingParentPane;
+import homer.tastyworld.frontend.poscreator.panes.dynamic.LookOrderParentPane;
 import homer.tastyworld.frontend.poscreator.panes.dynamic.ProductsParentPane;
 import homer.tastyworld.frontend.poscreator.panes.stable.StableParentPane;
 import homer.tastyworld.frontend.poscreator.panes.stable.MainParentPane;
@@ -13,8 +15,10 @@ import homer.tastyworld.frontend.poscreator.panes.stable.MenuParentPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.VirtualKeyboard;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -40,6 +44,26 @@ public class POSCreatorController {
     @FXML
     private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
 
+    private StableParentPane menuPane;
+    @FXML
+    private AnchorPane menuPaneParent;
+    @FXML
+    private AnchorPane menuPaneDeleteOrderImgBtn, menuPaneLookOrderImgBtn;
+    @FXML
+    private AnchorPane menuPaneTopic;
+    @FXML
+    private GridPane menuPaneImgMenuContainer;
+
+    private DynamicParentPane productsPane;
+    @FXML
+    private AnchorPane productsPaneParent;
+    @FXML
+    private AnchorPane productsPaneBackInMenuImgBtn;
+    @FXML
+    private AnchorPane productsPaneMenuTopic;
+    @FXML
+    private GridPane productPaneImgProductsContainer;
+
     private DynamicParentPane addProductPane;
     @FXML
     private AnchorPane addProductPaneParent;
@@ -64,27 +88,7 @@ public class POSCreatorController {
     @FXML
     private GridPane addProductAdditivesContainer;
 
-    private DynamicParentPane productsPane;
-    @FXML
-    private AnchorPane productsPaneParent;
-    @FXML
-    private AnchorPane productsPaneBackInMenuImgBtn;
-    @FXML
-    private AnchorPane productsPaneMenuTopic;
-    @FXML
-    private GridPane productPaneImgProductsContainer;
-
-    private StableParentPane menuPane;
-    @FXML
-    private AnchorPane menuPaneParent;
-    @FXML
-    private AnchorPane menuPaneDeleteOrderImgBtn, menuPaneLookOrderImgBtn;
-    @FXML
-    private AnchorPane menuPaneTopic;
-    @FXML
-    private GridPane menuPaneImgMenuContainer;
-
-    private DynamicParentPane endOrderPane;
+    private DynamicParentPane endOrderCreatingPane;
     @FXML
     private AnchorPane endOrderCreatingPaneParent;
     @FXML
@@ -97,6 +101,20 @@ public class POSCreatorController {
     private TextField endOrderCreatingDeliveryField;
     @FXML
     private CheckBox endOrderCreatingIsPaidCheckBox;
+
+    private DynamicParentPane lookOrderPane;
+    @FXML
+    private AnchorPane lookOrderPaneParent;
+    @FXML
+    private AnchorPane lookOrderNameTopic, lookOrderTotalPriceTopic;
+    @FXML
+    private AnchorPane lookOrderClosePaneImgBtn, lookOrderSetDoneImgBtn;
+    @FXML
+    private GridPane lookOrderItemsContainer;
+    @FXML
+    private TextField lookOrderDeliveryField;
+    @FXML
+    private Button lookOrderSetPaidBtn;
 
     private VirtualKeyboard virtualKeyboard;
     @FXML
@@ -111,6 +129,7 @@ public class POSCreatorController {
         mainPane = MainParentPane
                 .builder()
                 .parent(mainPaneParent)
+                .lookOrderParentPane(lookOrderPane)
                 .mainPaneGridNodeContainer(mainPaneGridNodeContainer)
                 .mainPaneDaysLeftAlert(mainPaneDaysLeftAlert)
                 .mainPaneDaysLeftAlertTopic(mainPaneDaysLeftAlertTopic)
@@ -122,6 +141,31 @@ public class POSCreatorController {
                 .mainPaneReadyOrdersTable(mainPaneReadyOrdersTable)
                 .build();
         mainPane.initialize();
+    }
+
+    private void initMenuPane() {
+        menuPane = MenuParentPane
+                .builder()
+                .parent(menuPaneParent)
+                .productsParentPane(productsPane)
+                .menuPaneDeleteOrderImgBtn(menuPaneDeleteOrderImgBtn)
+                .menuPaneLookOrderImgBtn(menuPaneLookOrderImgBtn)
+                .menuPaneTopic(menuPaneTopic)
+                .menuPaneImgMenuContainer(menuPaneImgMenuContainer)
+                .build();
+        menuPane.initialize();
+    }
+
+    private void initProductsPane() {
+        productsPane = ProductsParentPane
+                .builder()
+                .parent(productsPaneParent)
+                .addProductParentPane(addProductPane)
+                .productsPaneBackInMenuImgBtn(productsPaneBackInMenuImgBtn)
+                .productsPaneMenuTopic(productsPaneMenuTopic)
+                .productPaneImgProductsContainer(productPaneImgProductsContainer)
+                .build();
+        productsPane.initialize();
     }
 
     private void initAddProductPane() {
@@ -144,33 +188,8 @@ public class POSCreatorController {
         addProductPane.initialize();
     }
 
-    private void initProductsPane() {
-        productsPane = ProductsParentPane
-                .builder()
-                .parent(productsPaneParent)
-                .addProductParentPane(addProductPane)
-                .productsPaneBackInMenuImgBtn(productsPaneBackInMenuImgBtn)
-                .productsPaneMenuTopic(productsPaneMenuTopic)
-                .productPaneImgProductsContainer(productPaneImgProductsContainer)
-                .build();
-        productsPane.initialize();
-    }
-
-    private void initMenuPane() {
-        menuPane = MenuParentPane
-                .builder()
-                .parent(menuPaneParent)
-                .productsParentPane(productsPane)
-                .menuPaneDeleteOrderImgBtn(menuPaneDeleteOrderImgBtn)
-                .menuPaneLookOrderImgBtn(menuPaneLookOrderImgBtn)
-                .menuPaneTopic(menuPaneTopic)
-                .menuPaneImgMenuContainer(menuPaneImgMenuContainer)
-                .build();
-        menuPane.initialize();
-    }
-
     private void initEndOrderPane() {
-        endOrderPane = EndOrderCreatingParentPane
+        endOrderCreatingPane = EndOrderCreatingParentPane
                 .builder()
                 .parent(endOrderCreatingPaneParent)
                 .endOrderCreatingOpenMenuImgBtn(endOrderCreatingOpenMenuImgBtn)
@@ -181,13 +200,29 @@ public class POSCreatorController {
                 .endOrderCreatingDeliveryField(endOrderCreatingDeliveryField)
                 .endOrderCreatingIsPaidCheckBox(endOrderCreatingIsPaidCheckBox)
                 .build();
-        endOrderPane.initialize();
+        endOrderCreatingPane.initialize();
+    }
+
+    private void initLookOrderPane() {
+        lookOrderPane = LookOrderParentPane
+                .builder()
+                .parent(lookOrderPaneParent)
+                .lookOrderNameTopic(lookOrderNameTopic)
+                .lookOrderTotalPriceTopic(lookOrderTotalPriceTopic)
+                .lookOrderClosePaneImgBtn(lookOrderClosePaneImgBtn)
+                .lookOrderSetDoneImgBtn(lookOrderSetDoneImgBtn)
+                .lookOrderItemsContainer(lookOrderItemsContainer)
+                .lookOrderDeliveryField(lookOrderDeliveryField)
+                .lookOrderSetPaidBtn(lookOrderSetPaidBtn)
+                .build();
+        lookOrderPane.initialize();
     }
 
     private void initVirtualKeyboard() {
         virtualKeyboard = new VirtualKeyboard(virtualKeyboardPlace);
         VirtualKeyboardPrompts.setPromptsContainer(virtualKeyboardPrompts);
         VirtualKeyboardPrompts.setInputField(endOrderCreatingDeliveryField);
+        VirtualKeyboardPrompts.setInputField(lookOrderDeliveryField);
     }
 
     @FXML
@@ -197,6 +232,7 @@ public class POSCreatorController {
             throw new SubscriptionDaysAreOverError();
         }
         ParentPane.setBase(base);
+        initLookOrderPane();
         initMainPane();
         initAddProductPane();
         initProductsPane();
@@ -255,14 +291,14 @@ public class POSCreatorController {
                     "Заказ пуст", "Добавьте хотя бы один продукт, прежде чем завершить создание заказа", true
             );
         } else {
-            endOrderPane.fill(OrderCreating.id);
-            endOrderPane.openAndCloseFrom(menuPaneParent);
+            endOrderCreatingPane.fill(OrderCreating.id);
+            endOrderCreatingPane.openAndCloseFrom(menuPaneParent);
         }
     }
 
     @FXML
     void endOrderCreatingOpenMenuImgBtnPressed() {
-        endOrderPane.clean();
+        endOrderCreatingPane.clean();
         menuPane.openAndCloseFrom(endOrderCreatingPaneParent);
     }
 
@@ -283,18 +319,58 @@ public class POSCreatorController {
         if (endOrderCreatingIsPaidCheckBox.isSelected()) {
             OrderCreating.setPaid();
         }
-        endOrderPane.clean();
+        endOrderCreatingPane.clean();
         mainPane.openAndCloseFrom(endOrderCreatingPaneParent);
     }
 
     @FXML
+    void closeLookOrderPane() {
+        OrderLooking.editDeliveryAddressIfNotEqual(lookOrderDeliveryField.getText().trim());
+        lookOrderPane.clean();
+        OrderLooking.finish();
+        lookOrderPaneParent.setVisible(false);
+    }
+
+    @FXML
+    void lookOrderSetDoneImgBtnPressed() {
+        boolean isPaid = OrderLooking.isPaid();
+        boolean isAccess = DialogWindow.askBool(
+                "Выдан", "Нет", "Завершение заказа",
+                String.format("Отметить заказ как выданный%s?", isPaid ? " и оплаченный" : ""),
+                "Заказ будет завешён, отменить это действие нльзя"
+        );
+        if (!isAccess) {
+            return;
+        }
+        if (!isPaid) {
+            OrderLooking.setPaid();
+            lookOrderSetPaidBtn.setDisable(true);
+        }
+        OrderLooking.setDone();
+        closeLookOrderPane();
+    }
+
+    @FXML
+    void lookOrderSetPaidBtnPressed() {
+        boolean isAccess = !OrderLooking.isPaid() && DialogWindow.askBool(
+                "Оплачен", "Нет", "Оплата заказа",
+                "Отметить заказ как оплаченный и получить чек?",
+                "Позиции заказа будут закрыты для редактирования, отменить это действие нльзя"
+        );
+        if (isAccess) {
+            OrderLooking.setPaid();
+            lookOrderSetPaidBtn.setDisable(true);
+        }
+    }
+
+    @FXML
     void hideVirtualKeyboardParentPane() {
+        VirtualKeyboardPrompts.clean();
         virtualKeyboardPaneParent.setVisible(false);
     }
 
     @FXML
     void showVirtualKeyboardParentPane() {
-        VirtualKeyboardPrompts.clean();
         virtualKeyboardPaneParent.setVisible(true);
     }
 
