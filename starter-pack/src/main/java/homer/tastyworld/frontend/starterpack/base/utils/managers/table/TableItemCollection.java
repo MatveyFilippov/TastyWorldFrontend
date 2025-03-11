@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager;
+package homer.tastyworld.frontend.starterpack.base.utils.managers.table;
 
 import javafx.scene.Node;
 import java.awt.Point;

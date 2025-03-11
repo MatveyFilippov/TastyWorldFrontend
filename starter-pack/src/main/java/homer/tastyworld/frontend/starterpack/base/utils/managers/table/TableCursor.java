@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager;
+package homer.tastyworld.frontend.starterpack.base.utils.managers.table;
 
 import java.awt.Point;
 

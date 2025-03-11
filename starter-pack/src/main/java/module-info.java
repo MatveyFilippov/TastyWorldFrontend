@@ -7,6 +7,7 @@ module homer.tastyworld.frontend.starterpack {
     requires com.rabbitmq.client;
     requires java.sql;
     requires java.desktop;
+    requires com.fazecast.jSerialComm;
 
     exports homer.tastyworld.frontend.starterpack;
     exports homer.tastyworld.frontend.starterpack.api;
@@ -16,8 +17,9 @@ module homer.tastyworld.frontend.starterpack {
     exports homer.tastyworld.frontend.starterpack.base.config;
     exports homer.tastyworld.frontend.starterpack.base.exceptions;
     exports homer.tastyworld.frontend.starterpack.base.exceptions.response;
-    exports homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager;
-    exports homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.cursors;
+    exports homer.tastyworld.frontend.starterpack.base.utils.managers.table;
+    exports homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors;
+    exports homer.tastyworld.frontend.starterpack.base.utils.managers.scale;
     exports homer.tastyworld.frontend.starterpack.base.utils.misc;
     exports homer.tastyworld.frontend.starterpack.base.utils.ui;
     exports homer.tastyworld.frontend.starterpack.base.utils.ui.helpers;

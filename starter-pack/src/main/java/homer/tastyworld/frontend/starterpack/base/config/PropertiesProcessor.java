@@ -26,16 +26,16 @@ class PropertiesProcessor {
     }
 
     public String getValue(ConfigKey key) {
-        return properties.getProperty(key.key);
+        return properties.getProperty(key.propertiesKey);
     }
 
     public void setValue(ConfigKey key, String value) {
-        properties.setProperty(key.key, value);
+        properties.setProperty(key.propertiesKey, value);
         save();
     }
 
     public void deleteValue(ConfigKey key) {
-        properties.remove(key.key);
+        properties.remove(key.propertiesKey);
         save();
     }
 

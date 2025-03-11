@@ -1,6 +1,6 @@
-package homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.cursors;
+package homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors;
 
-import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableCursor;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableCursor;
 import java.awt.Point;
 
 public class SelfExtendedTableCursor extends TableCursor {

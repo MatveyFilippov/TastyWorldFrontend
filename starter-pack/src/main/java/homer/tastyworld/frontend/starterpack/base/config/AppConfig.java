@@ -35,10 +35,10 @@ public class AppConfig {
         appName = appProperties.getValue(ConfigKey.APP_NAME);
         appVersion = appProperties.getValue(ConfigKey.APP_VERSION);
         if (appName == null || appName.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_NAME.key + "'");
+            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_NAME.propertiesKey + "'");
         }
         if (appVersion == null || appVersion.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_VERSION.key + "'");
+            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_VERSION.propertiesKey + "'");
         }
     }
 
@@ -80,6 +80,14 @@ public class AppConfig {
 
     public static String getAppDateTimeZoneID() {
         return properties.getValue(ConfigKey.APP_DATETIME_ZONE_ID);
+    }
+
+    public static String getPrinterName() {
+        return properties.getValue(ConfigKey.PRINTER_NAME);
+    }
+
+    public static String getScaleComPort() {
+        return properties.getValue(ConfigKey.SCALE_COM_PORT);
     }
 
 }

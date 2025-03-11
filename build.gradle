@@ -28,6 +28,7 @@ subprojects {
         implementation 'org.slf4j:slf4j-api:1.7.36'
         implementation 'org.slf4j:slf4j-jdk14:1.7.36'
         implementation 'com.rabbitmq:amqp-client:5.16.0'
+        implementation 'com.fazecast:jSerialComm:2.10.4'
     }
     if (project.name != 'starter-pack') {
         apply plugin: 'application'
