@@ -2,7 +2,7 @@ package homer.tastyworld.frontend.pos.creator.core.orders.table;
 
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderLooking;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.scene.Node;

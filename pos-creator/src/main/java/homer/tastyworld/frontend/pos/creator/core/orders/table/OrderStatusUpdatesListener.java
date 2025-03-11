@@ -6,7 +6,7 @@ import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import org.apache.hc.core5.http.Method;
 import java.util.Arrays;

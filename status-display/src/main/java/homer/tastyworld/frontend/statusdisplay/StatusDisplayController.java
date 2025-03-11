@@ -1,9 +1,9 @@
 package homer.tastyworld.frontend.statusdisplay;
 
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableManager;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.cursors.DefaultTableCursor;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableManager;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors.DefaultTableCursor;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import homer.tastyworld.frontend.statusdisplay.core.OrderUpdatesListener;
 import homer.tastyworld.frontend.statusdisplay.core.StatusDisplayTableNodeFactory;
