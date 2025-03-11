@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.pos.creator.core.vkb;
 
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -51,7 +51,7 @@ public class VirtualKeyboardPrompts {
 
     private static Node getClickablePrompt(TextField field, String prompt) {
         AnchorPane pane = new AnchorPane();
-        Text.setTextCentre(pane, prompt, Text.getAdaptiveFontSize(pane, 5), null);
+        TextHelper.setTextCentre(pane, prompt, TextHelper.getAdaptiveFontSize(pane, 5), null);
         pane.setOnMouseClicked(event -> {
             clean();
             field.setText(prompt);

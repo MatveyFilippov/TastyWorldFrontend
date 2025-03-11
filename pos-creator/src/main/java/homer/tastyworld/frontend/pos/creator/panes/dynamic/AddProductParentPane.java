@@ -3,8 +3,8 @@ package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
@@ -115,8 +115,8 @@ public class AddProductParentPane extends DynamicParentPane {
         });
         setProduct(productInfo);
 
-        Text.setTextCentre(addProductNameTopic, Product.name, productNameTopicFontSize, null);
-        Text.setTextCentre(addProductQTYTypeTopic, Product.pieceType, productQTYTopicFontSize, null);
+        TextHelper.setTextCentre(addProductNameTopic, Product.name, productNameTopicFontSize, null);
+        TextHelper.setTextCentre(addProductQTYTypeTopic, Product.pieceType, productQTYTopicFontSize, null);
         addProductQTYFiled.setText(String.valueOf(Product.qty));
         recalculatePrice();
 
@@ -177,7 +177,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private AnchorPane getAdditiveName(Map<String, Object> additiveInfo) {
         AnchorPane name = new AnchorPane();
-        Text.setTextCentre(name, (String) additiveInfo.get("NAME"), Text.getAdaptiveFontSize(name, 8), null);
+        TextHelper.setTextCentre(name, (String) additiveInfo.get("NAME"), TextHelper.getAdaptiveFontSize(name, 8), null);
         return name;
     }
 
@@ -194,8 +194,8 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void setPlusMinusAdditiveImgBtnsClickable(AnchorPane plus, AnchorPane minus, TextField additiveQTY, Map<String, Object> additiveInfo) {
-        Helper.setAnchorPaneImageBackgroundCentre(plus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png"));
-        Helper.setAnchorPaneImageBackgroundCentre(minus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png"));
+        PaneHelper.setImageBackgroundCentre(plus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png"));
+        PaneHelper.setImageBackgroundCentre(minus, POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png"));
         int step = additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? 100 : 1;
         long additiveID = TypeChanger.toLong(additiveInfo.get("ID"));
         plus.setOnMouseClicked(event -> {
@@ -223,19 +223,19 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInAddProductPane() {
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 addProductCloseImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductCloseImgBtn.png")
         );
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 addProductSubmitImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductSubmitImgBtn.png")
         );
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 addProductMinusQTYImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductMinusQTYImgBtn.png")
         );
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 addProductPlusQTYImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductPlusQTYImgBtn.png")
         );
@@ -258,13 +258,13 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void initTopicsInAddProductPane() {
-        Text.setTextCentre(addProductPriceTopic, "Цена", Text.getAdaptiveFontSize(addProductPriceTopic, 5), null);
-        Text.setTextCentre(addProductAdditivesTopic, "Добавки", Text.getAdaptiveFontSize(addProductAdditivesTopic, 15), null);
+        TextHelper.setTextCentre(addProductPriceTopic, "Цена", TextHelper.getAdaptiveFontSize(addProductPriceTopic, 5), null);
+        TextHelper.setTextCentre(addProductAdditivesTopic, "Добавки", TextHelper.getAdaptiveFontSize(addProductAdditivesTopic, 15), null);
     }
 
     private AnchorPane getClickableKbBtn(String toAppend) {
         AnchorPane btn = new AnchorPane();
-        Text.setTextCentre(btn, toAppend, Text.getAdaptiveFontSize(btn, 2), null);
+        TextHelper.setTextCentre(btn, toAppend, TextHelper.getAdaptiveFontSize(btn, 2), null);
         btn.setOnMouseClicked(event -> {
             String old = addProductQTYFiled.getText().replace(" ", "");
             if (old.equals("0")) {
@@ -279,7 +279,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private AnchorPane getClickableShiftBackKbBtn() {
         AnchorPane btn = new AnchorPane();
-        Text.setTextCentre(btn, "<--", Text.getAdaptiveFontSize(btn, 4), null);
+        TextHelper.setTextCentre(btn, "<--", TextHelper.getAdaptiveFontSize(btn, 4), null);
         btn.setOnMouseClicked(event -> {
             String old = addProductQTYFiled.getText().replace(" ", "");
             int len = old.length();
@@ -303,8 +303,8 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void initTopicsFontSize() {
-        productNameTopicFontSize = Text.getAdaptiveFontSize(addProductNameTopic, 20);
-        productQTYTopicFontSize = Text.getAdaptiveFontSize(addProductQTYTypeTopic, 5);
+        productNameTopicFontSize = TextHelper.getAdaptiveFontSize(addProductNameTopic, 20);
+        productQTYTopicFontSize = TextHelper.getAdaptiveFontSize(addProductQTYTypeTopic, 5);
     }
 
     private void initAdditiveLines() {

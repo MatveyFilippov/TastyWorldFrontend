@@ -4,8 +4,8 @@ import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.StringExpression;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -53,8 +53,8 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         if (!deliveryAddress.equals("NOT FOR DELIVERY")) {
             endOrderCreatingDeliveryField.setText(deliveryAddress);
         }
-        Text.setTextCentre(endOrderCreatingNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, null);
-        Text.setTextCentre(endOrderCreatingTotalPriceTopic, "Стоимость: " + orderInfo.get("TOTAL_PRICE"), priceTopicFontSize, null);
+        TextHelper.setTextCentre(endOrderCreatingNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, null);
+        TextHelper.setTextCentre(endOrderCreatingTotalPriceTopic, "Стоимость: " + orderInfo.get("TOTAL_PRICE"), priceTopicFontSize, null);
         endOrderCreatingIsPaidCheckBox.setSelected(TypeChanger.toBool(orderInfo.get("IS_PAID")));
         scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
     }
@@ -113,7 +113,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     private AnchorPane getDeleteItem(Map<String, Object> itemInfo, ObservableList<Node> deleteFrom, Node toDelete) {
         AnchorPane delete = new AnchorPane();
-        Helper.setAnchorPaneImageBackgroundCentre(delete, POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png"));
+        PaneHelper.setImageBackgroundCentre(delete, POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png"));
         delete.setOnMouseClicked(event -> {
             Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
             if (!DialogWindow.askBool(
@@ -130,7 +130,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
             Request infoRequest = new Request("/order/read", Method.GET);
             infoRequest.putInBody("id", TypeChanger.toLong(itemInfo.get("ORDER_ID")));
             endOrderCreatingTotalPriceTopic.getChildren().clear();
-            Text.setTextCentre(
+            TextHelper.setTextCentre(
                     endOrderCreatingTotalPriceTopic, "Стоимость: " + infoRequest.request().getResultAsJSON().get("TOTAL_PRICE"), priceTopicFontSize, null
             );
         });
@@ -140,7 +140,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private AnchorPane getItemName(Map<String, Object> itemInfo) {
         AnchorPane name = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        Text.setTextCentre(name, (String) productInfo.get("NAME"), Text.getAdaptiveFontSize(name, 15), null);
+        TextHelper.setTextCentre(name, (String) productInfo.get("NAME"), TextHelper.getAdaptiveFontSize(name, 15), null);
         return name;
     }
 
@@ -148,7 +148,10 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         AnchorPane qty = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
-        Text.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, Text.getAdaptiveFontSize(qty, 4), null);
+        TextHelper.setTextCentre(
+                qty, itemInfo.get("PEACE_QTY") + " " + peaceType,
+                TextHelper.getAdaptiveFontSize(qty, 4), null
+        );
         return qty;
     }
 
@@ -176,13 +179,16 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         String line = additiveInfo.get("NAME") + " " + qty + (
                 additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
         );
-        Text.setTextCentre(additiveLine, line, Text.getAdaptiveFontSize(additiveLine, 17), null);
+        TextHelper.setTextCentre(additiveLine, line, TextHelper.getAdaptiveFontSize(additiveLine, 17), null);
         return additiveLine;
     }
 
     private AnchorPane getItemPrice(Map<String, Object> itemInfo) {
         AnchorPane price = new AnchorPane();
-        Text.setTextCentre(price, TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(), Text.getAdaptiveFontSize(price, 4), null);
+        TextHelper.setTextCentre(
+                price, TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(),
+                TextHelper.getAdaptiveFontSize(price, 4), null
+        );
         return price;
     }
 
@@ -200,16 +206,16 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     }
 
     private void initTopicsFontSize() {
-        nameTopicFontSize = Text.getAdaptiveFontSize(endOrderCreatingNameTopic, 6);
-        priceTopicFontSize = Text.getAdaptiveFontSize(endOrderCreatingTotalPriceTopic, 10);
+        nameTopicFontSize = TextHelper.getAdaptiveFontSize(endOrderCreatingNameTopic, 6);
+        priceTopicFontSize = TextHelper.getAdaptiveFontSize(endOrderCreatingTotalPriceTopic, 10);
     }
 
     private void initImgBtnsInEndOrderCreatingPane() {
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundBottom(
                 endOrderCreatingOpenMenuImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingOpenMenuImgBtn.png")
         );
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundBottom(
                 endOrderCreatingCommitImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingCommitImgBtn.png")
         );

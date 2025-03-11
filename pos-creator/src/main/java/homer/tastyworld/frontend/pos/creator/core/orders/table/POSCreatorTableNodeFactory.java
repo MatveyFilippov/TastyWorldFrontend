@@ -3,8 +3,8 @@ package homer.tastyworld.frontend.pos.creator.core.orders.table;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderLooking;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.TableNodeFactory;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -21,7 +21,7 @@ public class POSCreatorTableNodeFactory implements TableNodeFactory {
     }
 
     private void setOnTouch(Node node, long orderID) {
-        Helper.setOnMouseClickedWithPressingTimeChecking(node, Duration.millis(50), event -> {
+        PaneHelper.setOnMouseClickedWithPressingTimeChecking(node, Duration.millis(50), event -> {
             lookOrderPane.fill(orderID);
             OrderLooking.start(orderID);
             lookOrderPane.getParent().setVisible(true);
@@ -30,7 +30,7 @@ public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
     private AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
-        Text.setTextCentre(pane, name, Text.getAdaptiveFontSize(pane, 3), null);
+        TextHelper.setTextCentre(pane, name, TextHelper.getAdaptiveFontSize(pane, 3), null);
         pane.setOpacity(1.0);
         pane.setMinSize(0, 0);
         pane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);

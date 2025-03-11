@@ -5,8 +5,8 @@ import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -56,7 +56,7 @@ public class MenuParentPane extends StableParentPane {
         menu.prefWidthProperty().bind(scroll.widthProperty());
         menu.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        Helper.setOnMouseClickedWithPressingTimeChecking(menu, Duration.millis(100), event -> {
+        PaneHelper.setOnMouseClickedWithLongPressing(menu, event -> {
             productsParentPane.fill(menuID);
             productsParentPane.openAndCloseFrom(parent);
         });
@@ -76,7 +76,7 @@ public class MenuParentPane extends StableParentPane {
         AnchorPane result = new AnchorPane();
         PhotoRequest request = new PhotoRequest("/menu/get_photo");
         request.putInBody("id", menuID);
-        Helper.setAnchorPaneImageBackgroundBottom(result, request.read());
+        PaneHelper.setImageBackgroundBottom(result, request.read());
         return result;
     }
 
@@ -85,20 +85,20 @@ public class MenuParentPane extends StableParentPane {
         Request request = new Request("/menu/read", Method.GET);
         request.putInBody("id", menuID);
         Map<String, Object> info = request.request().getResultAsJSON();
-        Text.setTextCentre(result, (String) info.get("NAME"), Text.getAdaptiveFontSize(result, 12), null);
+        TextHelper.setTextCentre(result, (String) info.get("NAME"), TextHelper.getAdaptiveFontSize(result, 12), null);
         return result;
     }
 
     private void initTopicInMenuPane() {
-        Text.setTextCentre(menuPaneTopic, "Меню", Text.getAdaptiveFontSize(menuPaneTopic, 15), null);
+        TextHelper.setTextCentre(menuPaneTopic, "Меню", TextHelper.getAdaptiveFontSize(menuPaneTopic, 15), null);
     }
 
     private void initImgBtnsInMenuPane() {
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 menuPaneDeleteOrderImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/MenuPane/menuPaneDeleteOrderImgBtn.png")
         );
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 menuPaneLookOrderImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/MenuPane/menuPaneLookOrderImgBtn.png")
         );

@@ -16,7 +16,7 @@ import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.VirtualKeyboard;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.VirtualKeyboard;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;

@@ -10,8 +10,8 @@ import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.Ta
 import homer.tastyworld.frontend.starterpack.base.utils.managers.tablemanager.cursors.DefaultTableCursor;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
@@ -38,9 +38,9 @@ public class MainParentPane extends StableParentPane {
                     TypeChanger.toDaysFormat(subscriptionAvailableDays)
             );
             if (subscriptionAvailableDays <= 5) {
-                Text.setTextCentre(
+                TextHelper.setTextCentre(
                         mainPaneDaysLeftAlertTopic, text,
-                        Text.getAdaptiveFontSize(mainPaneDaysLeftAlertTopic, 45), null
+                        TextHelper.getAdaptiveFontSize(mainPaneDaysLeftAlertTopic, 45), null
                 );
                 mainPaneDaysLeftAlert.setVisible(true);
             }
@@ -53,20 +53,20 @@ public class MainParentPane extends StableParentPane {
     }
 
     private void initImgBtnsInMainPane() {
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 mainPaneNewOrderImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/mainPaneNewOrderImgBtn.png")
         );
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 mainPaneSettingsImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/mainPaneSettingsImgBtn.png")
         );
     }
 
     private void initTablesInMainPane() {
-        StringExpression topicFontSize = Text.getAdaptiveFontSize(mainPaneCookingOrdersTopic, 17);
-        Text.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize, null);
-        Text.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, null);
+        StringExpression topicFontSize = TextHelper.getAdaptiveFontSize(mainPaneCookingOrdersTopic, 17);
+        TextHelper.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize, null);
+        TextHelper.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, null);
         mainPaneCookingOrdersTable.setAlignment(Pos.CENTER);
         mainPaneReadyOrdersTable.setAlignment(Pos.CENTER);
         TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory(lookOrderParentPane);

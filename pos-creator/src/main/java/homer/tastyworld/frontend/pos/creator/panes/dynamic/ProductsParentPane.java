@@ -4,8 +4,8 @@ import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Helper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.Text;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -50,7 +50,7 @@ public class ProductsParentPane extends DynamicParentPane {
         Request request = new Request("/menu/read", Method.GET);
         request.putInBody("id", menuID);
         Map<String, Object> menuInfo = request.request().getResultAsJSON();
-        Text.setTextCentre(productsPaneMenuTopic, (String) menuInfo.get("NAME"), topicFontSize, null);
+        TextHelper.setTextCentre(productsPaneMenuTopic, (String) menuInfo.get("NAME"), topicFontSize, null);
         scroll.setContent(productsCache.computeIfAbsent(menuID, ignored -> computeTable(menuInfo)));
     }
 
@@ -72,7 +72,7 @@ public class ProductsParentPane extends DynamicParentPane {
         product.prefWidthProperty().bind(scroll.widthProperty());
         product.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        Helper.setOnMouseClickedWithPressingTimeChecking(product, Duration.millis(100), event -> {
+        PaneHelper.setOnMouseClickedWithLongPressing(product, event -> {
             addProductParentPane.fill(productID);
             addProductParentPane.openAndCloseFrom(parent);
             clean();
@@ -93,7 +93,7 @@ public class ProductsParentPane extends DynamicParentPane {
         AnchorPane result = new AnchorPane();
         PhotoRequest request = new PhotoRequest("/product/get_photo");
         request.putInBody("id", productID);
-        Helper.setAnchorPaneImageBackgroundBottom(result, request.read());
+        PaneHelper.setImageBackgroundBottom(result, request.read());
         return result;
     }
 
@@ -102,7 +102,7 @@ public class ProductsParentPane extends DynamicParentPane {
         Request request = new Request("/product/read", Method.GET);
         request.putInBody("id", productID);
         Map<String, Object> info = request.request().getResultAsJSON();
-        Text.setTextCentre(result, (String) info.get("NAME"), Text.getAdaptiveFontSize(result, 12), null);
+        TextHelper.setTextCentre(result, (String) info.get("NAME"), TextHelper.getAdaptiveFontSize(result, 12), null);
         return result;
     }
 
@@ -112,7 +112,7 @@ public class ProductsParentPane extends DynamicParentPane {
     }
 
     private void initTopicFontSize() {
-        topicFontSize = Text.getAdaptiveFontSize(productsPaneMenuTopic, 20);
+        topicFontSize = TextHelper.getAdaptiveFontSize(productsPaneMenuTopic, 20);
     }
 
     private void initItemsTable() {
@@ -121,7 +121,7 @@ public class ProductsParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInProductsPane() {
-        Helper.setAnchorPaneImageBackgroundCentre(
+        PaneHelper.setImageBackgroundCentre(
                 productsPaneBackInMenuImgBtn,
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/ProductsPane/productsPaneBackInMenuImgBtn.png")
         );
