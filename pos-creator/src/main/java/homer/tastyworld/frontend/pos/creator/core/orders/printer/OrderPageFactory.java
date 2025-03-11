@@ -84,11 +84,11 @@ public class OrderPageFactory implements PrinterPageFactory {
             return request.request().getResultAsJSON();
         });
 
-        String qty = TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт");
-        BigDecimal price = TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE"));
-
-        String leftPart = productInfo.get("NAME") + " " + qty;
-        String rightPart = price + " р";
+        String leftPart = String.format(
+                "%s %s", TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")),
+                productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
+        );
+        String rightPart = TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")) + " р";
         String trimmedLeft = truncate(leftPart, WIDTH - rightPart.length() - MIN_DOTS);
 
         String line = String.format(
