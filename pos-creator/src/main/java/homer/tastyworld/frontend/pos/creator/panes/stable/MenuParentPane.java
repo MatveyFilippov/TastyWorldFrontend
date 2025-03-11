@@ -45,7 +45,7 @@ public class MenuParentPane extends StableParentPane {
             clickableItemsTable.add(getMenuImgBtn(menuIDs[i], scroll), i % 3, i / 3);
         }
         System.out.printf("\rGetting menu category (%s/%s)%n", menuIDs.length, menuIDs.length);
-        //productsParentPane.cacheAll(menuIDs);
+        productsParentPane.cacheAll(menuIDs);
 
         menuPaneImgMenuContainer.add(scroll, 1, 0);
     }
