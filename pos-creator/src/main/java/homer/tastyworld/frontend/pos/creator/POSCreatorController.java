@@ -311,7 +311,7 @@ public class POSCreatorController {
             return;
         }
         if (endOrderCreatingIsPaidCheckBox.isSelected()) {
-            boolean isAccess = !OrderLooking.isPaid() && DialogWindow.askBool(
+            boolean isAccess = DialogWindow.askBool(
                     "Оплачен", "Нет", "Оплата заказа",
                     "Отметить заказ как оплаченный и получить чек?",
                     "Позиции заказа будут закрыты для редактирования, отменить это действие нльзя"

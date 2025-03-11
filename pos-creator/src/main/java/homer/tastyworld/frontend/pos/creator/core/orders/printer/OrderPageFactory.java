@@ -84,11 +84,8 @@ public class OrderPageFactory implements PrinterPageFactory {
             return request.request().getResultAsJSON();
         });
 
-        String qty = TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")).toString();
-        qty += productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт";
-        BigDecimal price = TypeChanger.toBigDecimal(
-                productInfo.get("PRICE_PEER_PEACE")).divide(BigDecimal.valueOf(AddProductParentPane.Product.pieceStep)
-        );
+        String qty = TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт");
+        BigDecimal price = TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE"));
 
         String leftPart = productInfo.get("NAME") + " " + qty;
         String rightPart = price + " р";
