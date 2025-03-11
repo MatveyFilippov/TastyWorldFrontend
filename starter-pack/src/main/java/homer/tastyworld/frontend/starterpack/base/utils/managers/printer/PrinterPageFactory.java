@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.starterpack.base.utils.managers.printer;
 
-public interface PageFactory {
+public interface PrinterPageFactory {
 
     byte[] getPage();
 

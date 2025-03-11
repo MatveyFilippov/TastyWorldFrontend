@@ -25,7 +25,7 @@ public class PrinterManager {
         return printer != null;
     }
 
-    public static void print(PageFactory pageFactory) {
+    public static void print(PrinterPageFactory printerPageFactory) {
         if (!isPrinterAvailable() && AppConfig.getPrinterName() != null) {
             throw new ScaleUsingException(
                     "Try to use printer, but it is unavailable",
@@ -33,7 +33,7 @@ public class PrinterManager {
             );
         }
         DocPrintJob job = printer.createPrintJob();
-        Doc doc = new SimpleDoc(pageFactory.getPage(), DocFlavor.BYTE_ARRAY.AUTOSENSE, null);
+        Doc doc = new SimpleDoc(printerPageFactory.getPage(), DocFlavor.BYTE_ARRAY.AUTOSENSE, null);
         try {
             job.print(doc, null);
         } catch (PrintException ex) {
