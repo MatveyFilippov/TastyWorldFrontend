@@ -310,13 +310,23 @@ public class POSCreatorController {
             );
             return;
         }
+        if (endOrderCreatingIsPaidCheckBox.isSelected()) {
+            boolean isAccess = !OrderLooking.isPaid() && DialogWindow.askBool(
+                    "Оплачен", "Нет", "Оплата заказа",
+                    "Отметить заказ как оплаченный и получить чек?",
+                    "Позиции заказа будут закрыты для редактирования, отменить это действие нльзя"
+            );
+            if (isAccess) {
+                OrderCreating.setPaid();
+            } else {
+                endOrderCreatingIsPaidCheckBox.setSelected(false);
+                return;
+            }
+        }
         String address = endOrderCreatingDeliveryField.getText().trim();
         if (!address.equals("")) {
             OrderCreating.editDeliveryAddress(address);
             VirtualKeyboardPrompts.appendVar(endOrderCreatingDeliveryField);
-        }
-        if (endOrderCreatingIsPaidCheckBox.isSelected()) {
-            OrderCreating.setPaid();
         }
         OrderCreating.finish();
         endOrderCreatingPane.clean();

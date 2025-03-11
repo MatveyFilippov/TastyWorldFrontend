@@ -20,7 +20,7 @@ import javafx.util.Duration;
 
 public class PaneHelper {
 
-    public static final Duration LONG_PRESSING = Duration.millis(100);
+    public static final Duration LONG_PRESSING = Duration.millis(50);
 
     public static void setColorRoundBackground(AnchorPane pane, int radius, Color color) {
         pane.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), Insets.EMPTY)));

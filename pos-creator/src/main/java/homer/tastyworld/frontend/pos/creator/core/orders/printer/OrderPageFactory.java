@@ -33,10 +33,10 @@ public class OrderPageFactory implements PrinterPageFactory {
             addCenteredText((String) MyParams.getClientPointInfo().get("NAME"));
             addDivider('~');
 
-            String closeTime = AppDateTime.backendToLocal(AppDateTime.parseDateTime(
-                    (String) orderInfo.get("CLOSED_AT")
+            String paidAt = AppDateTime.backendToLocal(AppDateTime.parseDateTime(
+                    (String) orderInfo.get("PAID_AT")
             )).format(AppDateTime.DATETIME_FORMAT);
-            addCenteredText(closeTime);
+            addCenteredText(paidAt);
             addDivider('=');
 
             setItems(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs")));
