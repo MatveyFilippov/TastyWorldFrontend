@@ -315,10 +315,10 @@ public class POSCreatorController {
             OrderCreating.editDeliveryAddress(address);
             VirtualKeyboardPrompts.appendVar(endOrderCreatingDeliveryField);
         }
-        OrderCreating.finish();
         if (endOrderCreatingIsPaidCheckBox.isSelected()) {
             OrderCreating.setPaid();
         }
+        OrderCreating.finish();
         endOrderCreatingPane.clean();
         mainPane.openAndCloseFrom(endOrderCreatingPaneParent);
     }
