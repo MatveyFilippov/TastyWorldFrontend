@@ -25,17 +25,17 @@ class PropertiesProcessor {
         this.filePath = filePath;
     }
 
-    public String getValue(String key) {
-        return properties.getProperty(key);
+    public String getValue(ConfigKey key) {
+        return properties.getProperty(key.key);
     }
 
-    public void setValue(String key, String value) {
-        properties.setProperty(key, value);
+    public void setValue(ConfigKey key, String value) {
+        properties.setProperty(key.key, value);
         save();
     }
 
-    public void deleteValue(String key) {
-        properties.remove(key);
+    public void deleteValue(ConfigKey key) {
+        properties.remove(key.key);
         save();
     }
 

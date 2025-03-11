@@ -18,13 +18,15 @@ import javafx.scene.paint.Color;
 import java.io.InputStream;
 import javafx.util.Duration;
 
-public class Helper {
+public class PaneHelper {
 
-    public static void setAnchorPaneColorRoundBackground(AnchorPane pane, int radius, Color color) {
+    public static final Duration LONG_PRESSING = Duration.millis(100);
+
+    public static void setColorRoundBackground(AnchorPane pane, int radius, Color color) {
         pane.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), Insets.EMPTY)));
     }
 
-    public static void setAnchorPaneImageBackgroundCentre(AnchorPane pane, InputStream img) {
+    public static void setImageBackgroundCentre(AnchorPane pane, InputStream img) {
         BackgroundImage backgroundImage = new BackgroundImage(
                 new Image(img),
                 BackgroundRepeat.NO_REPEAT,
@@ -36,7 +38,7 @@ public class Helper {
         pane.setBackground(new Background(backgroundImage));
     }
 
-    public static void setAnchorPaneImageBackgroundBottom(AnchorPane pane, InputStream img) {
+    public static void setImageBackgroundBottom(AnchorPane pane, InputStream img) {
         BackgroundImage backgroundImage = new BackgroundImage(
                 new Image(img),
                 BackgroundRepeat.NO_REPEAT,
@@ -60,6 +62,10 @@ public class Helper {
         node.setOnMousePressed(ignored -> delay.playFromStart());
         node.setOnMouseReleased(ignored -> delay.stop());
         delay.setOnFinished(event);
+    }
+
+    public static void setOnMouseClickedWithLongPressing(Node node, EventHandler<ActionEvent> event) {
+        setOnMouseClickedWithPressingTimeChecking(node, LONG_PRESSING, event);
     }
 
 }

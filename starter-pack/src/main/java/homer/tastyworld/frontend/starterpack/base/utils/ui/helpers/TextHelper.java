@@ -9,7 +9,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
-public class Text {
+public class TextHelper {
 
     public static StringExpression getAdaptiveFontSize(AnchorPane pane, int divide) {
         return Bindings.concat(

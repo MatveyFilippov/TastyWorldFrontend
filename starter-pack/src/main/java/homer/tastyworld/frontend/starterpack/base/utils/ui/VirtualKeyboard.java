@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.starterpack.base.utils.ui.helpers;
+package homer.tastyworld.frontend.starterpack.base.utils.ui;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;

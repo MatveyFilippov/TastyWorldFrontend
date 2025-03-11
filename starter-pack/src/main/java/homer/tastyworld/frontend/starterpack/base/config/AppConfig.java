@@ -32,19 +32,19 @@ public class AppConfig {
         try {
             inputStream.close();
         } catch (IOException ignored) {}
-        appName = appProperties.getValue("app.name");
-        appVersion = appProperties.getValue("app.version");
+        appName = appProperties.getValue(ConfigKey.APP_NAME);
+        appVersion = appProperties.getValue(ConfigKey.APP_VERSION);
         if (appName == null || appName.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find property 'app.name'");
+            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_NAME.key + "'");
         }
         if (appVersion == null || appVersion.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find property 'app.version'");
+            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_VERSION.key + "'");
         }
     }
 
     public static String getToken() {
         if (token == null) {
-            token = properties.getValue("api.token");
+            token = properties.getValue(ConfigKey.API_TOKEN);
             if (token == null) {
                 String tempToken = DialogWindow.getOrNull(
                         "TastyWorld API token",
@@ -63,9 +63,9 @@ public class AppConfig {
 
     public static void setToken(String newToken) {
         if (newToken == null) {
-            properties.deleteValue("api.token");
+            properties.deleteValue(ConfigKey.API_TOKEN);
         } else {
-            properties.setValue("api.token", newToken);
+            properties.setValue(ConfigKey.API_TOKEN, newToken);
         }
         token = newToken;
     }
@@ -76,6 +76,10 @@ public class AppConfig {
 
     public static String getAppVersion() {
         return appVersion;
+    }
+
+    public static String getAppDateTimeZoneID() {
+        return properties.getValue(ConfigKey.APP_DATETIME_ZONE_ID);
     }
 
 }

@@ -4,7 +4,6 @@ import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
 import homer.tastyworld.frontend.starterpack.base.AppDateTime;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
-import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.ResponseException;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
@@ -35,7 +34,7 @@ public class MyParams {
     }
 
     public static long getTokenSubscriptionAvailableDays() {
-        LocalDate paidTill = AppDateTime.parse((String) getTokenInfo().get("PAID_TILL"));
+        LocalDate paidTill = AppDateTime.parseDate((String) getTokenInfo().get("PAID_TILL"));
         return AppDateTime.getDaysDiff(AppDateTime.getNowDate(), paidTill);
     }
 
