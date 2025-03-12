@@ -27,7 +27,7 @@ public class OrderPageFactory implements PrinterPageFactory {
         try {
             initPrinter();
             setOrderName((String) orderInfo.get("NAME"));
-            setEmptyLine();
+            setEmptyLines(2);
 
             addCenteredText("ТОВАРНЫЙ ЧЕК");
             addCenteredText((String) MyParams.getClientPointInfo().get("NAME"));
@@ -42,7 +42,7 @@ public class OrderPageFactory implements PrinterPageFactory {
             setItems(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs")));
             setPrice(TypeChanger.toBigDecimal(orderInfo.get("TOTAL_PRICE")));
             addCenteredText("СПАСИБО ЗА ВИЗИТ!");
-            setEmptyLine();
+            setEmptyLines(4);
         } catch (IOException ex) {
             logger.error("Occurred exception while creating page to print", ex);
         }
@@ -72,8 +72,12 @@ public class OrderPageFactory implements PrinterPageFactory {
         addDivider('~');
     }
 
-    private void setEmptyLine() throws IOException {
-        output.write("\n\n".getBytes(StandardCharsets.US_ASCII));
+    private void setEmptyLines(int qty) throws IOException {
+        StringBuilder result = new StringBuilder(qty);
+        for (int i = 0; i < qty; i++) {
+            result.append("\n");
+        }
+        output.write(result.toString().getBytes(StandardCharsets.US_ASCII));
     }
 
     private void addItemLine(Map<String, Object> itemInfo) throws IOException {
@@ -91,12 +95,12 @@ public class OrderPageFactory implements PrinterPageFactory {
                 productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт"
         );
         String rightPart = TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")) + " р";
-        String trimmedLeft = truncate(leftPart, WIDTH - rightPart.length() - 7);
+        String trimmedLeft = truncate(leftPart, WIDTH - rightPart.length());
 
         String line = String.format(
                 "%s %s %s",
                 trimmedLeft,
-                new String(new char[WIDTH - trimmedLeft.length() - rightPart.length()]).replace('\0', '.'),
+                new String(new char[WIDTH - trimmedLeft.length() - rightPart.length() - 2]).replace('\0', '.'),
                 rightPart
         );
 

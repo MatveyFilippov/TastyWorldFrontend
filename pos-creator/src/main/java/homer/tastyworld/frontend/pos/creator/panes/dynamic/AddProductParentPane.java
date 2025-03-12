@@ -262,12 +262,14 @@ public class AddProductParentPane extends DynamicParentPane {
         TextHelper.setTextCentre(addProductAdditivesTopic, "Добавки", TextHelper.getAdaptiveFontSize(addProductAdditivesTopic, 15), null);
     }
 
-    private AnchorPane getClickableNumberKbBtn(int toAppend) {
+    private AnchorPane getClickableNumberKbBtn(String toAppend) {
         AnchorPane btn = new AnchorPane();
-        TextHelper.setTextCentre(btn, String.valueOf(toAppend), TextHelper.getAdaptiveFontSize(btn, 2), null);
+        TextHelper.setTextCentre(btn, toAppend, TextHelper.getAdaptiveFontSize(btn, 2), null);
         btn.setOnMouseClicked(event -> {
-            Product.qty = Integer.parseInt(addProductQTYFiled.getText()) + toAppend;
-            addProductQTYFiled.setText(String.valueOf(Product.qty));
+            String oldQTY = addProductQTYFiled.getText().replace(" ", "");
+            String newQTY = oldQTY.equals("0") ? toAppend : oldQTY + toAppend;
+            Product.qty = Integer.parseInt(newQTY);
+            addProductQTYFiled.setText(newQTY);
             recalculatePrice();
         });
         return btn;
@@ -277,13 +279,9 @@ public class AddProductParentPane extends DynamicParentPane {
         AnchorPane btn = new AnchorPane();
         TextHelper.setTextCentre(btn, "<--", TextHelper.getAdaptiveFontSize(btn, 4), null);
         btn.setOnMouseClicked(event -> {
-            String old = addProductQTYFiled.getText().replace(" ", "");
-            int len = old.length();
-            if (len <= 1) {
-                Product.qty = 0;
-            } else {
-                Product.qty = Integer.parseInt(old.substring(0, len - 1));
-            }
+            String oldQTY = addProductQTYFiled.getText().replace(" ", "");
+            int len = oldQTY.length();
+            Product.qty = len <= 1 ? 0 : Integer.parseInt(oldQTY.substring(0, len - 1));
             addProductQTYFiled.setText(String.valueOf(Product.qty));
             recalculatePrice();
         });
@@ -292,9 +290,9 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private void initNumbersKeyboardInAddProductPane() {
         for (int i = 0; i < 9; i++) {
-            addProductNumbersKeyboard.add(getClickableNumberKbBtn(i + 1), i % 3, i / 3);
+            addProductNumbersKeyboard.add(getClickableNumberKbBtn(String.valueOf(i + 1)), i % 3, i / 3);
         }
-        addProductNumbersKeyboard.add(getClickableNumberKbBtn(0), 3, 0);
+        addProductNumbersKeyboard.add(getClickableNumberKbBtn("0"), 3, 0);
         addProductNumbersKeyboard.add(getClickableShiftBackKbBtn(), 3, 1);
         addProductQTYFiled.setText("0");
     }
