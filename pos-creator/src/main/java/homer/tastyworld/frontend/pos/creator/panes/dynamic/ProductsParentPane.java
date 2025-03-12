@@ -72,7 +72,7 @@ public class ProductsParentPane extends DynamicParentPane {
         product.prefWidthProperty().bind(scroll.widthProperty());
         product.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        PaneHelper.setOnMouseClickedWithLongPressing(product, event -> {
+        PaneHelper.setOnMouseClickedWithPressingCountChecking(product, 2, event -> {
             addProductParentPane.fill(productID);
             addProductParentPane.openAndCloseFrom(parent);
             clean();

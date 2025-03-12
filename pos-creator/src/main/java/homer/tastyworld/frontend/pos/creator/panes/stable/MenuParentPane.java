@@ -56,7 +56,7 @@ public class MenuParentPane extends StableParentPane {
         menu.prefWidthProperty().bind(scroll.widthProperty());
         menu.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        PaneHelper.setOnMouseClickedWithLongPressing(menu, event -> {
+        PaneHelper.setOnMouseClickedWithPressingCountChecking(menu, 2, event -> {
             productsParentPane.fill(menuID);
             productsParentPane.openAndCloseFrom(parent);
         });

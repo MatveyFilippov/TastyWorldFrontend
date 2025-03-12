@@ -21,7 +21,7 @@ public class POSCreatorTableNodeFactory implements TableNodeFactory {
     }
 
     private void setOnTouch(Node node, long orderID) {
-        PaneHelper.setOnMouseClickedWithPressingTimeChecking(node, Duration.millis(50), event -> {
+        node.setOnMouseClicked(event -> {
             lookOrderPane.fill(orderID);
             OrderLooking.start(orderID);
             lookOrderPane.getParent().setVisible(true);

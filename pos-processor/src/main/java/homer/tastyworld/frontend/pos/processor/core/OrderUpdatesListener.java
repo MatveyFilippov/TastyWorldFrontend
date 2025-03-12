@@ -102,9 +102,7 @@ public class OrderUpdatesListener {
         row.prefWidthProperty().bind(scroll.widthProperty());
         row.prefHeightProperty().bind(scroll.heightProperty().divide(10));
         TextHelper.setTextCentre(row, name, TextHelper.getAdaptiveFontSize(row, 5), Colors.NOT_LOOKED);
-        PaneHelper.setOnMouseClickedWithLongPressing(
-                row, event -> OrderInfoPane.fill(orderID)
-        );
+        PaneHelper.setOnMouseClickedWithPressingCountChecking(row, 2, event -> OrderInfoPane.fill(orderID));
         return row;
     }
 

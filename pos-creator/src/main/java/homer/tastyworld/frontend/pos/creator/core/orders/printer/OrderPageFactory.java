@@ -19,7 +19,6 @@ public class OrderPageFactory implements PrinterPageFactory {
 
     private static final AppLogger logger = AppLogger.getFor(OrderPageFactory.class);
     private static final int WIDTH = 48;
-    private static final int MIN_DOTS = 5;
     private static final String CHARSET_NAME = "CP866";
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -28,6 +27,7 @@ public class OrderPageFactory implements PrinterPageFactory {
         try {
             initPrinter();
             setOrderName((String) orderInfo.get("NAME"));
+            setEmptyLine();
 
             addCenteredText("ТОВАРНЫЙ ЧЕК");
             addCenteredText((String) MyParams.getClientPointInfo().get("NAME"));
@@ -85,16 +85,19 @@ public class OrderPageFactory implements PrinterPageFactory {
         });
 
         String leftPart = String.format(
-                "%s %s", TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")),
-                productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
+                "%s %s %s",
+                productInfo.get("NAME"),
+                TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")),
+                productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт"
         );
         String rightPart = TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")) + " р";
-        String trimmedLeft = truncate(leftPart, WIDTH - rightPart.length() - MIN_DOTS);
+        String trimmedLeft = truncate(leftPart, WIDTH - rightPart.length() - 6);
 
         String line = String.format(
                 "%s %s%s",
                 trimmedLeft,
-                new String(new char[WIDTH - trimmedLeft.length() - rightPart.length()]).replace('\0', '.'), rightPart
+                new String(new char[WIDTH - trimmedLeft.length() - rightPart.length()]).replace('\0', '.'),
+                rightPart
         );
 
         output.write(line.getBytes(CHARSET_NAME));

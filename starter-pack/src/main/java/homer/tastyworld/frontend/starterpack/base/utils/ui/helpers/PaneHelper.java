@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -16,11 +17,13 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.util.Duration;
 
 public class PaneHelper {
 
-    public static final Duration LONG_PRESSING = Duration.millis(50);
+    private static final Map<Node, Integer> nodeClickedCount = new ConcurrentHashMap<>();
 
     public static void setColorRoundBackground(AnchorPane pane, int radius, Color color) {
         pane.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), Insets.EMPTY)));
@@ -64,8 +67,20 @@ public class PaneHelper {
         delay.setOnFinished(event);
     }
 
-    public static void setOnMouseClickedWithLongPressing(Node node, EventHandler<ActionEvent> event) {
-        setOnMouseClickedWithPressingTimeChecking(node, LONG_PRESSING, event);
+    public static void setOnMouseClickedWithPressingCountChecking(Node node, int count, EventHandler<MouseEvent> event) {
+        nodeClickedCount.put(node, 0);
+        PauseTransition clickDelay = new PauseTransition(Duration.millis(500));
+        clickDelay.setOnFinished(ignored -> nodeClickedCount.put(node, 0));
+        node.setOnMouseClicked(mouseEvent -> {
+            int clicked = nodeClickedCount.get(node) + 1;
+            if (clicked >= count) {
+                event.handle(mouseEvent);
+                nodeClickedCount.put(node, 0);
+            } else {
+                clickDelay.playFromStart();
+                nodeClickedCount.put(node, clicked);
+            }
+        });
     }
 
 }
