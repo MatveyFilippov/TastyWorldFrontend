@@ -262,16 +262,12 @@ public class AddProductParentPane extends DynamicParentPane {
         TextHelper.setTextCentre(addProductAdditivesTopic, "Добавки", TextHelper.getAdaptiveFontSize(addProductAdditivesTopic, 15), null);
     }
 
-    private AnchorPane getClickableKbBtn(String toAppend) {
+    private AnchorPane getClickableNumberKbBtn(int toAppend) {
         AnchorPane btn = new AnchorPane();
-        TextHelper.setTextCentre(btn, toAppend, TextHelper.getAdaptiveFontSize(btn, 2), null);
+        TextHelper.setTextCentre(btn, String.valueOf(toAppend), TextHelper.getAdaptiveFontSize(btn, 2), null);
         btn.setOnMouseClicked(event -> {
-            String old = addProductQTYFiled.getText().replace(" ", "");
-            if (old.equals("0")) {
-                addProductQTYFiled.setText(toAppend);
-            } else {
-                addProductQTYFiled.setText(old + toAppend);
-            }
+            Product.qty = Integer.parseInt(addProductQTYFiled.getText()) + toAppend;
+            addProductQTYFiled.setText(String.valueOf(Product.qty));
             recalculatePrice();
         });
         return btn;
@@ -284,10 +280,11 @@ public class AddProductParentPane extends DynamicParentPane {
             String old = addProductQTYFiled.getText().replace(" ", "");
             int len = old.length();
             if (len <= 1) {
-                addProductQTYFiled.setText("0");
+                Product.qty = 0;
             } else {
-                addProductQTYFiled.setText(old.substring(0, len - 1));
+                Product.qty = Integer.parseInt(old.substring(0, len - 1));
             }
+            addProductQTYFiled.setText(String.valueOf(Product.qty));
             recalculatePrice();
         });
         return btn;
@@ -295,9 +292,9 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private void initNumbersKeyboardInAddProductPane() {
         for (int i = 0; i < 9; i++) {
-            addProductNumbersKeyboard.add(getClickableKbBtn(String.valueOf(i+1)), i % 3, i / 3);
+            addProductNumbersKeyboard.add(getClickableNumberKbBtn(i + 1), i % 3, i / 3);
         }
-        addProductNumbersKeyboard.add(getClickableKbBtn("0"), 3, 0);
+        addProductNumbersKeyboard.add(getClickableNumberKbBtn(0), 3, 0);
         addProductNumbersKeyboard.add(getClickableShiftBackKbBtn(), 3, 1);
         addProductQTYFiled.setText("0");
     }

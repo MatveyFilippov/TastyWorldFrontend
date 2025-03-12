@@ -59,14 +59,16 @@ public class OrderLooking {
         request.request();
     }
 
-    public static void setDone() {
+    public static void setDoneAndFinish() {
         Request request = new Request("/order/close", Method.POST);
         request.putInBody("id", id);
         request.request();
+        finish();
     }
 
     public static void finish() {
-        OrderLooking.id = null;
+        id = null;
+        orderInfo = null;
     }
 
 }

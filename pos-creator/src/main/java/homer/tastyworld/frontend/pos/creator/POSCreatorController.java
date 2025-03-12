@@ -346,7 +346,7 @@ public class POSCreatorController {
         boolean isPaid = OrderLooking.isPaid();
         boolean isAccess = DialogWindow.askBool(
                 "Выдан", "Нет", "Завершение заказа",
-                String.format("Отметить заказ как выданный%s?", isPaid ? " и оплаченный" : ""),
+                String.format("Отметить заказ как выданный%s?", !isPaid ? " и оплаченный" : ""),
                 "Заказ будет завешён, отменить это действие нльзя"
         );
         if (!isAccess) {
@@ -356,8 +356,10 @@ public class POSCreatorController {
             OrderLooking.setPaid();
             lookOrderSetPaidBtn.setDisable(true);
         }
-        OrderLooking.setDone();
-        closeLookOrderPane();
+        OrderLooking.editDeliveryAddressIfNotEqual(lookOrderDeliveryField.getText().trim());
+        OrderLooking.setDoneAndFinish();
+        lookOrderPane.clean();
+        lookOrderPaneParent.setVisible(false);
     }
 
     @FXML

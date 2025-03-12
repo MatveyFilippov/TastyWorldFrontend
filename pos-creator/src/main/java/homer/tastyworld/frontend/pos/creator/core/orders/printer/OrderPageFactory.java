@@ -73,7 +73,7 @@ public class OrderPageFactory implements PrinterPageFactory {
     }
 
     private void setEmptyLine() throws IOException {
-        output.write("\n\n\n\n".getBytes(StandardCharsets.US_ASCII));
+        output.write("\n\n".getBytes(StandardCharsets.US_ASCII));
     }
 
     private void addItemLine(Map<String, Object> itemInfo) throws IOException {
@@ -91,10 +91,10 @@ public class OrderPageFactory implements PrinterPageFactory {
                 productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт"
         );
         String rightPart = TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")) + " р";
-        String trimmedLeft = truncate(leftPart, WIDTH - rightPart.length() - 6);
+        String trimmedLeft = truncate(leftPart, WIDTH - rightPart.length() - 7);
 
         String line = String.format(
-                "%s %s%s",
+                "%s %s %s",
                 trimmedLeft,
                 new String(new char[WIDTH - trimmedLeft.length() - rightPart.length()]).replace('\0', '.'),
                 rightPart
