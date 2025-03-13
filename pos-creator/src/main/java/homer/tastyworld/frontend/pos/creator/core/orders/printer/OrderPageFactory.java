@@ -91,7 +91,7 @@ public class OrderPageFactory extends PrinterPageFactory {
 
         setItems(orderToPrint.itemIDs);
 
-        addLineCenter("ИТОГО: " + orderToPrint.totalPrice.toString() + " р");
+        addLineRight("ИТОГО: " + orderToPrint.totalPrice.toString() + " р");
         addDivider('~');
 
         addLineCenter("СПАСИБО ЗА ВИЗИТ!");
