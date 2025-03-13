@@ -35,7 +35,7 @@ public class MyParams {
 
     public static long getTokenSubscriptionAvailableDays() {
         LocalDate paidTill = AppDateTime.parseDate((String) getTokenInfo().get("PAID_TILL"));
-        return AppDateTime.getDaysDiff(AppDateTime.getNowDate(), paidTill);
+        return AppDateTime.getDaysDiff(AppDateTime.getBackendNowDate(), paidTill);
     }
 
     public static Long[] getActiveOrders() {

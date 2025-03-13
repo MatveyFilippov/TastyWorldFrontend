@@ -21,6 +21,10 @@ public class PrinterManager {
         setPrinter(AppConfig.getPrinterName());
     }
 
+    protected static String getPrinterName() {
+        return isPrinterAvailable() ? printer.getName() : null;
+    }
+
     public static boolean isPrinterAvailable() {
         return printer != null;
     }

@@ -29,12 +29,12 @@ public class AppDateTime {
         return LocalDate.parse(date);
     }
 
-    public static LocalDate getNowDate() {
+    public static LocalDate getBackendNowDate() {
         return LocalDate.now(BACKEND_DATETIME_ZONE_ID);
     }
 
-    public static LocalDate plusDaysFromNowToDate(long days) {
-        return getNowDate().plusDays(days);
+    public static LocalDate plusDaysFromBackendNow(long days) {
+        return getBackendNowDate().plusDays(days);
     }
 
     public static LocalDate getPasterDate(LocalDate firs, LocalDate second) {
@@ -49,7 +49,7 @@ public class AppDateTime {
         return LocalDateTime.parse(date);
     }
 
-    public static LocalDateTime getNowDateTime() {
+    public static LocalDateTime getBackendNowDateTime() {
         return LocalDateTime.now(BACKEND_DATETIME_ZONE_ID);
     }
 

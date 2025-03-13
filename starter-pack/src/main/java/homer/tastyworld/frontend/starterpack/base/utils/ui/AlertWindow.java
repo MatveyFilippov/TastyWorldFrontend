@@ -1,5 +1,6 @@
 package homer.tastyworld.frontend.starterpack.base.utils.ui;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -32,11 +33,19 @@ public class AlertWindow {
     }
 
     public static void showError(String errorName, String errorText, boolean wait) {
-        show(create(Alert.AlertType.ERROR, "Error", errorName, errorText), wait);
+        if (Platform.isFxApplicationThread()) {
+            show(create(Alert.AlertType.ERROR, "Error", errorName, errorText), wait);
+        } else {
+            Platform.runLater(() -> show(create(Alert.AlertType.ERROR, "Error", errorName, errorText), wait));
+        }
     }
 
     public static void showInfo(String header, String content, boolean wait) {
-        show(create(Alert.AlertType.INFORMATION, "Info", header, content), wait);
+        if (Platform.isFxApplicationThread()) {
+            show(create(Alert.AlertType.INFORMATION, "Info", header, content), wait);
+        } else {
+            Platform.runLater(() -> show(create(Alert.AlertType.INFORMATION, "Info", header, content), wait));
+        }
     }
 
 }
