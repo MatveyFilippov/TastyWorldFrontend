@@ -2,7 +2,7 @@ package homer.tastyworld.frontend.starterpack.base.utils.managers.printer;
 
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.modules.ScaleUsingException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.modules.PrinterUsingException;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -31,7 +31,7 @@ public class PrinterManager {
 
     public static void print(PrinterPageFactory printerPageFactory) {
         if (!isPrinterAvailable() && AppConfig.getPrinterName() != null) {
-            throw new ScaleUsingException(
+            throw new PrinterUsingException(
                     "Try to use printer, but it is unavailable",
                     "Принтер недоступен, обратитесь за помощью к разарботчикам"
             );
