@@ -7,9 +7,13 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class PrinterPageFactory {
 
-    public static final int WIDTH = 48;
     protected static final AppLogger logger = AppLogger.getFor(PrinterPageFactory.class);
-    protected final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    public final int WIDTH;
+    private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+    protected PrinterPageFactory(int width) {
+        this.WIDTH = width;
+    }
 
     protected abstract void setContent() throws Exception;
 
@@ -22,6 +26,14 @@ public abstract class PrinterPageFactory {
             logger.error("Occurred exception while creating page to print", ex);
         }
         return output.toByteArray();
+    }
+
+    protected void setFontStyle(byte[] style) throws IOException {
+        output.write(style);
+    }
+
+    protected void dropFontStyle() throws IOException {
+        setFontStyle(new byte[] {0x1B, 0x21, 0x00});
     }
 
     protected void addEmptyLines(int qty) throws IOException {

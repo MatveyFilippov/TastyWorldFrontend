@@ -22,9 +22,11 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     }
 
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
+    private static final Map<Long, Map<String, Object>> additivesCache = new ConcurrentHashMap<>();
     private final OrderToPrint orderToPrint;
 
     private OrderPrinterPageFactory(OrderToPrint orderToPrint) {
+        super(24);
         this.orderToPrint = orderToPrint;
     }
 
@@ -47,7 +49,6 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
             request.putInBody("id", itemID);
             addItemLine(request.request().getResultAsJSON());
         }
-        addDivider('=');
     }
 
     private void addItemLine(Map<String, Object> itemInfo) throws IOException {
@@ -59,30 +60,44 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                 }
         );
         addFullLine(
-                String.format(
-                        "%s %s %s",
-                        productInfo.get("NAME"),
-                        TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")),
-                        productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт"
-                ),
+                (String) productInfo.get("NAME"),
                 '.',
-                TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")) + " р"
+                TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + " " + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
         );
+        addAdditiveLines(TypeChanger.toMap("NOT_DEFAULT_ADDITIVES", Long.class, Integer.class));
+        addEmptyLines(1);
+    }
+
+    private void addAdditiveLines(Map<Long, Integer> additives) throws IOException {
+        dropFontStyle();
+        for (Map.Entry<Long, Integer> additive : additives.entrySet()) {
+            final Map<String, Object> additiveInfo = additivesCache.computeIfAbsent(
+                    additive.getKey(), id -> {
+                        Request request = new Request("/product/read_additive", Method.GET);
+                        request.putInBody("id", id);
+                        return request.request().getResultAsJSON();
+                    }
+            );
+            addFullLine(
+                    (String) additiveInfo.get("NAME"),
+                    '.',
+                    TypeChanger.toBigDecimal(additiveInfo.get("PEACE_QTY")) + " " + (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
+            );
+        }
+        setFontStyle(new byte[] {0x1B, 0x21, 0x30});  // 2x high + bold
     }
 
     @Override
     protected void setContent() throws IOException {
-        output.write(new byte[] {0x1D, 0x21, 0x11});  // 4x high + 2x width
+        setFontStyle(new byte[] {0x1D, 0x21, 0x11});  // 4x high + 2x width
         addLineCenter(orderToPrint.name);
-        output.write(new byte[] {0x1B, 0x21, 0x30}); // 2x high + bold
-
+        setFontStyle(new byte[] {0x1B, 0x21, 0x30});  // 2x high + bold
         addEmptyLines(2);
         addDivider('=');
         addLineCenter(orderToPrint.createdAt.format(AppDateTime.DATETIME_FORMAT));
         addDivider('-');
-
         setItems(orderToPrint.itemIDs);
-
+        addDivider('=');
         addEmptyLines(4);
     }
 

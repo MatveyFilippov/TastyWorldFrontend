@@ -28,6 +28,7 @@ public class OrderPageFactory extends PrinterPageFactory {
     private final OrderToPrint orderToPrint;
 
     private OrderPageFactory(OrderToPrint orderToPrint) {
+        super(48);
         this.orderToPrint = orderToPrint;
     }
 
@@ -51,7 +52,6 @@ public class OrderPageFactory extends PrinterPageFactory {
             request.putInBody("id", itemID);
             addItemLine(request.request().getResultAsJSON());
         }
-        addDivider('=');
     }
 
     private void addItemLine(Map<String, Object> itemInfo) throws IOException {
@@ -76,24 +76,19 @@ public class OrderPageFactory extends PrinterPageFactory {
 
     @Override
     protected void setContent() throws IOException {
-        output.write(new byte[] {0x1B, 0x21, 0x38});  // 4x high + 2x width
+        setFontStyle(new byte[] {0x1B, 0x21, 0x38});  // 4x high + 2x width
         addLineCenter(orderToPrint.name);
-        output.write(new byte[] {0x1B, 0x21, 0x00});  // Clean styles
-
+        dropFontStyle();
         addEmptyLines(2);
-
         addLineCenter("ТОВАРНЫЙ ЧЕК");
         addLineCenter(OrderToPrint.clientPoint);
         addDivider('~');
-
         addLineCenter(orderToPrint.paidAt.format(AppDateTime.DATETIME_FORMAT));
         addDivider('=');
-
         setItems(orderToPrint.itemIDs);
-
+        addDivider('=');
         addLineRight("ИТОГО: " + orderToPrint.totalPrice.toString() + " р");
         addDivider('~');
-
         addLineCenter("СПАСИБО ЗА ВИЗИТ!");
         addEmptyLines(4);
     }
