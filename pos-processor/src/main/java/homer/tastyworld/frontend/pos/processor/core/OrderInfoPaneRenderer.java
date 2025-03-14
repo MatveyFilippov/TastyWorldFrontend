@@ -19,32 +19,29 @@ import org.apache.hc.core5.http.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class OrderInfoPane {
+public class OrderInfoPaneRenderer {
 
-    private static Long orderID = null;
+    public static Long orderID = null;
     private static ScrollPane scroll;
-    private static AnchorPane printOrderImgBtn, doneOrderImgBtn;
     private static AnchorPane orderCreatedTimeTopic, orderNameTopic;
     private static StringExpression nameTopicFontSize, createdTimeTopicFontSize;
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
     private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
 
-    public static void init(ScrollPane scroll, AnchorPane printOrderImgBtn, AnchorPane doneOrderImgBtn, AnchorPane orderCreatedTimeTopic, AnchorPane orderNameTopic) {
-        OrderInfoPane.scroll = scroll;
-        OrderInfoPane.printOrderImgBtn = printOrderImgBtn;
-        OrderInfoPane.doneOrderImgBtn = doneOrderImgBtn;
-        OrderInfoPane.orderCreatedTimeTopic = orderCreatedTimeTopic;
-        OrderInfoPane.orderNameTopic = orderNameTopic;
+    public static void init(ScrollPane scroll, AnchorPane orderCreatedTimeTopic, AnchorPane orderNameTopic) {
+        OrderInfoPaneRenderer.scroll = scroll;
+        OrderInfoPaneRenderer.orderCreatedTimeTopic = orderCreatedTimeTopic;
+        OrderInfoPaneRenderer.orderNameTopic = orderNameTopic;
         nameTopicFontSize = TextHelper.getAdaptiveFontSize(orderNameTopic, 12);
         createdTimeTopicFontSize = TextHelper.getAdaptiveFontSize(orderCreatedTimeTopic, 25);
     }
 
-    public static void fill(long orderID) {
+    public static void render(long orderID) {
         clean();
         Request request = new Request("/order/read", Method.GET);
         request.putInBody("id", orderID);
         Map<String, Object> orderInfo = request.request().getResultAsJSON();
-        OrderInfoPane.orderID = TypeChanger.toLong(orderInfo.get("ID"));
+        OrderInfoPaneRenderer.orderID = TypeChanger.toLong(orderInfo.get("ID"));
         TextHelper.setTextLeft(
                 orderCreatedTimeTopic, AppDateTime.backendToLocal(AppDateTime.parseDateTime(
                         (String) orderInfo.get("CREATED_AT")
@@ -158,7 +155,7 @@ public class OrderInfoPane {
     }
 
     public static void cleanIfFilled(long orderID) {
-        if (OrderInfoPane.orderID != null && OrderInfoPane.orderID.equals(orderID)) {
+        if (OrderInfoPaneRenderer.orderID != null && OrderInfoPaneRenderer.orderID.equals(orderID)) {
             clean();
         }
     }

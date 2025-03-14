@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.pos.processor;
 
-import homer.tastyworld.frontend.pos.processor.core.OrderInfoPane;
+import homer.tastyworld.frontend.pos.processor.core.OrderActions;
+import homer.tastyworld.frontend.pos.processor.core.OrderInfoPaneRenderer;
 import homer.tastyworld.frontend.pos.processor.core.OrderUpdatesListener;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
@@ -24,7 +25,7 @@ public class POSProcessorController {
     private void initialize() {
         checkDaysLeft();
         initImgBtnsInMainPane();
-        OrderInfoPane.init(scrollItems, printOrderImgBtn, doneOrderImgBtn, orderCreatedTimeTopic, orderNameTopic);
+        OrderInfoPaneRenderer.init(scrollItems, orderCreatedTimeTopic, orderNameTopic);
         OrderUpdatesListener.init(scrollOrders);
     }
 
@@ -51,6 +52,24 @@ public class POSProcessorController {
                 doneOrderImgBtn,
                 POSProcessorApplication.class.getResourceAsStream("images/buttons/doneOrderImgBtn.png")
         );
+    }
+
+    @FXML
+    void printOrderImgBtnPressed() {
+        if (OrderInfoPaneRenderer.orderID == null) {
+            AlertWindow.showInfo("Заказ не выбран", "Печатать нечего, для начала откройте заказ", true);
+            return;
+        }
+        OrderActions.print(OrderInfoPaneRenderer.orderID);
+    }
+
+    @FXML
+    void doneOrderImgBtnPressed() {
+        if (OrderInfoPaneRenderer.orderID == null) {
+            AlertWindow.showInfo("Заказ не выбран", "Завершать нечего, для начала откройте заказ", true);
+            return;
+        }
+        OrderActions.setProcessed(OrderInfoPaneRenderer.orderID);
     }
 
 }

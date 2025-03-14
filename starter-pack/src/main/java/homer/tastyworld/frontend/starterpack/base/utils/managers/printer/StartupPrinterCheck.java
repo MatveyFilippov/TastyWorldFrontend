@@ -11,9 +11,9 @@ public class StartupPrinterCheck {
         if (printerName == null) {
             return;
         }
-        if (!PrinterManager.isPrinterAvailable()) {
+        if (PrinterManager.getPrinterName() == null) {
             PrinterManager.setDefaultPrinter();
-            if (!PrinterManager.isPrinterAvailable()) {
+            if (PrinterManager.getPrinterName() == null) {
                 AlertWindow.showError(
                         "Ошибка с принтером", "Не удалось подключиться к принтеру, чеки не будут печаться", false
                 );

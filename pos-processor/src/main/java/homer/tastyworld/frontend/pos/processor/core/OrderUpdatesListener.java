@@ -65,10 +65,7 @@ public class OrderUpdatesListener {
 
     private static void put(long orderID, String name) {
         putIfNotExists(orderID, name);
-        Request request = new Request("order/set_status", Method.POST);
-        request.putInBody("id", orderID);
-        request.putInBody("new_status", "PROCESSING");
-        request.request();
+        OrderActions.setProcessing(orderID);
     }
 
     private static void putIfNotExists(long orderID, String name) {
@@ -81,7 +78,7 @@ public class OrderUpdatesListener {
     }
 
     private static void remove(long orderID) {
-        OrderInfoPane.cleanIfFilled(orderID);
+        OrderInfoPaneRenderer.cleanIfFilled(orderID);
         Node order = ordersCache.remove(orderID);
         if (order != null) {
             orders.getChildren().remove(order);
@@ -102,7 +99,7 @@ public class OrderUpdatesListener {
         row.prefWidthProperty().bind(scroll.widthProperty());
         row.prefHeightProperty().bind(scroll.heightProperty().divide(10));
         TextHelper.setTextCentre(row, name, TextHelper.getAdaptiveFontSize(row, 5), Colors.NOT_LOOKED);
-        PaneHelper.setOnMouseClickedWithPressingCountChecking(row, 2, event -> OrderInfoPane.fill(orderID));
+        PaneHelper.setOnMouseClickedWithPressingCountChecking(row, 2, event -> OrderInfoPaneRenderer.render(orderID));
         return row;
     }
 

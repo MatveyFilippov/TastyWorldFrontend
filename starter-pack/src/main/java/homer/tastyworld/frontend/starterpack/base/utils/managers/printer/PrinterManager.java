@@ -22,19 +22,18 @@ public class PrinterManager {
     }
 
     protected static String getPrinterName() {
-        return isPrinterAvailable() ? printer.getName() : null;
-    }
-
-    public static boolean isPrinterAvailable() {
-        return printer != null;
+        return printer != null ? printer.getName() : null;
     }
 
     public static void print(PrinterPageFactory printerPageFactory) {
-        if (!isPrinterAvailable() && AppConfig.getPrinterName() != null) {
-            throw new PrinterUsingException(
-                    "Try to use printer, but it is unavailable",
-                    "Принтер недоступен, обратитесь за помощью к разарботчикам"
-            );
+        if (printer == null) {
+            if (AppConfig.getPrinterName() != null) {
+                throw new PrinterUsingException(
+                        "Try to use printer, but it is unavailable",
+                        "Принтер недоступен, обратитесь за помощью к разарботчикам"
+                );
+            }
+            return;
         }
         DocPrintJob job = printer.createPrintJob();
         Doc doc = new SimpleDoc(printerPageFactory.getPage(), DocFlavor.BYTE_ARRAY.AUTOSENSE, null);

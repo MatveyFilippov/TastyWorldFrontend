@@ -40,9 +40,7 @@ public class OrderLooking {
         Request request = new Request("/order/mark_as_paid", Method.POST);
         request.putInBody("id", id);
         request.request();
-        if (PrinterManager.isPrinterAvailable()) {
-            PrinterManager.print(OrderPageFactory.getFor(id));
-        }
+        PrinterManager.print(OrderPageFactory.getFor(id));
     }
 
     public static void editDeliveryAddressIfNotEqual(String address) {
