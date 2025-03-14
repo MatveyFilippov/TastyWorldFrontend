@@ -1,9 +1,10 @@
-package homer.tastyworld.frontend.pos.processor.core;
+package homer.tastyworld.frontend.pos.processor.core.helpers;
 
 import homer.tastyworld.frontend.pos.processor.POSProcessorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.AppDateTime;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.StringExpression;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OrderInfoPaneRenderer {
 
     public static Long orderID = null;
+    public static boolean isEditable = false;
     private static ScrollPane scroll;
     private static AnchorPane orderCreatedTimeTopic, orderNameTopic;
     private static StringExpression nameTopicFontSize, createdTimeTopicFontSize;
@@ -42,6 +44,7 @@ public class OrderInfoPaneRenderer {
         request.putInBody("id", orderID);
         Map<String, Object> orderInfo = request.request().getResultAsJSON();
         OrderInfoPaneRenderer.orderID = TypeChanger.toLong(orderInfo.get("ID"));
+        OrderInfoPaneRenderer.isEditable = !TypeChanger.toBool(orderInfo.get("IS_PAID"));
         TextHelper.setTextLeft(
                 orderCreatedTimeTopic, AppDateTime.backendToLocal(AppDateTime.parseDateTime(
                         (String) orderInfo.get("CREATED_AT")
@@ -49,6 +52,12 @@ public class OrderInfoPaneRenderer {
         );
         TextHelper.setTextCentre(orderNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, Color.BLACK);
         scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
+    }
+
+    public static void rerender() {
+        if (orderID != null) {
+            render(orderID);
+        }
     }
 
     private static GridPane computeItemsTable(Long[] itemIDs) {
@@ -108,7 +117,20 @@ public class OrderInfoPaneRenderer {
                 editImgBtn, "editOrderItemImgBtn",
                 POSProcessorApplication.class.getResourceAsStream("images/buttons/editOrderItemImgBtn.png")
         );
+        setEditOnClick(editImgBtn, TypeChanger.toLong(itemInfo.get("ID")), TypeChanger.toInt(itemInfo.get("PEACE_QTY")));
         return editImgBtn;
+    }
+
+    private static void setEditOnClick(AnchorPane editImgBtn, long itemID, int qty) {
+        editImgBtn.setOpacity(isEditable ? 1 : 0.5);
+        if (isEditable) {
+            editImgBtn.setOnMouseClicked(event -> EditItemQtyPane.open(itemID, qty));
+        } else {
+            editImgBtn.setOnMouseClicked(event -> AlertWindow.showInfo(
+                    "Позицию нельзя отредактировать", "Заказ уже оплачен, изменить позицию невозможно", true
+            ));
+            editImgBtn.setOpacity(0.5);
+        }
     }
 
     private static AnchorPane getItemName(Map<String, Object> itemInfo) {
@@ -162,6 +184,7 @@ public class OrderInfoPaneRenderer {
 
     public static void clean() {
         orderID = null;
+        isEditable = false;
         orderCreatedTimeTopic.getChildren().clear();
         orderNameTopic.getChildren().clear();
     }

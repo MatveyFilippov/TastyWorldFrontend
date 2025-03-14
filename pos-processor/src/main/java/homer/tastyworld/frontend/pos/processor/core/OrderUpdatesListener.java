@@ -1,5 +1,6 @@
 package homer.tastyworld.frontend.pos.processor.core;
 
+import homer.tastyworld.frontend.pos.processor.core.helpers.OrderInfoPaneRenderer;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;

@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.starterpack.base.utils.managers.scale;
 
-public enum STA {  // Scale status
+public enum ScaleStatus {  // Scale status
 
     STABLE ('S'),
     UNSTABLE ('U'),
@@ -9,15 +9,15 @@ public enum STA {  // Scale status
 
     private final char STATUS_CHAR;
 
-    STA (char statusChar) {
+    ScaleStatus(char statusChar) {
         STATUS_CHAR = statusChar;
     }
 
-    public static STA parse(byte[] packet) {
+    public static ScaleStatus parse(byte[] packet) {
         char staChar = (char) packet[2];
-        for (STA sta : values()) {
-            if (sta.STATUS_CHAR == staChar) {
-                return sta;
+        for (ScaleStatus scaleStatus : values()) {
+            if (scaleStatus.STATUS_CHAR == staChar) {
+                return scaleStatus;
             }
         }
         return UNKNOWN;

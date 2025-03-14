@@ -3,21 +3,39 @@ package homer.tastyworld.frontend.starterpack.base.utils.managers.scale;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.modules.ScaleUsingException;
-import com.fazecast.jSerialComm.*;
+import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortEvent;
 import javafx.application.Platform;
 import java.util.Arrays;
 
 public class ScaleManager implements AutoCloseable {
 
+    public static class ScaleState {
+
+        public final ScaleStatus STATUS;
+        public final double WEIGHT;
+        public final ScaleWeightUnit UNIT;
+
+        ScaleState(ScaleStatus status, double weight, ScaleWeightUnit unit) {
+            this.STATUS = status;
+            this.WEIGHT = weight;
+            this.UNIT = unit;
+        }
+
+    }
+
     @FunctionalInterface
-    public interface WeightHandler { void handle(STA sta, double weight, Unit unit); }
+    public interface WeightHandler { void handle(ScaleState scaleState); }
 
     private static final AppLogger logger = AppLogger.getFor(ScaleManager.class);
     private static final byte SOH = 0x01; // Start byte 1
     private static final byte STX = 0x02; // Start byte 2
     public static final boolean IS_SCALE_AVAILABLE;
     private static final SerialPort COM_PORT;
-    private final WeightHandler weightHandler;
+    private ScaleState scaleState;
+    private WeightHandler weightHandler;
+    private boolean isAsking = false;
     private byte[] buffer = new byte[0];
 
     static {
@@ -33,14 +51,13 @@ public class ScaleManager implements AutoCloseable {
         }
     }
 
-    public ScaleManager(WeightHandler weightHandler) {
+    public ScaleManager() {
         if (!IS_SCALE_AVAILABLE || !COM_PORT.openPort()) {
             throw new ScaleUsingException(
                     "Try to use scale, but it is unavailable (or can't open port)",
                     "Весы недоступны, обратитесь за помощью к разарботчикам"
             );
         }
-        this.weightHandler = weightHandler;
         COM_PORT.addDataListener(new SerialPortDataListener() {
 
             @Override
@@ -50,6 +67,9 @@ public class ScaleManager implements AutoCloseable {
 
             @Override
             public void serialEvent(SerialPortEvent event) {
+                if (weightHandler == null && !isAsking) {
+                    return;
+                }
                 byte[] newData = new byte[COM_PORT.bytesAvailable()];
                 COM_PORT.readBytes(newData, newData.length);
                 byte[] tempBuffer = new byte[buffer.length + newData.length];
@@ -57,6 +77,14 @@ public class ScaleManager implements AutoCloseable {
                 System.arraycopy(newData, 0, tempBuffer, buffer.length, newData.length);
                 buffer = tempBuffer;
                 processBuffer();
+                if (weightHandler != null && scaleState != null) {
+                    if (Platform.isFxApplicationThread()) {
+                        weightHandler.handle(scaleState);
+                    } else {
+                        Platform.runLater(() -> weightHandler.handle(scaleState));
+                    }
+                }
+                scaleState = null;
             }
 
         });
@@ -97,14 +125,23 @@ public class ScaleManager implements AutoCloseable {
             logger.errorOnlyServerNotify("ScaleManager can't parse weight", ex);
             return;
         }
-        STA sta = STA.parse(packet);
-        Unit unit = Unit.parse(packet);
 
-        if (Platform.isFxApplicationThread()) {
-            weightHandler.handle(sta, weight, unit);
-        } else {
-            Platform.runLater(() -> weightHandler.handle(sta, weight, unit));
+        scaleState = new ScaleState(ScaleStatus.parse(packet), weight, ScaleWeightUnit.parse(packet));
+    }
+
+    public void setWeightHandler(WeightHandler weightHandler) {
+        this.weightHandler = weightHandler;
+    }
+
+    public ScaleState getScaleState() throws InterruptedException {
+        isAsking = true;
+        ScaleState tempScaleState = null;
+        while (tempScaleState == null) {
+            Thread.sleep(100);
+            tempScaleState = scaleState;
         }
+        isAsking = false;
+        return tempScaleState;
     }
 
     @Override
