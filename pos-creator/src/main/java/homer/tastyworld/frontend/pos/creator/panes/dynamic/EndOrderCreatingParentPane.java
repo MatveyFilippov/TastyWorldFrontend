@@ -113,7 +113,10 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     private AnchorPane getDeleteItem(Map<String, Object> itemInfo, ObservableList<Node> deleteFrom, Node toDelete) {
         AnchorPane delete = new AnchorPane();
-        PaneHelper.setImageBackgroundCentre(delete, POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png"));
+        PaneHelper.setImageBackgroundCentre(
+                delete, "EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn",
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png")
+        );
         delete.setOnMouseClicked(event -> {
             Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
             if (!DialogWindow.askBool(
@@ -202,7 +205,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     private void initItemsTable() {
         scroll.setFitToWidth(true);
-        endOrderCreatingItemsContainer.add(scroll, 1, 1);
+        endOrderCreatingItemsContainer.add(scroll, 1, 2);
     }
 
     private void initTopicsFontSize() {

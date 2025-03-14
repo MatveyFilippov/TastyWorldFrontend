@@ -16,6 +16,7 @@ import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -25,12 +26,14 @@ public class MainParentPane extends StableParentPane {
 
     private GridPane mainPaneGridNodeContainer;
     private AnchorPane mainPaneDaysLeftAlert, mainPaneDaysLeftAlertTopic;
+    private AnchorPane mainPaneClientPointNameTopic;
     private AnchorPane mainPaneSettingsImgBtn, mainPaneNewOrderImgBtn;
     private AnchorPane mainPaneCookingOrdersTopic, mainPaneReadyOrdersTopic;
     private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
     private DynamicParentPane lookOrderParentPane;
 
     private void initDaysLeftAlertInMainPane() {
+        mainPaneDaysLeftAlert.setVisible(false);
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
         if (subscriptionAvailableDays <= 7) {
             String text = String.format(
@@ -46,10 +49,16 @@ public class MainParentPane extends StableParentPane {
             }
             AlertWindow.showInfo("Близится окончание подписки", text, true);
         } else {
-            mainPaneDaysLeftAlert.setVisible(false);
             mainPaneGridNodeContainer.getRowConstraints().getFirst().setPercentHeight(0);
             mainPaneGridNodeContainer.getRowConstraints().getLast().setPercentHeight(85);
         }
+    }
+
+    private void initClientPointTopicInMainPane() {
+        TextHelper.setTextCentre(
+                mainPaneClientPointNameTopic, (String) MyParams.getClientPointInfo().get("NAME"),
+                TextHelper.getAdaptiveFontSize(mainPaneClientPointNameTopic, 17), Color.web("#808080")
+        );
     }
 
     private void initImgBtnsInMainPane() {
@@ -78,6 +87,7 @@ public class MainParentPane extends StableParentPane {
 
     @Override
     public void initialize() {
+        initClientPointTopicInMainPane();
         initDaysLeftAlertInMainPane();
         initImgBtnsInMainPane();
         initTablesInMainPane();

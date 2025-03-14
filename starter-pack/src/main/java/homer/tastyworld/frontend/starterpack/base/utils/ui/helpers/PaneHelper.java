@@ -24,40 +24,44 @@ import javafx.util.Duration;
 public class PaneHelper {
 
     private static final Map<Node, Integer> nodeClickedCount = new ConcurrentHashMap<>();
+    private static final Map<String, Background> backgroundImageFromResourcesCache = new ConcurrentHashMap<>();
+    private static final BackgroundPosition imageBackgroundBottomPosition = new BackgroundPosition(
+            BackgroundPosition.CENTER.getHorizontalSide(), BackgroundPosition.CENTER.getHorizontalPosition(),
+            true, null, 1, true
+    );
+    private static final BackgroundSize imageBackgroundSize = new BackgroundSize(-1, -1, true, true, true, false);
 
     public static void setColorRoundBackground(AnchorPane pane, int radius, Color color) {
         pane.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), Insets.EMPTY)));
     }
 
-    public static void setImageBackgroundCentre(AnchorPane pane, InputStream img) {
+    private static Background getImageBackground(Image img, BackgroundPosition position) {
         BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(img),
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(-1, -1, true, true, true, false)
-                //new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)
+                img, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, position, imageBackgroundSize
         );
-        pane.setBackground(new Background(backgroundImage));
+        return new Background(backgroundImage);
+    }
+
+    public static void setImageBackgroundCentre(AnchorPane pane, InputStream img) {
+        pane.setBackground(getImageBackground(new Image(img), BackgroundPosition.CENTER));
+    }
+
+    public static void setImageBackgroundCentre(AnchorPane pane, String keyToCache, InputStream img) {
+        Background backgroundImage = backgroundImageFromResourcesCache.computeIfAbsent(
+                keyToCache, ignored -> getImageBackground(new Image(img), BackgroundPosition.CENTER)
+        );
+        pane.setBackground(backgroundImage);
     }
 
     public static void setImageBackgroundBottom(AnchorPane pane, InputStream img) {
-        BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(img),
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                new BackgroundPosition(
-                        BackgroundPosition.CENTER.getHorizontalSide(),
-                        BackgroundPosition.CENTER.getHorizontalPosition(),
-                        true,
-                        null,
-                        1,
-                        true
-                ),
-                new BackgroundSize(-1, -1, true, true, true, false)
-                //new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)
+        pane.setBackground(getImageBackground(new Image(img), imageBackgroundBottomPosition));
+    }
+
+    public static void setImageBackgroundBottom(AnchorPane pane, String keyToCache, InputStream img) {
+        Background backgroundImage = backgroundImageFromResourcesCache.computeIfAbsent(
+                keyToCache, ignored -> getImageBackground(new Image(img), imageBackgroundBottomPosition)
         );
-        pane.setBackground(new Background(backgroundImage));
+        pane.setBackground(backgroundImage);
     }
 
     public static void setOnMouseClickedWithPressingTimeChecking(Node node, Duration requiredPressingTime, EventHandler<ActionEvent> event) {

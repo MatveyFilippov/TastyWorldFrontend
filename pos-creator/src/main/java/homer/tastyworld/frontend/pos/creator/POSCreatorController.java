@@ -38,6 +38,8 @@ public class POSCreatorController {
     @FXML
     private AnchorPane mainPaneDaysLeftAlert, mainPaneDaysLeftAlertTopic;
     @FXML
+    private AnchorPane mainPaneClientPointNameTopic;
+    @FXML
     private AnchorPane mainPaneSettingsImgBtn, mainPaneNewOrderImgBtn;
     @FXML
     private AnchorPane mainPaneCookingOrdersTopic, mainPaneReadyOrdersTopic;
@@ -133,6 +135,7 @@ public class POSCreatorController {
                 .mainPaneGridNodeContainer(mainPaneGridNodeContainer)
                 .mainPaneDaysLeftAlert(mainPaneDaysLeftAlert)
                 .mainPaneDaysLeftAlertTopic(mainPaneDaysLeftAlertTopic)
+                .mainPaneClientPointNameTopic(mainPaneClientPointNameTopic)
                 .mainPaneSettingsImgBtn(mainPaneSettingsImgBtn)
                 .mainPaneNewOrderImgBtn(mainPaneNewOrderImgBtn)
                 .mainPaneCookingOrdersTopic(mainPaneCookingOrdersTopic)

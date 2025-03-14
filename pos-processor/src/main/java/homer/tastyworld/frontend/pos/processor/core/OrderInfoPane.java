@@ -108,7 +108,7 @@ public class OrderInfoPane {
     private static AnchorPane getEditImgBtn(Map<String, Object> itemInfo) {
         AnchorPane editImgBtn = new AnchorPane();
         PaneHelper.setImageBackgroundCentre(
-                editImgBtn,
+                editImgBtn, "editOrderItemImgBtn",
                 POSProcessorApplication.class.getResourceAsStream("images/buttons/editOrderItemImgBtn.png")
         );
         return editImgBtn;

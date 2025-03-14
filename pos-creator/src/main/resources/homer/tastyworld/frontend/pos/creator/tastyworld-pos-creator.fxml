@@ -15,7 +15,7 @@
    <children>
       <AnchorPane fx:id="mainPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <GridPane fx:id="mainPaneGridNodeContainer" gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane fx:id="mainPaneGridNodeContainer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
               </columnConstraints>
@@ -27,7 +27,7 @@
                <children>
                   <AnchorPane fx:id="mainPaneDaysLeftAlert" style="-fx-background-color: #FF3333;">
                      <children>
-                        <GridPane gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" />
                             <ColumnConstraints hgrow="SOMETIMES" percentWidth="90.0" />
@@ -46,7 +46,7 @@
                         </GridPane>
                      </children>
                   </AnchorPane>
-                  <GridPane gridLinesVisible="true" GridPane.rowIndex="1">
+                  <GridPane GridPane.rowIndex="1">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -61,10 +61,11 @@
                     </rowConstraints>
                      <children>
                         <AnchorPane fx:id="mainPaneSettingsImgBtn" onMouseClicked="#mainPaneSettingsImgBtnPressed" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="mainPaneClientPointNameTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <AnchorPane fx:id="mainPaneNewOrderImgBtn" onMouseClicked="#mainPaneNewOrderImgBtnPressed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
-                  <GridPane alignment="CENTER" gridLinesVisible="true" GridPane.rowIndex="2">
+                  <GridPane alignment="CENTER" GridPane.rowIndex="2">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="55.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -79,7 +80,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </GridPane.margin>
                            <children>
-                              <GridPane gridLinesVisible="true" layoutX="33.0" layoutY="75.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane layoutX="33.0" layoutY="75.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="ALWAYS" />
                                  </columnConstraints>
@@ -97,7 +98,7 @@
                                           <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
                                        </GridPane.margin>
                                     </AnchorPane>
-                                    <GridPane fx:id="mainPaneCookingOrdersTable" gridLinesVisible="true" GridPane.rowIndex="2">
+                                    <GridPane fx:id="mainPaneCookingOrdersTable" GridPane.rowIndex="2">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="ALWAYS" />
                                        </columnConstraints>
@@ -114,7 +115,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </GridPane.margin>
                            <children>
-                              <GridPane gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="ALWAYS" />
                                  </columnConstraints>
@@ -132,7 +133,7 @@
                                           <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
                                        </GridPane.margin>
                                     </AnchorPane>
-                                    <GridPane fx:id="mainPaneReadyOrdersTable" gridLinesVisible="true" GridPane.rowIndex="2">
+                                    <GridPane fx:id="mainPaneReadyOrdersTable" GridPane.rowIndex="2">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="ALWAYS" />
                                        </columnConstraints>
@@ -152,7 +153,7 @@
       </AnchorPane>
       <AnchorPane fx:id="addProductPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <GridPane gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                </columnConstraints>
@@ -161,7 +162,7 @@
                   <RowConstraints percentHeight="82.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <GridPane gridLinesVisible="true">
+                  <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -180,20 +181,20 @@
                         <AnchorPane fx:id="addProductSubmitImgBtn" onMouseClicked="#addProductSubmitImgBtnPressed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
-                  <GridPane alignment="CENTER" gridLinesVisible="true" GridPane.rowIndex="1">
+                  <GridPane alignment="CENTER" GridPane.rowIndex="1">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="4.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="1.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="45.0" />
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="4.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="1.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
                         <RowConstraints percentHeight="4.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <GridPane gridLinesVisible="true" GridPane.columnIndex="1">
+                        <GridPane GridPane.columnIndex="1">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" />
                           </columnConstraints>
@@ -203,7 +204,7 @@
                             <RowConstraints percentHeight="60.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <GridPane gridLinesVisible="true">
+                              <GridPane>
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="35.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="65.0" />
@@ -220,9 +221,10 @@
                                     </TextField>
                                  </children>
                               </GridPane>
-                              <GridPane gridLinesVisible="true" GridPane.rowIndex="1">
+                              <GridPane GridPane.rowIndex="1">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="65.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" />
                                   <ColumnConstraints hgrow="SOMETIMES" />
@@ -232,16 +234,16 @@
                                 </rowConstraints>
                                  <children>
                                     <AnchorPane fx:id="addProductMinusQTYImgBtn" />
-                                    <TextField fx:id="addProductQTYFiled" alignment="CENTER" GridPane.columnIndex="1">
+                                    <TextField fx:id="addProductQTYFiled" alignment="CENTER" GridPane.columnIndex="2">
                                        <font>
                                           <Font size="36.0" />
                                        </font>
                                     </TextField>
-                                    <AnchorPane fx:id="addProductQTYTypeTopic" GridPane.columnIndex="2" />
-                                    <AnchorPane fx:id="addProductPlusQTYImgBtn" GridPane.columnIndex="3" />
+                                    <AnchorPane fx:id="addProductQTYTypeTopic" GridPane.columnIndex="3" />
+                                    <AnchorPane fx:id="addProductPlusQTYImgBtn" GridPane.columnIndex="4" />
                                  </children>
                               </GridPane>
-                              <GridPane fx:id="addProductNumbersKeyboard" alignment="CENTER" gridLinesVisible="true" hgap="5.0" vgap="5.0" GridPane.rowIndex="2">
+                              <GridPane fx:id="addProductNumbersKeyboard" alignment="CENTER" hgap="5.0" vgap="5.0" GridPane.rowIndex="2">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" />
                                     <ColumnConstraints hgrow="SOMETIMES" />
@@ -259,7 +261,7 @@
                               </GridPane>
                            </children>
                         </GridPane>
-                        <GridPane fx:id="addProductAdditivesContainer" gridLinesVisible="true" GridPane.columnIndex="3">
+                        <GridPane fx:id="addProductAdditivesContainer" GridPane.columnIndex="3">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" />
                           </columnConstraints>
@@ -279,7 +281,7 @@
       </AnchorPane>
       <AnchorPane fx:id="productsPaneParent" layoutX="10.0" layoutY="10.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <GridPane gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                </columnConstraints>
@@ -288,7 +290,7 @@
                   <RowConstraints percentHeight="82.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <GridPane gridLinesVisible="true">
+                  <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -305,11 +307,11 @@
                         <AnchorPane fx:id="productsPaneMenuTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
-                  <GridPane fx:id="productPaneImgProductsContainer" alignment="CENTER" gridLinesVisible="true" GridPane.rowIndex="1">
+                  <GridPane fx:id="productPaneImgProductsContainer" alignment="CENTER" GridPane.rowIndex="1">
                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="1.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="92.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="1.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
@@ -321,7 +323,7 @@
       </AnchorPane>
       <AnchorPane fx:id="menuPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <GridPane gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                </columnConstraints>
@@ -330,7 +332,7 @@
                   <RowConstraints percentHeight="82.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <GridPane gridLinesVisible="true">
+                  <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -349,11 +351,11 @@
                         <AnchorPane fx:id="menuPaneLookOrderImgBtn" onMouseClicked="#menuPaneLookOrderImgBtnPressed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
-                  <GridPane fx:id="menuPaneImgMenuContainer" alignment="CENTER" gridLinesVisible="true" GridPane.rowIndex="1">
+                  <GridPane fx:id="menuPaneImgMenuContainer" alignment="CENTER" GridPane.rowIndex="1">
                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="1.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="92.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="1.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
@@ -365,18 +367,18 @@
       </AnchorPane>
       <AnchorPane fx:id="endOrderCreatingPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <GridPane gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints vgrow="SOMETIMES" />
                   <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
-                  <RowConstraints percentHeight="80.0" vgrow="SOMETIMES" />
-                  <RowConstraints percentHeight="3.0" vgrow="SOMETIMES" />
+                  <RowConstraints percentHeight="82.0" vgrow="SOMETIMES" />
+                  <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <GridPane gridLinesVisible="true">
+                  <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -397,14 +399,15 @@
                         <AnchorPane fx:id="endOrderCreatingCommitImgBtn" onMouseClicked="#endOrderCreatingCommitImgBtnPressed" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
-                  <GridPane fx:id="endOrderCreatingItemsContainer" alignment="CENTER" gridLinesVisible="true" GridPane.rowIndex="2">
+                  <GridPane fx:id="endOrderCreatingItemsContainer" alignment="CENTER" GridPane.rowIndex="2">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="92.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="95.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
                         <RowConstraints percentHeight="88.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
@@ -420,12 +423,12 @@
                            <children>
                               <TextField fx:id="endOrderCreatingDeliveryField" onMouseClicked="#showVirtualKeyboardParentPane" promptText="Адрес доставки">
                                  <font>
-                                    <Font size="27.0" />
+                                    <Font size="20.0" />
                                  </font>
                               </TextField>
                               <CheckBox fx:id="endOrderCreatingIsPaidCheckBox" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" text="Оплачен" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="25.0" />
+                                    <Font size="26.0" />
                                  </font>
                               </CheckBox>
                            </children>
@@ -440,14 +443,14 @@
          <children>
             <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" />
-                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="85.0" />
-                <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="ALWAYS" />
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="85.0" />
+                <ColumnConstraints hgrow="ALWAYS" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints percentHeight="85.0" vgrow="SOMETIMES" />
-                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="ALWAYS" />
+                <RowConstraints percentHeight="90.0" vgrow="ALWAYS" />
+                <RowConstraints vgrow="ALWAYS" />
               </rowConstraints>
                <children>
                   <AnchorPane onMouseClicked="#closeLookOrderPane" />
@@ -456,17 +459,17 @@
                   <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.rowIndex="1" />
                   <AnchorPane style="-fx-background-color: #F5F5F5; -fx-background-radius: 25; -fx-border-color: #999999; -fx-border-radius: 25;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <GridPane gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints vgrow="SOMETIMES" />
                               <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
-                              <RowConstraints percentHeight="80.0" vgrow="SOMETIMES" />
+                              <RowConstraints percentHeight="82.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <GridPane gridLinesVisible="true">
+                              <GridPane>
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" />
@@ -487,7 +490,7 @@
                                     <AnchorPane fx:id="lookOrderSetDoneImgBtn" onMouseClicked="#lookOrderSetDoneImgBtnPressed" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
-                              <GridPane fx:id="lookOrderItemsContainer" alignment="CENTER" gridLinesVisible="true" GridPane.rowIndex="2">
+                              <GridPane fx:id="lookOrderItemsContainer" alignment="CENTER" GridPane.rowIndex="2">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" />
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="92.0" />
