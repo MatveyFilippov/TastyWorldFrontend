@@ -7,13 +7,10 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class PrinterPageFactory {
 
+    public static final int DEFAULT_WIDTH = 48;
     protected static final AppLogger logger = AppLogger.getFor(PrinterPageFactory.class);
-    public final int WIDTH;
+    private int width = DEFAULT_WIDTH;
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-    protected PrinterPageFactory(int width) {
-        this.WIDTH = width;
-    }
 
     protected abstract void setContent() throws Exception;
 
@@ -32,8 +29,17 @@ public abstract class PrinterPageFactory {
         output.write(style);
     }
 
+    protected void setFontStyle(int width) {
+        this.width = width;
+    }
+
+    protected void setFontStyle(byte[] style, int width) throws IOException {
+        setFontStyle(style);
+        setFontStyle(width);
+    }
+
     protected void dropFontStyle() throws IOException {
-        setFontStyle(new byte[] {0x1B, 0x21, 0x00});
+        setFontStyle(new byte[] {0x1B, 0x21, 0x00}, DEFAULT_WIDTH);
     }
 
     protected void addEmptyLines(int qty) throws IOException {
@@ -60,7 +66,7 @@ public abstract class PrinterPageFactory {
     }
 
     protected void addLineRight(String line) throws IOException {
-        addLine(String.format("%" + WIDTH + "s", line));
+        addLine(String.format("%" + width + "s", line));
     }
 
     protected void addLineLeft(String line) throws IOException {
@@ -69,24 +75,24 @@ public abstract class PrinterPageFactory {
 
     protected void addFullLine(String leftPart, char sep, String rightPart) throws IOException {
         int lines = 1;
-        if (leftPart.length() > WIDTH) {
+        if (leftPart.length() > width) {
             lines++;
         }
-        if (rightPart.length() > WIDTH) {
+        if (rightPart.length() > width) {
             lines++;
         }
-        if (leftPart.length() + rightPart.length() > WIDTH) {
+        if (leftPart.length() + rightPart.length() > width && lines == 1) {
             lines++;
         }
-        // rightPart = rightPart.length() > WIDTH ? rightPart.substring(0, WIDTH-3) + ".." : rightPart;
-        // final int leftMaxLen = WIDTH - rightPart.length();
+        // rightPart = rightPart.length() > width ? rightPart.substring(0, width-3) + ".." : rightPart;
+        // final int leftMaxLen = width - rightPart.length();
         // leftPart = leftPart.length() > leftMaxLen ? leftPart.substring(0, leftMaxLen-3) + ".." : leftPart;
-        final String separator = " " + new String(new char[(WIDTH * lines)- leftPart.length() - rightPart.length() - 2]).replace('\0', sep) + " ";
+        final String separator = " " + new String(new char[(width * lines) - leftPart.length() - rightPart.length() - 2]).replace('\0', sep) + " ";
         addLine(leftPart + separator + rightPart);
     }
 
     protected void addDivider(char symbol) throws IOException {
-        addLine(new String(new char[WIDTH]).replace('\0', symbol));
+        addLine(new String(new char[width]).replace('\0', symbol));
     }
 
 }

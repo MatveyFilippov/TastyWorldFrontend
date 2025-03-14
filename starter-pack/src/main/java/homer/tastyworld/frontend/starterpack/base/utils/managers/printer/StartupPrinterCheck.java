@@ -26,7 +26,7 @@ public class StartupPrinterCheck {
                 );
             }
         }
-        PrinterManager.print(new PrinterPageFactory(48) {
+        PrinterManager.print(new PrinterPageFactory() {
             @Override
             protected void setContent() throws Exception {
                 addLineLeft(AppDateTime.backendToLocal(AppDateTime.getBackendNowDateTime()).format(AppDateTime.DATETIME_FORMAT));

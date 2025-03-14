@@ -28,7 +28,6 @@ public class OrderPageFactory extends PrinterPageFactory {
     private final OrderToPrint orderToPrint;
 
     private OrderPageFactory(OrderToPrint orderToPrint) {
-        super(48);
         this.orderToPrint = orderToPrint;
     }
 

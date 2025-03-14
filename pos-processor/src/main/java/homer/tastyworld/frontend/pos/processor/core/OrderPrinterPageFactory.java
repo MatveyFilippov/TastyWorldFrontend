@@ -26,7 +26,6 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     private final OrderToPrint orderToPrint;
 
     private OrderPrinterPageFactory(OrderToPrint orderToPrint) {
-        super(24);
         this.orderToPrint = orderToPrint;
     }
 
@@ -44,10 +43,12 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     }
 
     private void setItems(Long[] itemIDs) throws IOException {
+        addEmptyLines(1);
         for (Long itemID : itemIDs) {
             Request request = new Request("/order/read_item", Method.GET);
             request.putInBody("id", itemID);
             addItemLine(request.request().getResultAsJSON());
+            addEmptyLines(1);
         }
     }
 
@@ -65,7 +66,6 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                 TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + " " + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
         );
         addAdditiveLines(TypeChanger.toMap(itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class));
-        addEmptyLines(1);
     }
 
     private void addAdditiveLines(Map<Long, Integer> additives) throws IOException {
@@ -78,22 +78,22 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                         return request.request().getResultAsJSON();
                     }
             );
-            addLineLeft(
+            addLineRight(
                     additiveInfo.get("NAME") + " " + additive.getValue() + " " + (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
             );
         }
-        setFontStyle(new byte[] {0x1B, 0x21, 0x30});  // 2x high + bold
+        setFontStyle(new byte[] {0x1B, 0x21, 0x20}, 24);  // 2x high + bold
     }
 
     @Override
     protected void setContent() throws IOException {
         setFontStyle(new byte[] {0x1D, 0x21, 0x11});  // 4x high + 2x width
         addLineCenter(orderToPrint.name);
-        setFontStyle(new byte[] {0x1B, 0x21, 0x30});  // 2x high + bold
-        addEmptyLines(2);
-        addDivider('=');
+        addEmptyLines(1);
+        dropFontStyle();
         addLineCenter(orderToPrint.createdAt.format(AppDateTime.DATETIME_FORMAT));
-        addDivider('-');
+        setFontStyle(new byte[] {0x1B, 0x21, 0x20}, 24);  // 2x high + bold
+        addDivider('=');
         setItems(orderToPrint.itemIDs);
         addDivider('=');
         addEmptyLines(4);
