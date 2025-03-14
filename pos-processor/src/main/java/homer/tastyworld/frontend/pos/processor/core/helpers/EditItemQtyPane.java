@@ -13,6 +13,7 @@ public class EditItemQtyPane {
     public static Integer qty = null;
     private static AnchorPane editItemQtyPaneParent;
     private static Label editItemQtyTopic;
+    private static Thread thread;
 
     private static void setQTY(Integer qty) {
         EditItemQtyPane.qty = qty;
@@ -20,23 +21,25 @@ public class EditItemQtyPane {
     }
 
     private static void startAskingScale() {
-        Thread thread = new Thread(() -> {
+        thread = new Thread(() -> {
             try (ScaleManager scaleManager = new ScaleManager()) {
                 while (true) {
-                    ScaleState state = scaleManager.getScaleState();
-                    if (state.STATUS == ScaleState.Status.STABLE) {
-                        int weight = 0;
-                        if (state.UNIT == ScaleState.Unit.KG) {
-                            weight = (int) (state.WEIGHT * 1000);
+                    if (!Thread.interrupted()) {
+                        ScaleState state = scaleManager.getScaleState();
+                        if (state.STATUS == ScaleState.Status.STABLE) {
+                            int weight = 0;
+                            if (state.UNIT == ScaleState.Unit.KG) {
+                                weight = (int) (state.WEIGHT * 1000);
+                            }
+                            setQTY(weight);
+                            return;
                         }
-                        setQTY(weight);
-                        return;
                     }
                 }
             } catch (InterruptedException ignored) {}
         });
         thread.setDaemon(true);
-        thread.setName("Scale thread");
+        thread.setName("Scale asking thread");
         thread.start();
     }
 
@@ -50,6 +53,10 @@ public class EditItemQtyPane {
     }
 
     public static void close() {
+        if (thread != null && thread.isAlive()) {
+            thread.interrupt();
+            thread = null;
+        }
         itemID = null;
         setQTY(null);
         editItemQtyPaneParent.setVisible(false);

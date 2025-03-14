@@ -74,7 +74,7 @@ public class ScaleManager implements AutoCloseable {
                         Platform.runLater(() -> weightHandler.handle(scaleState));
                     }
                 }
-                scaleState = null;
+                setScaleState(null);
             }
 
         });
@@ -116,18 +116,23 @@ public class ScaleManager implements AutoCloseable {
             return;
         }
 
-        scaleState = new ScaleState(ScaleState.parseStatus(packet), weight, ScaleState.parseUnit(packet));
+        setScaleState(new ScaleState(ScaleState.parseStatus(packet), weight, ScaleState.parseUnit(packet)));
     }
 
     public void setWeightHandler(WeightHandler weightHandler) {
         this.weightHandler = weightHandler;
     }
 
-    public ScaleState getScaleState() throws InterruptedException {
+    private synchronized void setScaleState(ScaleState scaleState) {
+        this.scaleState = scaleState;
+        notifyAll();
+    }
+
+    public synchronized ScaleState getScaleState() throws InterruptedException {
         isAsking = true;
         ScaleState tempScaleState = null;
         while (tempScaleState == null) {
-            Thread.sleep(100);
+            wait();
             tempScaleState = scaleState;
         }
         isAsking = false;
