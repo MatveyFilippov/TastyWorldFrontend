@@ -59,7 +59,7 @@ public class TypeChanger {
         Map<K, V> result = new HashMap<>();
         ((Map<Object, Object>) object).forEach(
                 (k, v) -> result.put(
-                        valueType == String.class ? (K) String.valueOf(k)
+                        keyType == String.class ? (K) String.valueOf(k)
                                                   : OBJECT_MAPPER.convertValue(String.valueOf(k), keyType),
                         valueType == Object.class ? (V) v
                                                   : OBJECT_MAPPER.convertValue(String.valueOf(v), valueType)

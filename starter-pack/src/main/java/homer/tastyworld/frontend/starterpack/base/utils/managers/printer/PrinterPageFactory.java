@@ -68,9 +68,20 @@ public abstract class PrinterPageFactory {
     }
 
     protected void addFullLine(String leftPart, char sep, String rightPart) throws IOException {
-        final int leftMaxLen = WIDTH - rightPart.length();
-        leftPart = leftPart.length() > leftMaxLen ? leftPart.substring(0, leftMaxLen-3) + ".." : leftPart;
-        final String separator = " " + new String(new char[WIDTH - leftPart.length() - rightPart.length() - 2]).replace('\0', sep) + " ";
+        int lines = 1;
+        if (leftPart.length() > WIDTH) {
+            lines++;
+        }
+        if (rightPart.length() > WIDTH) {
+            lines++;
+        }
+        if (leftPart.length() + rightPart.length() > WIDTH) {
+            lines++;
+        }
+        // rightPart = rightPart.length() > WIDTH ? rightPart.substring(0, WIDTH-3) + ".." : rightPart;
+        // final int leftMaxLen = WIDTH - rightPart.length();
+        // leftPart = leftPart.length() > leftMaxLen ? leftPart.substring(0, leftMaxLen-3) + ".." : leftPart;
+        final String separator = " " + new String(new char[(WIDTH * lines)- leftPart.length() - rightPart.length() - 2]).replace('\0', sep) + " ";
         addLine(leftPart + separator + rightPart);
     }
 

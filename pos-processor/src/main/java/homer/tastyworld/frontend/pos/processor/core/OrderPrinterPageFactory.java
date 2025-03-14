@@ -64,7 +64,7 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                 '.',
                 TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + " " + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
         );
-        addAdditiveLines(TypeChanger.toMap("NOT_DEFAULT_ADDITIVES", Long.class, Integer.class));
+        addAdditiveLines(TypeChanger.toMap(itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class));
         addEmptyLines(1);
     }
 
@@ -78,10 +78,8 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                         return request.request().getResultAsJSON();
                     }
             );
-            addFullLine(
-                    (String) additiveInfo.get("NAME"),
-                    '.',
-                    TypeChanger.toBigDecimal(additiveInfo.get("PEACE_QTY")) + " " + (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
+            addLineLeft(
+                    additiveInfo.get("NAME") + " " + additive.getValue() + " " + (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
             );
         }
         setFontStyle(new byte[] {0x1B, 0x21, 0x30});  // 2x high + bold

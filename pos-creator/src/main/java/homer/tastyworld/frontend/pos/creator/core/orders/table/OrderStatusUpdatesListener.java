@@ -19,35 +19,37 @@ public class OrderStatusUpdatesListener {
     public static void init(TableManager cooking, TableManager ready) {
         OrderStatusUpdatesListener.cooking = cooking;
         OrderStatusUpdatesListener.ready = ready;
-        Arrays.stream(MyParams.getActiveOrders()).forEach(OrderStatusUpdatesListener::process);
-        Subscriber.subscribe(Theme.ORDER_STATUS_CHANGED, orderID -> process(Long.parseLong(orderID)));
+        Arrays.stream(MyParams.getActiveOrders()).forEach(orderID -> process(orderID, false));
+        Subscriber.subscribe(Theme.ORDER_STATUS_CHANGED, orderID -> process(Long.parseLong(orderID), true));
     }
 
-    private static void route(TableForOrder table, long orderID, String name) {
+    private static void route(TableForOrder table, long orderID, String name, boolean notifyIfReady) {
         if (table == TableForOrder.NOT_IN_TABLE) {
             cooking.remove(orderID);
             ready.remove(orderID);
         } else if (table == TableForOrder.COOKING) {
             cooking.append(orderID, name);
         } else if (table == TableForOrder.READY) {
-            AlertWindow.showInfo(String.format("Заказ #%s готов", name), "", false);
+            if (notifyIfReady) {
+                AlertWindow.showInfo(String.format("Заказ #%s готов", name), "", false);
+            }
             cooking.remove(orderID);
             ready.append(orderID, name);
         }
     }
 
-    public static void process(long orderID) {
+    public static void process(long orderID, boolean notifyIfReady) {
         Request request = new Request("order/read", Method.GET);
         request.putInBody("id", orderID);
         Response response;
         try {
             response = request.request();
         } catch (BadRequestException ex) {
-            route(TableForOrder.NOT_IN_TABLE, orderID, null);
+            route(TableForOrder.NOT_IN_TABLE, orderID, null, false);
             return;
         }
         Map<String, Object> result = response.getResultAsJSON();
-        route(TableForOrder.get((String) result.get("STATUS")), orderID, (String) result.get("NAME"));
+        route(TableForOrder.get((String) result.get("STATUS")), orderID, (String) result.get("NAME"), notifyIfReady);
     }
 
 }
