@@ -1,10 +1,13 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.table;
 
+import homer.tastyworld.frontend.pos.creator.core.orders.printer.OrderPageFactory;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.Response;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
+import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import org.apache.hc.core5.http.Method;
@@ -45,7 +48,8 @@ public class OrderPaidMarkUpdateListener {
             waiters.remove(orderID);
             return;
         }
-        if ((Boolean) response.result) {
+        if (TypeChanger.toBool(response.result)) {
+            PrinterManager.print(OrderPageFactory.getFor(orderID));
             waiter.setTextFill(MarkColors.PAID);
             waiters.remove(orderID);
         } else {

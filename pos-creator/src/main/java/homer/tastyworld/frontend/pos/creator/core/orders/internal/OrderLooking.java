@@ -1,8 +1,6 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.internal;
 
-import homer.tastyworld.frontend.pos.creator.core.orders.printer.OrderPageFactory;
 import homer.tastyworld.frontend.starterpack.api.Request;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import org.apache.hc.core5.http.Method;
 import java.util.Map;
@@ -40,7 +38,6 @@ public class OrderLooking {
         Request request = new Request("/order/mark_as_paid", Method.POST);
         request.putInBody("id", id);
         request.request();
-        PrinterManager.print(OrderPageFactory.getFor(id));
     }
 
     public static void editDeliveryAddressIfNotEqual(String address) {
