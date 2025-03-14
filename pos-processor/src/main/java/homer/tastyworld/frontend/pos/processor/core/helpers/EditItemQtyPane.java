@@ -1,8 +1,7 @@
 package homer.tastyworld.frontend.pos.processor.core.helpers;
 
 import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleManager;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleStatus;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleWeightUnit;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleState;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -24,10 +23,10 @@ public class EditItemQtyPane {
         Thread thread = new Thread(() -> {
             try (ScaleManager scaleManager = new ScaleManager()) {
                 while (true) {
-                    ScaleManager.ScaleState state = scaleManager.getScaleState();
-                    if (state.STATUS == ScaleStatus.STABLE) {
+                    ScaleState state = scaleManager.getScaleState();
+                    if (state.STATUS == ScaleState.Status.STABLE) {
                         int weight = 0;
-                        if (state.UNIT == ScaleWeightUnit.KG) {
+                        if (state.UNIT == ScaleState.Unit.KG) {
                             weight = (int) (state.WEIGHT * 1000);
                         }
                         setQTY(weight);

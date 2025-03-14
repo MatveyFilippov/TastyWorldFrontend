@@ -6,24 +6,11 @@ import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.mod
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
+import com.fazecast.jSerialComm.SerialPortInvalidPortException;
 import javafx.application.Platform;
 import java.util.Arrays;
 
 public class ScaleManager implements AutoCloseable {
-
-    public static class ScaleState {
-
-        public final ScaleStatus STATUS;
-        public final double WEIGHT;
-        public final ScaleWeightUnit UNIT;
-
-        ScaleState(ScaleStatus status, double weight, ScaleWeightUnit unit) {
-            this.STATUS = status;
-            this.WEIGHT = weight;
-            this.UNIT = unit;
-        }
-
-    }
 
     @FunctionalInterface
     public interface WeightHandler { void handle(ScaleState scaleState); }
@@ -40,19 +27,22 @@ public class ScaleManager implements AutoCloseable {
 
     static {
         String scaleComPort = AppConfig.getScaleComPort();
+        SerialPort tempComPort = null;
+        boolean tempIsScaleAvailable = false;
         if (scaleComPort != null) {
-            COM_PORT = SerialPort.getCommPort(AppConfig.getScaleComPort());
-            COM_PORT.setComPortParameters(9600, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
-            IS_SCALE_AVAILABLE = COM_PORT.openPort();
-            COM_PORT.closePort();
-        } else {
-            COM_PORT = null;
-            IS_SCALE_AVAILABLE = false;
+            try {
+                tempComPort = SerialPort.getCommPort(AppConfig.getScaleComPort());
+                tempComPort.setComPortParameters(9600, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
+                tempIsScaleAvailable = tempComPort.openPort();
+                tempComPort.closePort();
+            } catch (SerialPortInvalidPortException ignored) {}
         }
+        COM_PORT = tempComPort;
+        IS_SCALE_AVAILABLE = tempIsScaleAvailable;
     }
 
     public ScaleManager() {
-        if (!IS_SCALE_AVAILABLE || !COM_PORT.openPort()) {
+        if (COM_PORT != null && !COM_PORT.openPort()) {
             throw new ScaleUsingException(
                     "Try to use scale, but it is unavailable (or can't open port)",
                     "Весы недоступны, обратитесь за помощью к разарботчикам"
@@ -126,7 +116,7 @@ public class ScaleManager implements AutoCloseable {
             return;
         }
 
-        scaleState = new ScaleState(ScaleStatus.parse(packet), weight, ScaleWeightUnit.parse(packet));
+        scaleState = new ScaleState(ScaleState.parseStatus(packet), weight, ScaleState.parseUnit(packet));
     }
 
     public void setWeightHandler(WeightHandler weightHandler) {

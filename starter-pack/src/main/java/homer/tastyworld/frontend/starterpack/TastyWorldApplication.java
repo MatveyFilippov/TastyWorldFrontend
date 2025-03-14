@@ -3,6 +3,7 @@ package homer.tastyworld.frontend.starterpack;
 import homer.tastyworld.frontend.starterpack.base.ErrorHandler;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.StartupPrinterCheck;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.StartupScaleCheck;
 import javafx.application.Application;
 
 public abstract class TastyWorldApplication extends Application {
@@ -12,6 +13,7 @@ public abstract class TastyWorldApplication extends Application {
         Thread.setDefaultUncaughtExceptionHandler(ErrorHandler::appErrorHandler);
         AppConfig.init(getClass());
         StartupPrinterCheck.check();
+        StartupScaleCheck.check();
     }
 
 }
