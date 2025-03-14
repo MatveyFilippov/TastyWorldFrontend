@@ -16,6 +16,7 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     private static class OrderToPrint {
 
         String name;
+        String deliveryAddress;
         LocalDateTime createdAt;
         Long[] itemIDs;
 
@@ -39,16 +40,25 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                 (String) orderInfo.get("CREATED_AT")
         ));
         orderToPrint.itemIDs = TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"));
+        orderToPrint.deliveryAddress = (String) orderInfo.get("DELIVERY_ADDRESS");
+        if (orderToPrint.deliveryAddress.equals("NOT FOR DELIVERY")) {
+            orderToPrint.deliveryAddress = "НЕТ";
+        }
         return new OrderPrinterPageFactory(orderToPrint);
     }
 
     private void setItems(Long[] itemIDs) throws IOException {
         addEmptyLines(1);
-        for (Long itemID : itemIDs) {
+        int lastItemIndex = itemIDs.length - 1;
+        for (int i = 0; i < lastItemIndex + 1; i++) {
             Request request = new Request("/order/read_item", Method.GET);
-            request.putInBody("id", itemID);
+            request.putInBody("id", itemIDs[i]);
             addItemLine(request.request().getResultAsJSON());
             addEmptyLines(1);
+            if (i < lastItemIndex) {
+                addDivider('-');
+                addEmptyLines(1);
+            }
         }
     }
 
@@ -60,15 +70,16 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                     return request.request().getResultAsJSON();
                 }
         );
-        addFullLine(
-                (String) productInfo.get("NAME"),
-                '.',
-                TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + " " + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
-        );
+        addLineLeft((String) productInfo.get("NAME"));
+        addLineLeft("Кол-во: " + TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + " " + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт"));
         addAdditiveLines(TypeChanger.toMap(itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class));
     }
 
     private void addAdditiveLines(Map<Long, Integer> additives) throws IOException {
+        if (additives.isEmpty()) {
+            return;
+        }
+        addLineLeft("Добавки:");
         dropFontStyle();
         for (Map.Entry<Long, Integer> additive : additives.entrySet()) {
             final Map<String, Object> additiveInfo = additivesCache.computeIfAbsent(
@@ -78,8 +89,8 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                         return request.request().getResultAsJSON();
                     }
             );
-            addLineRight(
-                    additiveInfo.get("NAME") + " " + additive.getValue() + " " + (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
+            addLineLeft(
+                    " - " + additiveInfo.get("NAME") + " " + additive.getValue() + " " + (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
             );
         }
         setFontStyle(new byte[] {0x1B, 0x21, 0x20}, 24);  // 2x high + bold
@@ -96,7 +107,10 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
         addDivider('=');
         setItems(orderToPrint.itemIDs);
         addDivider('=');
-        addEmptyLines(4);
+        addEmptyLines(1);
+        dropFontStyle();
+        addLineRight("Доставка: " + orderToPrint.deliveryAddress);
+        addEmptyLines(5);
     }
 
 }
