@@ -4,7 +4,7 @@ import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors.DefaultTableCursor;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.statusdisplay.core.OrderUpdatesListener;
 import homer.tastyworld.frontend.statusdisplay.core.StatusDisplayTableNodeFactory;
 import javafx.beans.binding.StringExpression;
@@ -22,9 +22,9 @@ public class StatusDisplayController {
 
     @FXML
     private void initialize() {
-        StringExpression topicFontSize = TextHelper.getAdaptiveFontSize(cookingTopic, 10);
-        TextHelper.setTextLeft(cookingTopic, "Заказ готовится", topicFontSize, null);
-        TextHelper.setTextLeft(readyTopic, "Готов к выдаче", topicFontSize, null);
+        StringExpression topicsFontSize = AdaptiveTextHelper.getFontSize(cookingTopic, 2);
+        AdaptiveTextHelper.setTextLeft(cookingTopic, "Заказ готовится", topicsFontSize, null);
+        AdaptiveTextHelper.setTextLeft(readyTopic, "Готов к выдаче", topicsFontSize, null);
         cookingOrders.setAlignment(Pos.CENTER);
         readyOrders.setAlignment(Pos.CENTER);
         if (MyParams.getTokenSubscriptionAvailableDays() >= 0) {
