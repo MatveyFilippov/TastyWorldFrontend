@@ -21,12 +21,16 @@ public class PrinterManager {
         setPrinter(AppConfig.getPrinterName());
     }
 
-    protected static String getPrinterName() {
+    public static String getPrinterName() {
         return printer != null ? printer.getName() : null;
     }
 
+    public static boolean isPrinterAvailable() {
+        return printer != null;
+    }
+
     public static void print(PrinterPageFactory printerPageFactory) {
-        if (printer == null) {
+        if (!isPrinterAvailable()) {
             if (AppConfig.getPrinterName() != null) {
                 throw new PrinterUsingException(
                         "Try to use printer, but it is unavailable",

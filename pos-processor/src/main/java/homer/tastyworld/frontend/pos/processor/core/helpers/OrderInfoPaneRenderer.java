@@ -25,17 +25,18 @@ public class OrderInfoPaneRenderer {
     public static Long orderID = null;
     public static boolean isEditable = false;
     private static ScrollPane scroll;
-    private static AnchorPane orderCreatedTimeTopic, orderNameTopic;
-    private static StringExpression nameTopicFontSize, createdTimeTopicFontSize;
+    private static AnchorPane orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic;
+    private static StringExpression nameTopicFontSize, miscInfoTopicsFontSize;
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
     private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
 
-    public static void init(ScrollPane scroll, AnchorPane orderCreatedTimeTopic, AnchorPane orderNameTopic) {
+    public static void init(ScrollPane scroll, AnchorPane orderCreatedTimeTopic, AnchorPane orderDeliveryTopic, AnchorPane orderNameTopic) {
         OrderInfoPaneRenderer.scroll = scroll;
         OrderInfoPaneRenderer.orderCreatedTimeTopic = orderCreatedTimeTopic;
+        OrderInfoPaneRenderer.orderDeliveryTopic = orderDeliveryTopic;
         OrderInfoPaneRenderer.orderNameTopic = orderNameTopic;
         nameTopicFontSize = TextHelper.getAdaptiveFontSize(orderNameTopic, 12);
-        createdTimeTopicFontSize = TextHelper.getAdaptiveFontSize(orderCreatedTimeTopic, 25);
+        miscInfoTopicsFontSize = TextHelper.getAdaptiveFontSize(orderDeliveryTopic, 10);
     }
 
     public static void render(long orderID) {
@@ -45,10 +46,15 @@ public class OrderInfoPaneRenderer {
         Map<String, Object> orderInfo = request.request().getResultAsJSON();
         OrderInfoPaneRenderer.orderID = TypeChanger.toLong(orderInfo.get("ID"));
         OrderInfoPaneRenderer.isEditable = !TypeChanger.toBool(orderInfo.get("IS_PAID"));
-        TextHelper.setTextLeft(
+        TextHelper.setTextCentre(
                 orderCreatedTimeTopic, AppDateTime.backendToLocal(AppDateTime.parseDateTime(
                         (String) orderInfo.get("CREATED_AT")
-                )).format(AppDateTime.DATETIME_FORMAT), createdTimeTopicFontSize, null
+                )).format(AppDateTime.DATETIME_FORMAT), miscInfoTopicsFontSize, null
+        );
+        TextHelper.setTextCentre(
+                orderDeliveryTopic,
+                "Доставка: " + (orderInfo.get("DELIVERY_ADDRESS").equals("NOT FOR DELIVERY") ? "Нет" : "Да"),
+                miscInfoTopicsFontSize, null
         );
         TextHelper.setTextCentre(orderNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, Color.BLACK);
         scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
@@ -117,14 +123,18 @@ public class OrderInfoPaneRenderer {
                 editImgBtn, "editOrderItemImgBtn",
                 POSProcessorApplication.class.getResourceAsStream("images/buttons/editOrderItemImgBtn.png")
         );
-        setEditOnClick(editImgBtn, TypeChanger.toLong(itemInfo.get("ID")), TypeChanger.toInt(itemInfo.get("PEACE_QTY")));
+        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+        setEditOnClick(
+                editImgBtn, TypeChanger.toLong(itemInfo.get("ID")),
+                TypeChanger.toInt(itemInfo.get("PEACE_QTY")), (String) productInfo.get("NAME")
+        );
         return editImgBtn;
     }
 
-    private static void setEditOnClick(AnchorPane editImgBtn, long itemID, int qty) {
+    private static void setEditOnClick(AnchorPane editImgBtn, long itemID, int qty, String name) {
         editImgBtn.setOpacity(isEditable ? 1 : 0.5);
         if (isEditable) {
-            editImgBtn.setOnMouseClicked(event -> EditItemQtyPane.open(itemID, qty));
+            editImgBtn.setOnMouseClicked(event -> EditItemQtyPane.open(itemID, qty, name));
         } else {
             editImgBtn.setOnMouseClicked(event -> AlertWindow.showInfo(
                     "Позицию нельзя отредактировать", "Заказ уже оплачен, изменить позицию невозможно", true
@@ -185,6 +195,7 @@ public class OrderInfoPaneRenderer {
     public static void clean() {
         orderID = null;
         isEditable = false;
+        orderDeliveryTopic.getChildren().clear();
         orderCreatedTimeTopic.getChildren().clear();
         orderNameTopic.getChildren().clear();
     }

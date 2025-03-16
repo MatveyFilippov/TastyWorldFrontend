@@ -13,12 +13,12 @@ public class EditItemQtyPane {
     public static Long itemID = null;
     public static Integer qty = null;
     private static AnchorPane editItemQtyPaneParent;
-    private static Label editItemQtyTopic;
+    private static Label editItemQtyPaneNameTopic, editItemQtyPaneTotalTopic;
     private static Thread thread;
 
     private static void setQTY(Integer qty) {
         EditItemQtyPane.qty = qty;
-        editItemQtyTopic.setText(String.valueOf(qty));
+        editItemQtyPaneTotalTopic.setText(String.valueOf(qty));
     }
 
     private static void startAskingScale() {
@@ -46,9 +46,10 @@ public class EditItemQtyPane {
         thread.start();
     }
 
-    public static void open(long itemID, int qty) {
+    public static void open(long itemID, int qty, String name) {
         EditItemQtyPane.itemID = itemID;
         setQTY(qty);
+        editItemQtyPaneNameTopic.setText(name);
         editItemQtyPaneParent.setVisible(true);
         if (ScaleManager.IS_SCALE_AVAILABLE) {
             startAskingScale();
@@ -61,6 +62,7 @@ public class EditItemQtyPane {
             thread = null;
         }
         itemID = null;
+        editItemQtyPaneNameTopic.setText("null");
         setQTY(null);
         editItemQtyPaneParent.setVisible(false);
     }
@@ -88,19 +90,21 @@ public class EditItemQtyPane {
         return btn;
     }
 
-    private static void initKeyboard(GridPane editItemQtyNumbersKeyboard) {
+    private static void initKeyboard(GridPane editItemQtyPaneNumbersKeyboard) {
         for (int i = 0; i < 9; i++) {
-            editItemQtyNumbersKeyboard.add(getClickableNumberKbBtn(String.valueOf(i + 1)), i % 3, i / 3);
+            editItemQtyPaneNumbersKeyboard.add(getClickableNumberKbBtn(String.valueOf(i + 1)), i % 3, i / 3);
         }
-        editItemQtyNumbersKeyboard.add(getClickableNumberKbBtn("0"), 3, 0);
-        editItemQtyNumbersKeyboard.add(getClickableShiftBackKbBtn(), 3, 1);
+        editItemQtyPaneNumbersKeyboard.add(getClickableNumberKbBtn("0"), 3, 0);
+        editItemQtyPaneNumbersKeyboard.add(getClickableShiftBackKbBtn(), 3, 1);
     }
 
-    public static void init(AnchorPane editItemQtyPaneParent, AnchorPane editItemQtyTopic, GridPane editItemQtyNumbersKeyboard) {
-        TextHelper.setTextCentre(editItemQtyTopic, "null", TextHelper.getAdaptiveFontSize(editItemQtyTopic, 10), null);
-        EditItemQtyPane.editItemQtyTopic = (Label) editItemQtyTopic.getChildren().getLast();
+    public static void init(AnchorPane editItemQtyPaneParent, AnchorPane editItemQtyPaneNameTopic, AnchorPane editItemQtyPaneTotalTopic, GridPane editItemQtyPaneNumbersKeyboard) {
+        TextHelper.setTextCentre(editItemQtyPaneNameTopic, "null", TextHelper.getAdaptiveFontSize(editItemQtyPaneNameTopic, 12), null);
+        EditItemQtyPane.editItemQtyPaneNameTopic = (Label) editItemQtyPaneNameTopic.getChildren().getLast();
+        TextHelper.setTextCentre(editItemQtyPaneTotalTopic, "null", TextHelper.getAdaptiveFontSize(editItemQtyPaneTotalTopic, 10), null);
+        EditItemQtyPane.editItemQtyPaneTotalTopic = (Label) editItemQtyPaneTotalTopic.getChildren().getLast();
         EditItemQtyPane.editItemQtyPaneParent = editItemQtyPaneParent;
-        initKeyboard(editItemQtyNumbersKeyboard);
+        initKeyboard(editItemQtyPaneNumbersKeyboard);
     }
 
 }

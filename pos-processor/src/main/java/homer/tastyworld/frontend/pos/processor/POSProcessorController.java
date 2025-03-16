@@ -6,6 +6,7 @@ import homer.tastyworld.frontend.pos.processor.core.OrderUpdatesListener;
 import homer.tastyworld.frontend.pos.processor.core.helpers.EditItemQtyPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
@@ -19,26 +20,27 @@ public class POSProcessorController {
     @FXML
     private ScrollPane scrollItems, scrollOrders;
     @FXML
-    private AnchorPane printOrderImgBtn, doneOrderImgBtn;
+    private AnchorPane startOrderImgBtn, doneOrderImgBtn;
     @FXML
-    private AnchorPane orderCreatedTimeTopic, orderNameTopic;
+    private AnchorPane orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic;
 
     @FXML
     private AnchorPane editItemQtyPaneParent;
     @FXML
     private AnchorPane editItemQtyPaneCloseImgBtn, editItemQtyPaneCommitImgBtn;
     @FXML
-    private AnchorPane editItemQtyTopic;
+    private AnchorPane editItemQtyPaneNameTopic, editItemQtyPaneTotalTopic;
     @FXML
-    private GridPane editItemQtyNumbersKeyboard;
+    private GridPane editItemQtyPaneNumbersKeyboard;
 
     @FXML
     private void initialize() {
         checkDaysLeft();
         initImgBtnsInMainPane();
-        OrderInfoPaneRenderer.init(scrollItems, orderCreatedTimeTopic, orderNameTopic);
+        initImgBtnsInEditItemQtyPane();
+        OrderInfoPaneRenderer.init(scrollItems, orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic);
         OrderUpdatesListener.init(scrollOrders);
-        EditItemQtyPane.init(editItemQtyPaneParent, editItemQtyTopic, editItemQtyNumbersKeyboard);
+        EditItemQtyPane.init(editItemQtyPaneParent, editItemQtyPaneNameTopic, editItemQtyPaneTotalTopic, editItemQtyPaneNumbersKeyboard);
     }
 
     private void checkDaysLeft() {
@@ -57,8 +59,12 @@ public class POSProcessorController {
 
     private void initImgBtnsInMainPane() {
         PaneHelper.setImageBackgroundCentre(
-                printOrderImgBtn,
-                POSProcessorApplication.class.getResourceAsStream("images/buttons/printOrderImgBtn.png")
+                startOrderImgBtn,
+                POSProcessorApplication.class.getResourceAsStream(
+                        PrinterManager.isPrinterAvailable()
+                        ? "images/buttons/startAndPrintOrderImgBtn.png"
+                        : "images/buttons/startOrderImgBtn.png"
+                )
         );
         PaneHelper.setImageBackgroundCentre(
                 doneOrderImgBtn,
@@ -66,10 +72,27 @@ public class POSProcessorController {
         );
     }
 
+    private void initImgBtnsInEditItemQtyPane() {
+        PaneHelper.setImageBackgroundCentre(
+                editItemQtyPaneCloseImgBtn,
+                POSProcessorApplication.class.getResourceAsStream("images/buttons/EditItemQtyPane/editItemQtyPaneCloseImgBtn.png")
+        );
+        PaneHelper.setImageBackgroundCentre(
+                editItemQtyPaneCommitImgBtn,
+                POSProcessorApplication.class.getResourceAsStream("images/buttons/EditItemQtyPane/editItemQtyPaneCommitImgBtn.png")
+        );
+    }
+
     @FXML
-    void printOrderImgBtnPressed() {
+    void startOrderImgBtnPressed() {
         if (OrderInfoPaneRenderer.orderID == null) {
-            AlertWindow.showInfo("Заказ не выбран", "Печатать нечего, для начала откройте заказ", true);
+            AlertWindow.showInfo(
+                    "Заказ не выбран",
+                    PrinterManager.isPrinterAvailable()
+                    ? "Печатать нечего, для начала откройте заказ"
+                    : "Начать выполнение невозможно, для начала откройте заказ",
+                    true
+            );
             return;
         }
         OrderActions.print(OrderInfoPaneRenderer.orderID);
