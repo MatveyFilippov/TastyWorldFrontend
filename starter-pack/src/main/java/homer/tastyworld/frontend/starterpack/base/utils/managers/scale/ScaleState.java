@@ -56,4 +56,8 @@ public class ScaleState {
         this.UNIT = unit;
     }
 
+    public ScaleState copy() {
+        return new ScaleState(STATUS, WEIGHT, UNIT);
+    }
+
 }

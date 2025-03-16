@@ -133,7 +133,7 @@ public class ScaleManager implements AutoCloseable {
         ScaleState tempScaleState = null;
         while (tempScaleState == null) {
             wait();
-            tempScaleState = scaleState;
+            tempScaleState = scaleState.copy();
         }
         isAsking = false;
         return tempScaleState;
