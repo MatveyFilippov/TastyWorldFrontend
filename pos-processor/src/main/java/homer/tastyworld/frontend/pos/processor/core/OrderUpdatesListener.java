@@ -6,8 +6,8 @@ import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -99,7 +99,7 @@ public class OrderUpdatesListener {
         row.setStyle("-fx-border-color: #000000;");
         row.prefWidthProperty().bind(scroll.widthProperty());
         row.prefHeightProperty().bind(scroll.heightProperty().divide(10));
-        TextHelper.setTextCentre(row, name, TextHelper.getAdaptiveFontSize(row, 5), Colors.NOT_LOOKED);
+        AdaptiveTextHelper.setTextCentre(row, name, 1.5, Colors.NOT_LOOKED);
         PaneHelper.setOnMouseClickedWithPressingCountChecking(row, 2, event -> OrderInfoPaneRenderer.render(orderID));
         return row;
     }

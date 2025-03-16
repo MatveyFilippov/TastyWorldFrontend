@@ -5,10 +5,11 @@ import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.AppDateTime;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -25,18 +26,16 @@ public class OrderInfoPaneRenderer {
     public static Long orderID = null;
     public static boolean isEditable = false;
     private static ScrollPane scroll;
-    private static AnchorPane orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic;
-    private static StringExpression nameTopicFontSize, miscInfoTopicsFontSize;
+    private static Label orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic;
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
     private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
 
     public static void init(ScrollPane scroll, AnchorPane orderCreatedTimeTopic, AnchorPane orderDeliveryTopic, AnchorPane orderNameTopic) {
         OrderInfoPaneRenderer.scroll = scroll;
-        OrderInfoPaneRenderer.orderCreatedTimeTopic = orderCreatedTimeTopic;
-        OrderInfoPaneRenderer.orderDeliveryTopic = orderDeliveryTopic;
-        OrderInfoPaneRenderer.orderNameTopic = orderNameTopic;
-        nameTopicFontSize = TextHelper.getAdaptiveFontSize(orderNameTopic, 12);
-        miscInfoTopicsFontSize = TextHelper.getAdaptiveFontSize(orderDeliveryTopic, 10);
+        StringExpression miscInfoTopicsFontSize = AdaptiveTextHelper.getFontSize(orderDeliveryTopic, 1.5);
+        OrderInfoPaneRenderer.orderCreatedTimeTopic = AdaptiveTextHelper.setTextCentre(orderCreatedTimeTopic, "", miscInfoTopicsFontSize, null);
+        OrderInfoPaneRenderer.orderDeliveryTopic = AdaptiveTextHelper.setTextCentre(orderDeliveryTopic, "", miscInfoTopicsFontSize, null);
+        OrderInfoPaneRenderer.orderNameTopic = AdaptiveTextHelper.setTextCentre(orderNameTopic, "", 1.35, Color.BLACK);;
     }
 
     public static void render(long orderID) {
@@ -46,17 +45,15 @@ public class OrderInfoPaneRenderer {
         Map<String, Object> orderInfo = request.request().getResultAsJSON();
         OrderInfoPaneRenderer.orderID = TypeChanger.toLong(orderInfo.get("ID"));
         OrderInfoPaneRenderer.isEditable = !TypeChanger.toBool(orderInfo.get("IS_PAID"));
-        TextHelper.setTextCentre(
-                orderCreatedTimeTopic, AppDateTime.backendToLocal(AppDateTime.parseDateTime(
+        orderCreatedTimeTopic.setText(
+                AppDateTime.backendToLocal(AppDateTime.parseDateTime(
                         (String) orderInfo.get("CREATED_AT")
-                )).format(AppDateTime.DATETIME_FORMAT), miscInfoTopicsFontSize, null
+                )).format(AppDateTime.DATETIME_FORMAT)
         );
-        TextHelper.setTextCentre(
-                orderDeliveryTopic,
-                "Доставка: " + (orderInfo.get("DELIVERY_ADDRESS").equals("NOT FOR DELIVERY") ? "Нет" : "Да"),
-                miscInfoTopicsFontSize, null
+        orderDeliveryTopic.setText(
+                "Доставка: " + (orderInfo.get("DELIVERY_ADDRESS").equals("NOT FOR DELIVERY") ? "Нет" : "Да")
         );
-        TextHelper.setTextCentre(orderNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, Color.BLACK);
+        orderNameTopic.setText("Заказ #" + orderInfo.get("NAME"));
         scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
     }
 
@@ -109,9 +106,9 @@ public class OrderInfoPaneRenderer {
         HBox.setHgrow(space2, Priority.ALWAYS);
         space1.prefWidthProperty().bind(row.widthProperty().multiply(0.01));
         editImgBn.prefWidthProperty().bind(row.widthProperty().multiply(0.1));
-        name.prefWidthProperty().bind(row.widthProperty().multiply(0.36));
+        name.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
         qty.prefWidthProperty().bind(row.widthProperty().multiply(0.15));
-        additives.prefWidthProperty().bind(row.widthProperty().multiply(0.37));
+        additives.prefWidthProperty().bind(row.widthProperty().multiply(0.38));
         space2.prefWidthProperty().bind(row.widthProperty().multiply(0.01));
 
         return row;
@@ -146,7 +143,7 @@ public class OrderInfoPaneRenderer {
     private static AnchorPane getItemName(Map<String, Object> itemInfo) {
         AnchorPane name = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        TextHelper.setTextCentre(name, (String) productInfo.get("NAME"), TextHelper.getAdaptiveFontSize(name, 10), null);
+        AdaptiveTextHelper.setTextCentre(name, (String) productInfo.get("NAME"), 5, null);
         return name;
     }
 
@@ -154,7 +151,7 @@ public class OrderInfoPaneRenderer {
         AnchorPane qty = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
-        TextHelper.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, TextHelper.getAdaptiveFontSize(qty, 4), null);
+        AdaptiveTextHelper.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, 4, null);
         return qty;
     }
 
@@ -178,11 +175,10 @@ public class OrderInfoPaneRenderer {
 
     private static AnchorPane getAdditiveLine(Map<String, Object> additiveInfo, int qty) {
         AnchorPane additiveLine = new AnchorPane();
-        additiveLine.setStyle("-fx-border-color: #000000;");
         String line = additiveInfo.get("NAME") + " " + qty + (
                 additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
         );
-        TextHelper.setTextCentre(additiveLine, line, TextHelper.getAdaptiveFontSize(additiveLine, 15), null);
+        AdaptiveTextHelper.setTextCentre(additiveLine, line, 35, null);
         return additiveLine;
     }
 
@@ -195,9 +191,9 @@ public class OrderInfoPaneRenderer {
     public static void clean() {
         orderID = null;
         isEditable = false;
-        orderDeliveryTopic.getChildren().clear();
-        orderCreatedTimeTopic.getChildren().clear();
-        orderNameTopic.getChildren().clear();
+        orderDeliveryTopic.setText("");
+        orderCreatedTimeTopic.setText("");
+        orderNameTopic.setText("");
     }
 
 }

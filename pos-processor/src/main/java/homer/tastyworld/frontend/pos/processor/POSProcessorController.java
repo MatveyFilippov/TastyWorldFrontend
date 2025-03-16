@@ -114,7 +114,7 @@ public class POSProcessorController {
 
     @FXML
     void editItemQtyPaneCommitImgBtnPressed() {
-        if (EditItemQtyPane.itemID != null && EditItemQtyPane.qty != null) {
+        if (EditItemQtyPane.itemID != null && EditItemQtyPane.qty != null && EditItemQtyPane.isEdit()) {
             OrderActions.editItemQTY(EditItemQtyPane.itemID, EditItemQtyPane.qty);
             OrderInfoPaneRenderer.rerender();
         }
