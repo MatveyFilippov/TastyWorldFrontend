@@ -11,7 +11,7 @@ import javafx.scene.text.TextAlignment;
 
 public class AdaptiveTextHelper {
 
-    public static StringExpression getFontSize(AnchorPane pane, int divide) {
+    public static StringExpression getFontSize(AnchorPane pane, double divide) {
         return Bindings.concat(
                 "-fx-font-size: ",
                 Bindings.min(pane.widthProperty().divide(divide), pane.heightProperty().divide(divide)).asString("%.0f"),
@@ -34,7 +34,7 @@ public class AdaptiveTextHelper {
         return label;
     }
 
-    public static Label setTextLeft(AnchorPane pane, String text, int divideForAdaptiveFontSize, Color color) {
+    public static Label setTextLeft(AnchorPane pane, String text, double divideForAdaptiveFontSize, Color color) {
         return setTextLeft(pane, text, getFontSize(pane, divideForAdaptiveFontSize), color);
     }
 
@@ -47,7 +47,7 @@ public class AdaptiveTextHelper {
         return label;
     }
 
-    public static Label setTextCentre(AnchorPane pane, String text, int divideForAdaptiveFontSize, Color color) {
+    public static Label setTextCentre(AnchorPane pane, String text, double divideForAdaptiveFontSize, Color color) {
         return setTextCentre(pane, text, getFontSize(pane, divideForAdaptiveFontSize), color);
     }
 
