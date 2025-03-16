@@ -3,6 +3,7 @@ package homer.tastyworld.frontend.pos.processor.core.helpers;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleState;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -24,22 +25,24 @@ public class EditItemQtyPane {
         thread = new Thread(() -> {
             try (ScaleManager scaleManager = new ScaleManager()) {
                 while (true) {
-                    if (!Thread.interrupted()) {
-                        ScaleState state = scaleManager.getScaleState();
-                        if (state.STATUS == ScaleState.Status.STABLE) {
-                            int weight = 0;
-                            if (state.UNIT == ScaleState.Unit.KG) {
-                                weight = (int) (state.WEIGHT * 1000);
-                            }
-                            setQTY(weight);
-                            return;
+                    if (Thread.interrupted()) {
+                        return;
+                    }
+                    ScaleState state = scaleManager.getScaleState();
+                    if (state.STATUS == ScaleState.Status.STABLE) {
+                        int weight = 0;
+                        if (state.UNIT == ScaleState.Unit.KG) {
+                            weight = (int) (state.WEIGHT * 1000);
                         }
+                        final int finalWeight = weight;
+                        Platform.runLater(() -> setQTY(finalWeight));
+                        return;
                     }
                 }
             } catch (InterruptedException ignored) {}
         });
         thread.setDaemon(true);
-        thread.setName("Scale asking thread");
+        thread.setName("Scale asking while edit item qty");
         thread.start();
     }
 

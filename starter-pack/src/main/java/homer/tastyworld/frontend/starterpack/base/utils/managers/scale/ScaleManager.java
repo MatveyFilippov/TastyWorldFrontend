@@ -7,21 +7,22 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortInvalidPortException;
-import javafx.application.Platform;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ScaleManager implements AutoCloseable {
 
     @FunctionalInterface
-    public interface WeightHandler { void handle(ScaleState scaleState); }
+    public interface ScaleStateUpdatesHandler { boolean handle(ScaleState scaleState); }
 
     private static final AppLogger logger = AppLogger.getFor(ScaleManager.class);
     private static final byte SOH = 0x01; // Start byte 1
     private static final byte STX = 0x02; // Start byte 2
     public static final boolean IS_SCALE_AVAILABLE;
     private static final SerialPort COM_PORT;
+    private final List<Thread> scaleStateUpdatesHandlerThreads = new ArrayList<>();
     private ScaleState scaleState;
-    private WeightHandler weightHandler;
     private boolean isAsking = false;
     private byte[] buffer = new byte[0];
 
@@ -42,7 +43,7 @@ public class ScaleManager implements AutoCloseable {
     }
 
     public ScaleManager() {
-        if (COM_PORT != null && !COM_PORT.openPort()) {
+        if (COM_PORT == null || !COM_PORT.openPort()) {
             throw new ScaleUsingException(
                     "Try to use scale, but it is unavailable (or can't open port)",
                     "Весы недоступны, обратитесь за помощью к разарботчикам"
@@ -57,7 +58,7 @@ public class ScaleManager implements AutoCloseable {
 
             @Override
             public void serialEvent(SerialPortEvent event) {
-                if (weightHandler == null && !isAsking) {
+                if (!isAsking) {
                     return;
                 }
                 byte[] newData = new byte[COM_PORT.bytesAvailable()];
@@ -67,14 +68,6 @@ public class ScaleManager implements AutoCloseable {
                 System.arraycopy(newData, 0, tempBuffer, buffer.length, newData.length);
                 buffer = tempBuffer;
                 processBuffer();
-                if (weightHandler != null && scaleState != null) {
-                    if (Platform.isFxApplicationThread()) {
-                        weightHandler.handle(scaleState);
-                    } else {
-                        Platform.runLater(() -> weightHandler.handle(scaleState));
-                    }
-                }
-                setScaleState(null);
             }
 
         });
@@ -119,10 +112,6 @@ public class ScaleManager implements AutoCloseable {
         setScaleState(new ScaleState(ScaleState.parseStatus(packet), weight, ScaleState.parseUnit(packet)));
     }
 
-    public void setWeightHandler(WeightHandler weightHandler) {
-        this.weightHandler = weightHandler;
-    }
-
     private synchronized void setScaleState(ScaleState scaleState) {
         this.scaleState = scaleState;
         notifyAll();
@@ -133,10 +122,29 @@ public class ScaleManager implements AutoCloseable {
         ScaleState tempScaleState = null;
         while (tempScaleState == null) {
             wait();
-            tempScaleState = scaleState.copy();
+            if (scaleState != null) {
+                tempScaleState = scaleState.copy();
+            }
         }
         isAsking = false;
         return tempScaleState;
+    }
+
+    public Thread addScaleStateUpdatesHandler(ScaleStateUpdatesHandler scaleStateUpdatesHandler) {
+        Thread thread = new Thread(() -> {
+            try {
+                while (true) {
+                    if (Thread.interrupted() || scaleStateUpdatesHandler.handle(getScaleState())) {
+                        return;
+                    }
+                }
+            } catch (InterruptedException ignored) {}
+        });
+        thread.setName("Scale state updates handler");
+        thread.setDaemon(true);
+        thread.start();
+        scaleStateUpdatesHandlerThreads.add(thread);
+        return thread;
     }
 
     @Override
@@ -144,6 +152,11 @@ public class ScaleManager implements AutoCloseable {
         if (COM_PORT != null) {
             COM_PORT.removeDataListener();
             COM_PORT.closePort();
+        }
+        for (Thread thread : scaleStateUpdatesHandlerThreads) {
+            if (thread != null && thread.isAlive()) {
+                thread.interrupt();
+            }
         }
     }
 
