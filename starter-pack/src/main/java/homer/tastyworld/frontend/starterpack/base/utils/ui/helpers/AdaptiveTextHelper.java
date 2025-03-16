@@ -9,17 +9,17 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
-public class TextHelper {
+public class AdaptiveTextHelper {
 
-    public static StringExpression getAdaptiveFontSize(AnchorPane pane, int divide) {
+    public static StringExpression getFontSize(AnchorPane pane, int divide) {
         return Bindings.concat(
                 "-fx-font-size: ",
-                Bindings.max(pane.widthProperty().divide(divide), pane.heightProperty().divide(divide)).asString("%.0f"),
+                Bindings.min(pane.widthProperty().divide(divide), pane.heightProperty().divide(divide)).asString("%.0f"),
                 "px;"
         );
     }
 
-    public static void setTextLeft(AnchorPane pane, String text, StringExpression fontSize, Color color) {
+    public static Label setTextLeft(AnchorPane pane, String text, StringExpression fontSize, Color color) {
         Label label = new Label(text);
         label.setWrapText(false);
         label.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
@@ -31,24 +31,24 @@ public class TextHelper {
         }
         label.styleProperty().bind(fontSize);
         pane.getChildren().add(label);
+        return label;
     }
 
-    public static void setTextCentre(AnchorPane pane, String text, StringExpression fontSize, Color color) {
-        Label label = new Label(text);
+    public static Label setTextLeft(AnchorPane pane, String text, int divideForAdaptiveFontSize, Color color) {
+        return setTextLeft(pane, text, getFontSize(pane, divideForAdaptiveFontSize), color);
+    }
+
+    public static Label setTextCentre(AnchorPane pane, String text, StringExpression fontSize, Color color) {
+        Label label = setTextLeft(pane, text, fontSize, color);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setAlignment(Pos.CENTER);
-        label.setWrapText(false);
-        label.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
-        AnchorPane.setTopAnchor(label, 0.0);
-        AnchorPane.setBottomAnchor(label, 0.0);
         AnchorPane.setLeftAnchor(label, 0.0);
         AnchorPane.setRightAnchor(label, 0.0);
-        if (color != null) {
-            label.setTextFill(color);
-            label.setOpacity(1.0);
-        }
-        label.styleProperty().bind(fontSize);
-        pane.getChildren().add(label);
+        return label;
+    }
+
+    public static Label setTextCentre(AnchorPane pane, String text, int divideForAdaptiveFontSize, Color color) {
+        return setTextCentre(pane, text, getFontSize(pane, divideForAdaptiveFontSize), color);
     }
 
 }
