@@ -35,17 +35,19 @@ public class MainParentPane extends StableParentPane {
     private void initDaysLeftAlert() {
         daysLeftAlert.setVisible(false);
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
+        boolean isAlertTopicRequired = subscriptionAvailableDays <= 5;
         if (subscriptionAvailableDays <= 7) {
             String text = String.format(
                     "Если не оплатить подписку, то через %s программа перестанет работать",
                     TypeChanger.toDaysFormat(subscriptionAvailableDays)
             );
-            if (subscriptionAvailableDays <= 5) {
+            if (isAlertTopicRequired) {
                 AdaptiveTextHelper.setTextCentre(daysLeftAlertTopic, text, 45, null);
                 daysLeftAlert.setVisible(true);
             }
             AlertWindow.showInfo("Близится окончание подписки", text, true);
-        } else {
+        }
+        if (!isAlertTopicRequired) {
             parentPlace.getRowConstraints().getFirst().setPercentHeight(0);
             parentPlace.getRowConstraints().getLast().setPercentHeight(85);
         }
