@@ -167,8 +167,8 @@ public class AddProductParentPane extends DynamicParentPane {
         });
         minus.setOnMouseClicked(event -> {
             int qty = Integer.parseInt(additiveQTY.getText()) - step;
-            if (qty < step) {
-                qty = step;
+            if (qty < 0) {
+                qty = 0;
             }
             Product.notDefaultAdditives.put(additiveID, qty);
             additiveQTY.setText(String.valueOf(qty));
