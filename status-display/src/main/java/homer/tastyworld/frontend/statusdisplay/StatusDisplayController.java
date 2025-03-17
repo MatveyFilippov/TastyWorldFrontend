@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 
 public class StatusDisplayController {
 
@@ -22,9 +23,10 @@ public class StatusDisplayController {
 
     @FXML
     private void initialize() {
-        StringExpression topicsFontSize = AdaptiveTextHelper.getFontSize(cookingTopic, 2);
-        AdaptiveTextHelper.setTextLeft(cookingTopic, "Заказ готовится", topicsFontSize, null);
-        AdaptiveTextHelper.setTextLeft(readyTopic, "Готов к выдаче", topicsFontSize, null);
+        StringExpression topicsFontSize = AdaptiveTextHelper.getFontSize(cookingTopic, 10);
+        Color topicsColor = Color.web("#999999");
+        AdaptiveTextHelper.setTextLeft(cookingTopic, "Заказ готовится", topicsFontSize, topicsColor);
+        AdaptiveTextHelper.setTextLeft(readyTopic, "Готов к выдаче", topicsFontSize, topicsColor);
         cookingOrders.setAlignment(Pos.CENTER);
         readyOrders.setAlignment(Pos.CENTER);
         if (MyParams.getTokenSubscriptionAvailableDays() >= 0) {
