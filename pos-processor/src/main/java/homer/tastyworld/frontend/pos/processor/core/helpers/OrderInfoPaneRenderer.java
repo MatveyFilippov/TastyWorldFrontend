@@ -106,14 +106,15 @@ public class OrderInfoPaneRenderer {
         Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         setEditOnClick(
                 editImgBtn, TypeChanger.toLong(itemInfo.get("ID")),
-                TypeChanger.toInt(itemInfo.get("PEACE_QTY")), (String) productInfo.get("NAME")
+                TypeChanger.toInt(itemInfo.get("PEACE_QTY")), (String) productInfo.get("NAME"),
+                productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS")
         );
         return editImgBtn;
     }
 
-    private static void setEditOnClick(AnchorPane editImgBtn, long itemID, int qty, String name) {
+    private static void setEditOnClick(AnchorPane editImgBtn, long itemID, int qty, String name, boolean isProductEditable) {
         editImgBtn.setOpacity(isEditable ? 1 : 0.5);
-        if (isEditable) {
+        if (isEditable && isProductEditable) {
             editImgBtn.setOnMouseClicked(event -> EditItemQtyPane.open(itemID, qty, name));
         } else {
             editImgBtn.setOnMouseClicked(event -> AlertWindow.showInfo(
