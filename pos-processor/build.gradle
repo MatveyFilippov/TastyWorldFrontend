@@ -32,7 +32,7 @@ jlink {
         requires "java.sql"
     }
     addExtraDependencies("javafx")
-    imageZip = project.file("$rootDir/packaged-apps/pos-creator/TastyWorld-POS-Processor-v${version}-${javafx.platform.classifier}.zip")
+    imageZip = project.file("$rootDir/packaged-apps/pos-processor/TastyWorld-POS-Processor-v${version}-${javafx.platform.classifier}.zip")
     options = [
             '--strip-debug', '--no-header-files', '--no-man-pages',
 //            '--module-path', "$System.env.PATH_TO_FX_MODS",
