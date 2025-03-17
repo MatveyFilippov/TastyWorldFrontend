@@ -29,30 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuperBuilder
 public class AddProductParentPane extends DynamicParentPane {
 
-    public static class Product {
-
-        public static Long menuID;
-        public static Long productID;
-        public static String name;
-        public static Integer pieceStep;
-        public static String pieceType;
-        public static BigDecimal price;
-        public static Integer qty;
-        public static final Map<Long, Integer> notDefaultAdditives = new ConcurrentHashMap<>();
-
-        public static void clean() {
-            menuID = null;
-            productID = null;
-            name = null;
-            pieceStep = null;
-            pieceType = null;
-            price = null;
-            qty = null;
-            notDefaultAdditives.clear();
-        }
-
-    }
-
+    private static final ScrollPane scroll = new ScrollPane();
+    private static Label productNameTopicLabel, productQTYTopicLabel;
     private AnchorPane addProductCloseImgBtn, addProductSubmitImgBtn;
     private AnchorPane addProductNameTopic;
     private AnchorPane addProductPriceTopic;
@@ -63,8 +41,6 @@ public class AddProductParentPane extends DynamicParentPane {
     private GridPane addProductNumbersKeyboard;
     private AnchorPane addProductAdditivesTopic;
     private GridPane addProductAdditivesContainer;
-    private static Label productNameTopicLabel, productQTYTopicLabel;
-    private static final ScrollPane scroll = new ScrollPane();
 
     @Override
     protected String getCacheProcess(int total, int actual) {
@@ -87,7 +63,8 @@ public class AddProductParentPane extends DynamicParentPane {
             Product.pieceStep = 1;
             Product.pieceType = "Шт";
         }
-        Product.price = TypeChanger.toBigDecimal(productInfo.get("PRICE_PEER_PEACE")).divide(BigDecimal.valueOf(Product.pieceStep));
+        Product.price = TypeChanger.toBigDecimal(productInfo.get("PRICE_PEER_PEACE"))
+                                   .divide(BigDecimal.valueOf(Product.pieceStep));
         Product.qty = TypeChanger.toInt(productInfo.get("DEFAULT_PEACE_QTY"));
         Product.notDefaultAdditives.clear();
     }
@@ -161,22 +138,25 @@ public class AddProductParentPane extends DynamicParentPane {
         TextField qty = new TextField();
         qty.setText(String.valueOf(additiveInfo.get("DEFAULT_PEACE_QTY")));
         qty.setAlignment(Pos.CENTER);
-        qty.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(Math.min(row.getWidth() / 10, row.getHeight() / 6)),
-                row.widthProperty(), row.heightProperty()
-        ));
+        qty.fontProperty()
+           .bind(Bindings.createObjectBinding(() -> Font.font(Math.min(row.getWidth() / 10, row.getHeight() / 6)),
+                                              row.widthProperty(),
+                                              row.heightProperty()
+           ));
         qty.setEditable(false);
         return qty;
     }
 
     private void setPlusMinusAdditiveImgBtnsClickable(AnchorPane plus, AnchorPane minus, TextField additiveQTY, Map<String, Object> additiveInfo) {
-        PaneHelper.setImageBackgroundCentre(
-                plus, "AddProductPane/addProductAdditivePlusQTYImgBtn",
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(plus,
+                                            "AddProductPane/addProductAdditivePlusQTYImgBtn",
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(
-                minus, "AddProductPane/addProductAdditiveMinusQTYImgBtn",
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(minus,
+                                            "AddProductPane/addProductAdditiveMinusQTYImgBtn",
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png")
         );
         int step = additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? 100 : 1;
         long additiveID = TypeChanger.toLong(additiveInfo.get("ID"));
@@ -205,21 +185,21 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInAddProductPane() {
-        PaneHelper.setImageBackgroundCentre(
-                addProductCloseImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductCloseImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(addProductCloseImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/AddProductPane/addProductCloseImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(
-                addProductSubmitImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductSubmitImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(addProductSubmitImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/AddProductPane/addProductSubmitImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(
-                addProductMinusQTYImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductMinusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(addProductMinusQTYImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/AddProductPane/addProductMinusQTYImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(
-                addProductPlusQTYImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductPlusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(addProductPlusQTYImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/AddProductPane/addProductPlusQTYImgBtn.png")
         );
     }
 
@@ -249,7 +229,8 @@ public class AddProductParentPane extends DynamicParentPane {
     private AnchorPane getClickableNumberKbBtn(int num, StringExpression fontSize) {
         String toAppend = String.valueOf(num);
         AnchorPane btn = new AnchorPane();
-        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        btn.setStyle(
+                "-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
         AdaptiveTextHelper.setTextCentre(btn, toAppend, fontSize, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");
@@ -263,7 +244,8 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private AnchorPane getClickableShiftBackKbBtn() {
         AnchorPane btn = new AnchorPane();
-        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        btn.setStyle(
+                "-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
         AdaptiveTextHelper.setTextCentre(btn, "<--", 3, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");
@@ -298,6 +280,30 @@ public class AddProductParentPane extends DynamicParentPane {
         initTopicsInAddProductPane();
         initNumbersKeyboardInAddProductPane();
         initAdditiveLines();
+    }
+
+    public static class Product {
+
+        public static final Map<Long, Integer> notDefaultAdditives = new ConcurrentHashMap<>();
+        public static Long menuID;
+        public static Long productID;
+        public static String name;
+        public static Integer pieceStep;
+        public static String pieceType;
+        public static BigDecimal price;
+        public static Integer qty;
+
+        public static void clean() {
+            menuID = null;
+            productID = null;
+            name = null;
+            pieceStep = null;
+            pieceType = null;
+            price = null;
+            qty = null;
+            notDefaultAdditives.clear();
+        }
+
     }
 
 }

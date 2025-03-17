@@ -30,8 +30,12 @@ class PromptsProcessor {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             StringPair that = (StringPair) o;
             return this.first == that.first && this.second == that.second;
         }
@@ -43,9 +47,9 @@ class PromptsProcessor {
 
     }
 
+    private static final Map<StringPair, Integer> levenshteinCache = new ConcurrentHashMap<>();
     private final Set<String> prompts;
     private final String path;
-    private static final Map<StringPair, Integer> levenshteinCache = new ConcurrentHashMap<>();
 
     public PromptsProcessor(String path) {
         Set<String> tempPrompts;
@@ -56,6 +60,28 @@ class PromptsProcessor {
         }
         prompts = tempPrompts;
         this.path = path;
+    }
+
+    private static int levenshteinDistance(StringPair pair) {
+        return levenshteinCache.computeIfAbsent(pair, strings -> {
+            int[][] dp = new int[strings.first.length() + 1][strings.second.length() + 1];
+            for (int i = 0; i <= strings.first.length(); i++) {
+                for (int j = 0; j <= strings.second.length(); j++) {
+                    if (i == 0) {
+                        dp[i][j] = j;
+                    } else if (j == 0) {
+                        dp[i][j] = i;
+                    } else {
+                        dp[i][j] = Arrays.stream(new int[] {dp[i - 1][j - 1] + (
+                                strings.first.charAt(i - 1) == strings.second.charAt(j - 1)
+                                ? 0
+                                : 1
+                        ), dp[i - 1][j] + 1, dp[i][j - 1] + 1}).min().orElse(Integer.MAX_VALUE);
+                    }
+                }
+            }
+            return dp[strings.first.length()][strings.second.length()];
+        });
     }
 
     public String[] get(String input, int qty) {
@@ -78,33 +104,12 @@ class PromptsProcessor {
     }
 
     public void save() {
-        try (FileOutputStream fileOut = new FileOutputStream(path); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+        try (FileOutputStream fileOut = new FileOutputStream(path); ObjectOutputStream out = new ObjectOutputStream(
+                fileOut)) {
             out.writeObject(prompts);
         } catch (IOException ex) {
             AppLogger.GLOBAL_LOGGER.errorOnlyServerNotify("Can't save VirtualKeyboard prompts to file", ex);
         }
-    }
-
-    private static int levenshteinDistance(StringPair pair) {
-        return levenshteinCache.computeIfAbsent(pair, strings -> {
-            int[][] dp = new int[strings.first.length() + 1][strings.second.length() + 1];
-            for (int i = 0; i <= strings.first.length(); i++) {
-                for (int j = 0; j <= strings.second.length(); j++) {
-                    if (i == 0) {
-                        dp[i][j] = j;
-                    } else if (j == 0) {
-                        dp[i][j] = i;
-                    } else {
-                        dp[i][j] = Arrays.stream(new int[] {
-                                dp[i - 1][j - 1] + (strings.first.charAt(i - 1) == strings.second.charAt(j - 1) ? 0 : 1),
-                                dp[i - 1][j] + 1,
-                                dp[i][j - 1] + 1
-                        }).min().orElse(Integer.MAX_VALUE);
-                    }
-                }
-            }
-            return dp[strings.first.length()][strings.second.length()];
-        });
     }
 
 }

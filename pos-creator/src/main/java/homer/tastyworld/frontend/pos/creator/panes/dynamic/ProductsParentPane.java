@@ -25,17 +25,20 @@ import java.util.Map;
 @SuperBuilder
 public class ProductsParentPane extends DynamicParentPane {
 
+    @Builder.Default
+    private final ScrollPane scroll = new ScrollPane();
     private AnchorPane productsPaneBackInMenuImgBtn;
     private AnchorPane productsPaneMenuTopic;
     private GridPane productPaneImgProductsContainer;
     private DynamicParentPane addProductParentPane;
+    private final CacheProcessor<Long, GridPane> productsInMenuCache = new CacheProcessor<>() {
+        @Override
+        protected GridPane compute(Long menuID) {
+            return computeTable(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID).get("PRODUCT_IDs")));
+        }
+    };
     @Builder.Default
     private Label nameTopicLabel = null;
-    @Builder.Default
-    private final ScrollPane scroll = new ScrollPane();
-    private final CacheProcessor<Long, GridPane> productsInMenuCache = new CacheProcessor<>() {
-        @Override protected GridPane compute(Long menuID) { return computeTable(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID).get("PRODUCT_IDs"))); }
-    };
 
     @Override
     protected String getCacheProcess(int total, int actual) {
@@ -49,11 +52,9 @@ public class ProductsParentPane extends DynamicParentPane {
 
     @Override
     public void cacheAll(Long[] menuIDs) {
-        Arrays.stream(menuIDs).forEach(
-                menuID -> addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(
-                        MenuCache.impl.get(menuID).get("PRODUCT_IDs")
-                ))
-        );
+        Arrays.stream(menuIDs)
+              .forEach(menuID -> addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID)
+                                                                                                           .get("PRODUCT_IDs"))));
         super.cacheAll(menuIDs);
     }
 
@@ -127,9 +128,9 @@ public class ProductsParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInProductsPane() {
-        PaneHelper.setImageBackgroundCentre(
-                productsPaneBackInMenuImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/ProductsPane/productsPaneBackInMenuImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(productsPaneBackInMenuImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/ProductsPane/productsPaneBackInMenuImgBtn.png")
         );
     }
 

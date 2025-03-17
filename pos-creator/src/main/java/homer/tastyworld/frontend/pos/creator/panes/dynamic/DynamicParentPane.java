@@ -19,7 +19,7 @@ public abstract class DynamicParentPane extends StableParentPane {
             cacheTask(ids[i]);
         }
         System.out.println("\r" + getCacheProcess(total, total));
-    };
+    }
 
     public abstract void fill(long id);
 

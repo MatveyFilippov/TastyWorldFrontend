@@ -37,9 +37,7 @@ public class OrderPageFactory extends PrinterPageFactory {
         Map<String, Object> orderInfo = READ_ORDER_REQUEST.request().getResultAsJSON();
         OrderToPrint orderToPrint = new OrderToPrint();
         orderToPrint.name = (String) orderInfo.get("NAME");
-        orderToPrint.paidAt = AppDateTime.backendToLocal(AppDateTime.parseDateTime(
-                (String) orderInfo.get("PAID_AT")
-        ));
+        orderToPrint.paidAt = AppDateTime.backendToLocal(AppDateTime.parseDateTime((String) orderInfo.get("PAID_AT")));
         orderToPrint.totalPrice = TypeChanger.toBigDecimal(orderInfo.get("TOTAL_PRICE"));
         orderToPrint.itemIDs = TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"));
         return new OrderPageFactory(orderToPrint);
@@ -56,13 +54,10 @@ public class OrderPageFactory extends PrinterPageFactory {
         final Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         addFullLine(
                 String.format(
-                        "%s %s %s",
-                        productInfo.get("NAME"),
-                        TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")),
+                        "%s %s %s", productInfo.get("NAME"), TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")),
                         productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт"
                 ),
-                '.',
-                TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")) + " р"
+                '.', TypeChanger.toBigDecimal(itemInfo.get("ITEM_PRICE")) + " р"
         );
     }
 

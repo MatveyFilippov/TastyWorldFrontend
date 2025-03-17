@@ -24,16 +24,16 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class MainParentPane extends StableParentPane {
 
-    private GridPane mainPaneGridNodeContainer;
-    private AnchorPane mainPaneDaysLeftAlert, mainPaneDaysLeftAlertTopic;
+    private GridPane parentPlace;
+    private AnchorPane daysLeftAlert, daysLeftAlertTopic;
     private AnchorPane mainPaneClientPointNameTopic;
     private AnchorPane mainPaneSettingsImgBtn, mainPaneNewOrderImgBtn;
     private AnchorPane mainPaneCookingOrdersTopic, mainPaneReadyOrdersTopic;
     private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
     private DynamicParentPane lookOrderParentPane;
 
-    private void initDaysLeftAlertInMainPane() {
-        mainPaneDaysLeftAlert.setVisible(false);
+    private void initDaysLeftAlert() {
+        daysLeftAlert.setVisible(false);
         long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
         if (subscriptionAvailableDays <= 7) {
             String text = String.format(
@@ -41,13 +41,13 @@ public class MainParentPane extends StableParentPane {
                     TypeChanger.toDaysFormat(subscriptionAvailableDays)
             );
             if (subscriptionAvailableDays <= 5) {
-                AdaptiveTextHelper.setTextCentre(mainPaneDaysLeftAlertTopic, text, 45, null);
-                mainPaneDaysLeftAlert.setVisible(true);
+                AdaptiveTextHelper.setTextCentre(daysLeftAlertTopic, text, 45, null);
+                daysLeftAlert.setVisible(true);
             }
             AlertWindow.showInfo("Близится окончание подписки", text, true);
         } else {
-            mainPaneGridNodeContainer.getRowConstraints().getFirst().setPercentHeight(0);
-            mainPaneGridNodeContainer.getRowConstraints().getLast().setPercentHeight(85);
+            parentPlace.getRowConstraints().getFirst().setPercentHeight(0);
+            parentPlace.getRowConstraints().getLast().setPercentHeight(85);
         }
     }
 
@@ -85,7 +85,7 @@ public class MainParentPane extends StableParentPane {
     @Override
     public void initialize() {
         initClientPointTopicInMainPane();
-        initDaysLeftAlertInMainPane();
+        initDaysLeftAlert();
         initImgBtnsInMainPane();
         initTablesInMainPane();
     }

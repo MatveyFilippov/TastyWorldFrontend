@@ -21,22 +21,21 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @SuperBuilder
 public class LookOrderParentPane extends DynamicParentPane {
 
+    private static final ScrollPane scroll = new ScrollPane();
+    private static Label nameTopicLabel, priceTopicLabel;
     private AnchorPane lookOrderNameTopic, lookOrderTotalPriceTopic;
     private AnchorPane lookOrderClosePaneImgBtn, lookOrderSetDoneImgBtn;
     private GridPane lookOrderItemsContainer;
     private TextField lookOrderDeliveryField;
     private Button lookOrderSetPaidBtn;
-    private static Label nameTopicLabel, priceTopicLabel;
-    private static final ScrollPane scroll = new ScrollPane();
 
     @Override
-    protected String getCacheProcess(int ignored1, int ignored2) { return ""; }
+    protected String getCacheProcess(int ignored1, int ignored2) {return "";}
 
     @Override
     protected void cacheTask(Long ignored) {}
@@ -119,7 +118,9 @@ public class LookOrderParentPane extends DynamicParentPane {
         result.setFillWidth(true);
         result.setAlignment(Pos.CENTER);
         Map<Long, Integer> notDefaultAdditives = TypeChanger.toMap(
-                itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class
+                itemInfo.get("NOT_DEFAULT_ADDITIVES"),
+                Long.class,
+                Integer.class
         );
         for (Map.Entry<Long, Integer> pair : notDefaultAdditives.entrySet()) {
             result.getChildren().add(getAdditiveLine(AdditivesCache.impl.get(pair.getKey()), pair.getValue()));
@@ -139,7 +140,12 @@ public class LookOrderParentPane extends DynamicParentPane {
 
     private AnchorPane getItemPrice(Map<String, Object> itemInfo) {
         AnchorPane price = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(price, TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(), 4, null);
+        AdaptiveTextHelper.setTextCentre(
+                price,
+                TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(),
+                4,
+                null
+        );
         return price;
     }
 
@@ -162,13 +168,13 @@ public class LookOrderParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInLookOrderPane() {
-        PaneHelper.setImageBackgroundCentre(
-                lookOrderClosePaneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderClosePaneImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(lookOrderClosePaneImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/LookOrderPane/lookOrderClosePaneImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(
-                lookOrderSetDoneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderSetDoneImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(lookOrderSetDoneImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/LookOrderPane/lookOrderSetDoneImgBtn.png")
         );
     }
 

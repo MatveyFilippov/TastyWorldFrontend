@@ -1,17 +1,17 @@
 package homer.tastyworld.frontend.pos.creator;
 
 import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderCreating;
+import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderLooking;
 import homer.tastyworld.frontend.pos.creator.core.vkb.VirtualKeyboardPrompts;
 import homer.tastyworld.frontend.pos.creator.panes.ParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.AddProductParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.EndOrderCreatingParentPane;
-import homer.tastyworld.frontend.pos.creator.panes.dynamic.ProductsParentPane;
-import homer.tastyworld.frontend.pos.creator.panes.stable.MenuParentPane;
-import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderLooking;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.LookOrderParentPane;
-import homer.tastyworld.frontend.pos.creator.panes.stable.StableParentPane;
+import homer.tastyworld.frontend.pos.creator.panes.dynamic.ProductsParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.stable.MainParentPane;
+import homer.tastyworld.frontend.pos.creator.panes.stable.MenuParentPane;
+import homer.tastyworld.frontend.pos.creator.panes.stable.StableParentPane;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
@@ -132,9 +132,9 @@ public class POSCreatorController {
                 .builder()
                 .parent(mainPaneParent)
                 .lookOrderParentPane(lookOrderPane)
-                .mainPaneGridNodeContainer(mainPaneGridNodeContainer)
-                .mainPaneDaysLeftAlert(mainPaneDaysLeftAlert)
-                .mainPaneDaysLeftAlertTopic(mainPaneDaysLeftAlertTopic)
+                .parentPlace(mainPaneGridNodeContainer)
+                .daysLeftAlert(mainPaneDaysLeftAlert)
+                .daysLeftAlertTopic(mainPaneDaysLeftAlertTopic)
                 .mainPaneClientPointNameTopic(mainPaneClientPointNameTopic)
                 .mainPaneSettingsImgBtn(mainPaneSettingsImgBtn)
                 .mainPaneNewOrderImgBtn(mainPaneNewOrderImgBtn)

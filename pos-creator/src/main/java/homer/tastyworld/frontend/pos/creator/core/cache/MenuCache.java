@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class MenuCache extends CacheProcessor<Long, Map<String, Object>> {
 
-    private static final Request request = new Request("/menu/read", Method.GET);
     public static final CacheProcessor<Long, Map<String, Object>> impl = new MenuCache();
+    private static final Request request = new Request("/menu/read", Method.GET);
 
     @Override
     protected Map<String, Object> compute(Long menuID) {

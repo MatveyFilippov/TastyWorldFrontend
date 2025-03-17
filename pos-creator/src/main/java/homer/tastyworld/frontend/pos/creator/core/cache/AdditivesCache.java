@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class AdditivesCache extends CacheProcessor<Long, Map<String, Object>> {
 
-    private static final Request request = new Request("/product/read_additive", Method.GET);
     public static final CacheProcessor<Long, Map<String, Object>> impl = new AdditivesCache();
+    private static final Request request = new Request("/product/read_additive", Method.GET);
 
     @Override
     protected Map<String, Object> compute(Long additiveID) {

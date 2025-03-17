@@ -29,16 +29,16 @@ import java.util.Map;
 @SuperBuilder
 public class EndOrderCreatingParentPane extends DynamicParentPane {
 
+    private static final ScrollPane scroll = new ScrollPane();
+    private static Label nameTopicLabel, priceTopicLabel;
     private AnchorPane endOrderCreatingOpenMenuImgBtn, endOrderCreatingCommitImgBtn;
     private AnchorPane endOrderCreatingNameTopic, endOrderCreatingTotalPriceTopic;
     private GridPane endOrderCreatingItemsContainer;
     private TextField endOrderCreatingDeliveryField;
     private CheckBox endOrderCreatingIsPaidCheckBox;
-    private static Label nameTopicLabel, priceTopicLabel;
-    private static final ScrollPane scroll = new ScrollPane();
 
     @Override
-    protected String getCacheProcess(int ignored1, int ignored2) { return ""; }
+    protected String getCacheProcess(int ignored1, int ignored2) {return "";}
 
     @Override
     protected void cacheTask(Long ignored) {}
@@ -104,16 +104,21 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     private AnchorPane getDeleteItem(Map<String, Object> itemInfo, ObservableList<Node> deleteFrom, Node toDelete) {
         AnchorPane delete = new AnchorPane();
-        PaneHelper.setImageBackgroundCentre(
-                delete, "EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn",
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(delete,
+                                            "EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn",
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png")
         );
         delete.setOnMouseClicked(event -> {
             Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-            if (!DialogWindow.askBool(
-                    "Да", "Нет", "Редактирование заказа",
-                    String.format("Вы уверены что хотите удалить '%s' из заказа?", productInfo.get("NAME")),
-                    "Продолжить?"
+            if (!DialogWindow.askBool("Да",
+                                      "Нет",
+                                      "Редактирование заказа",
+                                      String.format(
+                                              "Вы уверены что хотите удалить '%s' из заказа?",
+                                              productInfo.get("NAME")
+                                      ),
+                                      "Продолжить?"
             )) {
                 return;
             }
@@ -140,9 +145,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         AnchorPane qty = new AnchorPane();
         Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
-        AdaptiveTextHelper.setTextCentre(
-                qty, itemInfo.get("PEACE_QTY") + " " + peaceType, 4, null
-        );
+        AdaptiveTextHelper.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, 4, null);
         return qty;
     }
 
@@ -151,7 +154,9 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         result.setFillWidth(true);
         result.setAlignment(Pos.CENTER);
         Map<Long, Integer> notDefaultAdditives = TypeChanger.toMap(
-                itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class
+                itemInfo.get("NOT_DEFAULT_ADDITIVES"),
+                Long.class,
+                Integer.class
         );
         for (Map.Entry<Long, Integer> pair : notDefaultAdditives.entrySet()) {
             result.getChildren().add(getAdditiveLine(AdditivesCache.impl.get(pair.getKey()), pair.getValue()));
@@ -172,7 +177,10 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private AnchorPane getItemPrice(Map<String, Object> itemInfo) {
         AnchorPane price = new AnchorPane();
         AdaptiveTextHelper.setTextCentre(
-                price, TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(), 4, null
+                price,
+                TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(),
+                4,
+                null
         );
         return price;
     }
@@ -196,13 +204,13 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInEndOrderCreatingPane() {
-        PaneHelper.setImageBackgroundBottom(
-                endOrderCreatingOpenMenuImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingOpenMenuImgBtn.png")
+        PaneHelper.setImageBackgroundBottom(endOrderCreatingOpenMenuImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/EndOrderCreatingPane/endOrderCreatingOpenMenuImgBtn.png")
         );
-        PaneHelper.setImageBackgroundBottom(
-                endOrderCreatingCommitImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingCommitImgBtn.png")
+        PaneHelper.setImageBackgroundBottom(endOrderCreatingCommitImgBtn,
+                                            POSCreatorApplication.class.getResourceAsStream(
+                                                    "images/buttons/EndOrderCreatingPane/endOrderCreatingCommitImgBtn.png")
         );
     }
 
