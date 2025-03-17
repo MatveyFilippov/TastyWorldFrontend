@@ -13,7 +13,7 @@ public class AppConfig {
     public static final String API_URL = "http://" + TW_SERVER_IP + "/api";
     public static final String NOTIFICATION_HOST = "tastyworld-pos.ru";
     public static final int NOTIFICATION_PORT = 5672;
-    public static final String NOTIFICATION_VIRTUAL_HOST = "playground";
+    public static final String NOTIFICATION_VIRTUAL_HOST = "main";
     public static final File APP_DATA_DIR = new File(System.getProperty("user.home"), ".TastyWorld");
     private static final PropertiesProcessor properties;
     private static String token, appName, appVersion;
