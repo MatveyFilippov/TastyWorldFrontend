@@ -1,5 +1,5 @@
 group 'homer.tastyworld.frontend.pos'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 application {
     mainModule = 'homer.tastyworld.frontend.pos.processor'

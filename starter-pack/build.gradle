@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'homer.tastyworld.frontend'
-version '0.0.1-SNAPSHOT'
+version '1.0.0'
 
 javafx {
     version = '21.0.2'
