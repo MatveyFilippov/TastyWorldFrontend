@@ -1,13 +1,14 @@
 package homer.tastyworld.frontend.pos.creator.core.vkb;
 
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
-import javafx.collections.ObservableList;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
@@ -15,9 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class VirtualKeyboardPrompts {
 
+    public static final int PROMPTS_QTY = 3;
+    private static final int spacePromptPercent = 100 / PROMPTS_QTY;
     private static final String pathBeforeFileName;
     private static final Map<String, PromptsProcessor> processors = new ConcurrentHashMap<>();
-    private static ObservableList<Node> promptsContainer;
+    private static final Label[] promptPlaces = new Label[PROMPTS_QTY];
 
     static {
         File dir = new File(AppConfig.APP_DATA_DIR, "VirtualKeyboardPrompts");
@@ -36,7 +39,17 @@ public class VirtualKeyboardPrompts {
         promptsContainer.setSpacing(15);
         promptsContainer.setAlignment(Pos.CENTER);
         promptsContainer.setFillHeight(true);
-        VirtualKeyboardPrompts.promptsContainer = promptsContainer.getChildren();
+        for (int i = 0; i < PROMPTS_QTY; i++) {
+            promptsContainer.getChildren().add(createClickablePrompt(promptsContainer, i));
+        }
+    }
+
+    private static AnchorPane createClickablePrompt(HBox promptsContainer, int index) {
+        AnchorPane prompt = new AnchorPane();
+        HBox.setHgrow(prompt, Priority.ALWAYS);
+        prompt.prefWidthProperty().bind(promptsContainer.widthProperty().multiply(spacePromptPercent));
+        promptPlaces[index] = AdaptiveTextHelper.setTextCentre(prompt, "", 2, Color.web("#555555"));
+        return prompt;
     }
 
     public static void setInputField(TextField field) {
@@ -46,17 +59,18 @@ public class VirtualKeyboardPrompts {
     private static void setPrompts(TextField field, final String input) {
         PromptsProcessor processor = getProcessor(field);
         clean();
-        Arrays.stream(processor.get(input, 3)).forEach(prompt -> promptsContainer.add(getClickablePrompt(field, prompt)));
+        String[] prompts = processor.get(input, PROMPTS_QTY);
+        for (int i = 0; i < PROMPTS_QTY; i++) {
+            putClickablePrompt(field, prompts[i], i);
+        }
     }
 
-    private static Node getClickablePrompt(TextField field, String prompt) {
-        AnchorPane pane = new AnchorPane();
-        TextHelper.setTextCentre(pane, prompt, TextHelper.getAdaptiveFontSize(pane, 5), null);
-        pane.setOnMouseClicked(event -> {
+    private static void putClickablePrompt(TextField field, String prompt, int index) {
+        promptPlaces[index].setText(prompt);
+        promptPlaces[index].setOnMouseClicked(event -> {
             clean();
             field.setText(prompt);
         });
-        return pane;
     }
 
     public static void appendVar(TextField field) {
@@ -66,7 +80,10 @@ public class VirtualKeyboardPrompts {
     }
 
     public static void clean() {
-        promptsContainer.clear();
+        Arrays.stream(promptPlaces).forEach(place -> {
+            place.setText("");
+            place.setOnMouseClicked(e -> {});
+        });
     }
 
 }

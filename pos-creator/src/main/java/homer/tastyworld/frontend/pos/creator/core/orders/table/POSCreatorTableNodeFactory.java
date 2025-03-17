@@ -3,14 +3,12 @@ package homer.tastyworld.frontend.pos.creator.core.orders.table;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderLooking;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
-import javafx.util.Duration;
 
 public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
@@ -30,7 +28,7 @@ public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
     private AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
-        TextHelper.setTextCentre(pane, name, TextHelper.getAdaptiveFontSize(pane, 3), null);
+        AdaptiveTextHelper.setTextCentre(pane, name, 1.5, null);
         pane.setOpacity(1.0);
         pane.setMinSize(0, 0);
         pane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);

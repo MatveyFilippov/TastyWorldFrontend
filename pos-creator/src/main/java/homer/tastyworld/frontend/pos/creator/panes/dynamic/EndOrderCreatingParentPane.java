@@ -4,13 +4,14 @@ import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.StringExpression;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -33,7 +34,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private GridPane endOrderCreatingItemsContainer;
     private TextField endOrderCreatingDeliveryField;
     private CheckBox endOrderCreatingIsPaidCheckBox;
-    private static StringExpression nameTopicFontSize, priceTopicFontSize;
+    private static Label nameTopicLabel, priceTopicLabel;
     private static final ScrollPane scroll = new ScrollPane();
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
     private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
@@ -53,8 +54,8 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         if (!deliveryAddress.equals("NOT FOR DELIVERY")) {
             endOrderCreatingDeliveryField.setText(deliveryAddress);
         }
-        TextHelper.setTextCentre(endOrderCreatingNameTopic, "Заказ #" + orderInfo.get("NAME"), nameTopicFontSize, null);
-        TextHelper.setTextCentre(endOrderCreatingTotalPriceTopic, "Стоимость: " + orderInfo.get("TOTAL_PRICE"), priceTopicFontSize, null);
+        nameTopicLabel.setText("Заказ #" + orderInfo.get("NAME"));
+        priceTopicLabel.setText("Стоимость: " + orderInfo.get("TOTAL_PRICE"));
         endOrderCreatingIsPaidCheckBox.setSelected(TypeChanger.toBool(orderInfo.get("IS_PAID")));
         scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
     }
@@ -133,9 +134,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
             Request infoRequest = new Request("/order/read", Method.GET);
             infoRequest.putInBody("id", TypeChanger.toLong(itemInfo.get("ORDER_ID")));
             endOrderCreatingTotalPriceTopic.getChildren().clear();
-            TextHelper.setTextCentre(
-                    endOrderCreatingTotalPriceTopic, "Стоимость: " + infoRequest.request().getResultAsJSON().get("TOTAL_PRICE"), priceTopicFontSize, null
-            );
+            priceTopicLabel.setText("Стоимость: " + infoRequest.request().getResultAsJSON().get("TOTAL_PRICE"));
         });
         return delete;
     }
@@ -143,7 +142,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private AnchorPane getItemName(Map<String, Object> itemInfo) {
         AnchorPane name = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        TextHelper.setTextCentre(name, (String) productInfo.get("NAME"), TextHelper.getAdaptiveFontSize(name, 15), null);
+        AdaptiveTextHelper.setTextCentre(name, (String) productInfo.get("NAME"), 15, null);
         return name;
     }
 
@@ -151,9 +150,8 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         AnchorPane qty = new AnchorPane();
         Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
-        TextHelper.setTextCentre(
-                qty, itemInfo.get("PEACE_QTY") + " " + peaceType,
-                TextHelper.getAdaptiveFontSize(qty, 4), null
+        AdaptiveTextHelper.setTextCentre(
+                qty, itemInfo.get("PEACE_QTY") + " " + peaceType, 4, null
         );
         return qty;
     }
@@ -182,23 +180,22 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         String line = additiveInfo.get("NAME") + " " + qty + (
                 additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
         );
-        TextHelper.setTextCentre(additiveLine, line, TextHelper.getAdaptiveFontSize(additiveLine, 17), null);
+        AdaptiveTextHelper.setTextCentre(additiveLine, line, 17, null);
         return additiveLine;
     }
 
     private AnchorPane getItemPrice(Map<String, Object> itemInfo) {
         AnchorPane price = new AnchorPane();
-        TextHelper.setTextCentre(
-                price, TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(),
-                TextHelper.getAdaptiveFontSize(price, 4), null
+        AdaptiveTextHelper.setTextCentre(
+                price, TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(), 4, null
         );
         return price;
     }
 
     @Override
     protected void cleanTask() {
-        endOrderCreatingNameTopic.getChildren().clear();
-        endOrderCreatingTotalPriceTopic.getChildren().clear();
+        nameTopicLabel.setText("");
+        priceTopicLabel.setText("");
         endOrderCreatingDeliveryField.clear();
         endOrderCreatingIsPaidCheckBox.setSelected(false);
     }
@@ -208,9 +205,9 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         endOrderCreatingItemsContainer.add(scroll, 1, 2);
     }
 
-    private void initTopicsFontSize() {
-        nameTopicFontSize = TextHelper.getAdaptiveFontSize(endOrderCreatingNameTopic, 6);
-        priceTopicFontSize = TextHelper.getAdaptiveFontSize(endOrderCreatingTotalPriceTopic, 10);
+    private void initTopics() {
+        nameTopicLabel = AdaptiveTextHelper.setTextCentre(endOrderCreatingNameTopic, "", 6, null);
+        priceTopicLabel = AdaptiveTextHelper.setTextCentre(endOrderCreatingTotalPriceTopic, "", 10, null);
     }
 
     private void initImgBtnsInEndOrderCreatingPane() {
@@ -228,7 +225,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     public void initialize() {
         initItemsTable();
         initImgBtnsInEndOrderCreatingPane();
-        initTopicsFontSize();
+        initTopics();
     }
 
 }

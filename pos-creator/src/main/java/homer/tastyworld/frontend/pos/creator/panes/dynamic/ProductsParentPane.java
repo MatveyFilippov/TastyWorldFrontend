@@ -4,10 +4,10 @@ import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
-import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -26,7 +26,7 @@ public class ProductsParentPane extends DynamicParentPane {
     private AnchorPane productsPaneMenuTopic;
     private GridPane productPaneImgProductsContainer;
     private DynamicParentPane addProductParentPane;
-    private static StringExpression topicFontSize;
+    private static Label nameTopicLabel;
     private static final ScrollPane scroll = new ScrollPane();
     private static final Map<Long, GridPane> productsCache = new ConcurrentHashMap<>();
 
@@ -49,7 +49,7 @@ public class ProductsParentPane extends DynamicParentPane {
         Request request = new Request("/menu/read", Method.GET);
         request.putInBody("id", menuID);
         Map<String, Object> menuInfo = request.request().getResultAsJSON();
-        TextHelper.setTextCentre(productsPaneMenuTopic, (String) menuInfo.get("NAME"), topicFontSize, null);
+        nameTopicLabel.setText((String) menuInfo.get("NAME"));
         scroll.setContent(productsCache.computeIfAbsent(menuID, ignored -> computeTable(menuInfo)));
     }
 
@@ -101,7 +101,7 @@ public class ProductsParentPane extends DynamicParentPane {
         Request request = new Request("/product/read", Method.GET);
         request.putInBody("id", productID);
         Map<String, Object> info = request.request().getResultAsJSON();
-        TextHelper.setTextCentre(result, (String) info.get("NAME"), TextHelper.getAdaptiveFontSize(result, 12), null);
+        AdaptiveTextHelper.setTextCentre(result, (String) info.get("NAME"), 12, null);
         return result;
     }
 
@@ -110,8 +110,8 @@ public class ProductsParentPane extends DynamicParentPane {
         productsPaneMenuTopic.getChildren().clear();
     }
 
-    private void initTopicFontSize() {
-        topicFontSize = TextHelper.getAdaptiveFontSize(productsPaneMenuTopic, 20);
+    private void initNameTopic() {
+        nameTopicLabel = AdaptiveTextHelper.setTextCentre(productsPaneMenuTopic, "", 20, null);
     }
 
     private void initItemsTable() {
@@ -128,7 +128,7 @@ public class ProductsParentPane extends DynamicParentPane {
 
     @Override
     public void initialize() {
-        initTopicFontSize();
+        initNameTopic();
         initImgBtnsInProductsPane();
         initItemsTable();
     }

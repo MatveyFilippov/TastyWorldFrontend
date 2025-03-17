@@ -5,15 +5,15 @@ import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
+import javafx.scene.paint.Color;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -85,12 +85,12 @@ public class MenuParentPane extends StableParentPane {
         Request request = new Request("/menu/read", Method.GET);
         request.putInBody("id", menuID);
         Map<String, Object> info = request.request().getResultAsJSON();
-        TextHelper.setTextCentre(result, (String) info.get("NAME"), TextHelper.getAdaptiveFontSize(result, 12), null);
+        AdaptiveTextHelper.setTextCentre(result, (String) info.get("NAME"), 15, null);
         return result;
     }
 
     private void initTopicInMenuPane() {
-        TextHelper.setTextCentre(menuPaneTopic, "Меню", TextHelper.getAdaptiveFontSize(menuPaneTopic, 15), null);
+        AdaptiveTextHelper.setTextCentre(menuPaneTopic, "Меню", 15, Color.web("#555555"));
     }
 
     private void initImgBtnsInMenuPane() {

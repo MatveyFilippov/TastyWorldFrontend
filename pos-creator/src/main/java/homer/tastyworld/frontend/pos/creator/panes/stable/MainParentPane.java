@@ -10,8 +10,8 @@ import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNode
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors.DefaultTableCursor;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
@@ -41,10 +41,7 @@ public class MainParentPane extends StableParentPane {
                     TypeChanger.toDaysFormat(subscriptionAvailableDays)
             );
             if (subscriptionAvailableDays <= 5) {
-                TextHelper.setTextCentre(
-                        mainPaneDaysLeftAlertTopic, text,
-                        TextHelper.getAdaptiveFontSize(mainPaneDaysLeftAlertTopic, 45), null
-                );
+                AdaptiveTextHelper.setTextCentre(mainPaneDaysLeftAlertTopic, text, 45, null);
                 mainPaneDaysLeftAlert.setVisible(true);
             }
             AlertWindow.showInfo("Близится окончание подписки", text, true);
@@ -55,9 +52,8 @@ public class MainParentPane extends StableParentPane {
     }
 
     private void initClientPointTopicInMainPane() {
-        TextHelper.setTextCentre(
-                mainPaneClientPointNameTopic, (String) MyParams.getClientPointInfo().get("NAME"),
-                TextHelper.getAdaptiveFontSize(mainPaneClientPointNameTopic, 17), Color.web("#808080")
+        AdaptiveTextHelper.setTextCentre(
+                mainPaneClientPointNameTopic, (String) MyParams.getClientPointInfo().get("NAME"), 17, Color.web("#808080")
         );
     }
 
@@ -73,9 +69,10 @@ public class MainParentPane extends StableParentPane {
     }
 
     private void initTablesInMainPane() {
-        StringExpression topicFontSize = TextHelper.getAdaptiveFontSize(mainPaneCookingOrdersTopic, 17);
-        TextHelper.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize, null);
-        TextHelper.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, null);
+        StringExpression topicFontSize = AdaptiveTextHelper.getFontSize(mainPaneCookingOrdersTopic, 17);
+        Color topicsColor = Color.web("#555555");
+        AdaptiveTextHelper.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize, topicsColor);
+        AdaptiveTextHelper.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, topicsColor);
         mainPaneCookingOrdersTable.setAlignment(Pos.CENTER);
         mainPaneReadyOrdersTable.setAlignment(Pos.CENTER);
         TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory(lookOrderParentPane);

@@ -3,11 +3,11 @@ package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.TextHelper;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -64,8 +64,7 @@ public class AddProductParentPane extends DynamicParentPane {
     private GridPane addProductNumbersKeyboard;
     private AnchorPane addProductAdditivesTopic;
     private GridPane addProductAdditivesContainer;
-    private static StringExpression productNameTopicFontSize;
-    private static StringExpression productQTYTopicFontSize;
+    private static Label productNameTopicLabel, productQTYTopicLabel;
     private static final ScrollPane scroll = new ScrollPane();
     private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
     private static final Map<Long, List<Map<String, Object>>> additiveCache = new ConcurrentHashMap<>();
@@ -115,8 +114,8 @@ public class AddProductParentPane extends DynamicParentPane {
         });
         setProduct(productInfo);
 
-        TextHelper.setTextCentre(addProductNameTopic, Product.name, productNameTopicFontSize, null);
-        TextHelper.setTextCentre(addProductQTYTypeTopic, Product.pieceType, productQTYTopicFontSize, null);
+        productNameTopicLabel.setText(Product.name);
+        productQTYTopicLabel.setText(Product.pieceType);
         addProductQTYFiled.setText(String.valueOf(Product.qty));
         recalculatePrice();
 
@@ -177,7 +176,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private AnchorPane getAdditiveName(Map<String, Object> additiveInfo) {
         AnchorPane name = new AnchorPane();
-        TextHelper.setTextCentre(name, (String) additiveInfo.get("NAME"), TextHelper.getAdaptiveFontSize(name, 8), null);
+        AdaptiveTextHelper.setTextCentre(name, (String) additiveInfo.get("NAME"), 8, null);
         return name;
     }
 
@@ -222,8 +221,8 @@ public class AddProductParentPane extends DynamicParentPane {
     @Override
     protected void cleanTask() {
         Product.clean();
-        addProductQTYTypeTopic.getChildren().clear();
-        addProductNameTopic.getChildren().clear();
+        productNameTopicLabel.setText("null");
+        productQTYTopicLabel.setText("");
         addProductQTYFiled.setText("0");
         addProductTotalPriceField.setText("0");
     }
@@ -264,13 +263,23 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void initTopicsInAddProductPane() {
-        TextHelper.setTextCentre(addProductPriceTopic, "Цена", TextHelper.getAdaptiveFontSize(addProductPriceTopic, 5), null);
-        TextHelper.setTextCentre(addProductAdditivesTopic, "Добавки", TextHelper.getAdaptiveFontSize(addProductAdditivesTopic, 15), null);
+        AdaptiveTextHelper.setTextCentre(addProductPriceTopic, "Цена", 5, null);
+        AdaptiveTextHelper.setTextCentre(addProductAdditivesTopic, "Добавки", 15, null);
+        productNameTopicLabel = AdaptiveTextHelper.setTextCentre(addProductNameTopic, "", 20, null);
+        productQTYTopicLabel = AdaptiveTextHelper.setTextCentre(addProductQTYTypeTopic, "", 20, null);
+        addProductQTYFiled.fontProperty().bind(Bindings.createObjectBinding(
+                () -> Font.font(Math.min(addProductQTYFiled.getWidth() / 10, addProductQTYFiled.getHeight() / 6)),
+                addProductQTYFiled.widthProperty(), addProductQTYFiled.heightProperty()
+        ));
+        addProductTotalPriceField.fontProperty().bind(Bindings.createObjectBinding(
+                () -> Font.font(Math.min(addProductTotalPriceField.getWidth() / 10, addProductTotalPriceField.getHeight() / 6)),
+                addProductTotalPriceField.widthProperty(), addProductTotalPriceField.heightProperty()
+        ));
     }
 
     private AnchorPane getClickableNumberKbBtn(String toAppend) {
         AnchorPane btn = new AnchorPane();
-        TextHelper.setTextCentre(btn, toAppend, TextHelper.getAdaptiveFontSize(btn, 2), null);
+        AdaptiveTextHelper.setTextCentre(btn, toAppend, 2, null);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");
             String newQTY = oldQTY.equals("0") ? toAppend : oldQTY + toAppend;
@@ -283,7 +292,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private AnchorPane getClickableShiftBackKbBtn() {
         AnchorPane btn = new AnchorPane();
-        TextHelper.setTextCentre(btn, "<--", TextHelper.getAdaptiveFontSize(btn, 4), null);
+        AdaptiveTextHelper.setTextCentre(btn, "<--", 3, null);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");
             int len = oldQTY.length();
@@ -303,11 +312,6 @@ public class AddProductParentPane extends DynamicParentPane {
         addProductQTYFiled.setText("0");
     }
 
-    private void initTopicsFontSize() {
-        productNameTopicFontSize = TextHelper.getAdaptiveFontSize(addProductNameTopic, 20);
-        productQTYTopicFontSize = TextHelper.getAdaptiveFontSize(addProductQTYTypeTopic, 5);
-    }
-
     private void initAdditiveLines() {
         scroll.setFitToWidth(true);
         addProductAdditivesContainer.add(scroll, 0, 1);
@@ -315,7 +319,6 @@ public class AddProductParentPane extends DynamicParentPane {
 
     @Override
     public void initialize() {
-        initTopicsFontSize();
         initImgBtnsInAddProductPane();
         setPlusMinusProductImgBtnsClickable();
         initTopicsInAddProductPane();
