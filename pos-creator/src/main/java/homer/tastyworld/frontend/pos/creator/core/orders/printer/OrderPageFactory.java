@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class OrderPageFactory extends PrinterPageFactory {
 
@@ -25,6 +24,8 @@ public class OrderPageFactory extends PrinterPageFactory {
 
     }
 
+    private static final Request READ_ORDER_REQUEST = new Request("/order/read", Method.GET);
+    private static final Request READ_ORDER_ITEM_REQUEST = new Request("/order/read_item", Method.GET);
     private final OrderToPrint orderToPrint;
 
     private OrderPageFactory(OrderToPrint orderToPrint) {
@@ -32,9 +33,8 @@ public class OrderPageFactory extends PrinterPageFactory {
     }
 
     public static OrderPageFactory getFor(long orderID) {
-        Request request = new Request("/order/read", Method.GET);
-        request.putInBody("id", orderID);
-        Map<String, Object> orderInfo = request.request().getResultAsJSON();
+        READ_ORDER_REQUEST.putInBody("id", orderID);
+        Map<String, Object> orderInfo = READ_ORDER_REQUEST.request().getResultAsJSON();
         OrderToPrint orderToPrint = new OrderToPrint();
         orderToPrint.name = (String) orderInfo.get("NAME");
         orderToPrint.paidAt = AppDateTime.backendToLocal(AppDateTime.parseDateTime(
@@ -47,9 +47,8 @@ public class OrderPageFactory extends PrinterPageFactory {
 
     private void setItems(Long[] itemIDs) throws IOException {
         for (Long itemID : itemIDs) {
-            Request request = new Request("/order/read_item", Method.GET);
-            request.putInBody("id", itemID);
-            addItemLine(request.request().getResultAsJSON());
+            READ_ORDER_ITEM_REQUEST.putInBody("id", itemID);
+            addItemLine(READ_ORDER_ITEM_REQUEST.request().getResultAsJSON());
         }
     }
 

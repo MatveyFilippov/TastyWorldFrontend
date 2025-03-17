@@ -1,6 +1,8 @@
 package homer.tastyworld.frontend.pos.processor.core.helpers;
 
 import homer.tastyworld.frontend.pos.processor.POSProcessorApplication;
+import homer.tastyworld.frontend.pos.processor.core.cache.AdditivesCache;
+import homer.tastyworld.frontend.pos.processor.core.cache.ProductsCache;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.AppDateTime;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
@@ -19,30 +21,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.apache.hc.core5.http.Method;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class OrderInfoPaneRenderer {
 
     public static Long orderID = null;
     public static boolean isEditable = false;
+    private static final Request READ_ORDER_REQUEST = new Request("/order/read", Method.GET);
+    private static final Request READ_ORDER_ITEM_REQUEST = new Request("/order/read_item", Method.GET);
     private static ScrollPane scroll;
     private static Label orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic;
-    private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
-    private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
-
-    public static void init(ScrollPane scroll, AnchorPane orderCreatedTimeTopic, AnchorPane orderDeliveryTopic, AnchorPane orderNameTopic) {
-        OrderInfoPaneRenderer.scroll = scroll;
-        StringExpression miscInfoTopicsFontSize = AdaptiveTextHelper.getFontSize(orderDeliveryTopic, 1.5);
-        OrderInfoPaneRenderer.orderCreatedTimeTopic = AdaptiveTextHelper.setTextCentre(orderCreatedTimeTopic, "", miscInfoTopicsFontSize, null);
-        OrderInfoPaneRenderer.orderDeliveryTopic = AdaptiveTextHelper.setTextCentre(orderDeliveryTopic, "", miscInfoTopicsFontSize, null);
-        OrderInfoPaneRenderer.orderNameTopic = AdaptiveTextHelper.setTextCentre(orderNameTopic, "", 1.35, Color.BLACK);;
-    }
 
     public static void render(long orderID) {
         clean();
-        Request request = new Request("/order/read", Method.GET);
-        request.putInBody("id", orderID);
-        Map<String, Object> orderInfo = request.request().getResultAsJSON();
+        READ_ORDER_REQUEST.putInBody("id", orderID);
+        Map<String, Object> orderInfo = READ_ORDER_REQUEST.request().getResultAsJSON();
         OrderInfoPaneRenderer.orderID = TypeChanger.toLong(orderInfo.get("ID"));
         OrderInfoPaneRenderer.isEditable = !TypeChanger.toBool(orderInfo.get("IS_PAID"));
         orderCreatedTimeTopic.setText(
@@ -67,20 +59,11 @@ public class OrderInfoPaneRenderer {
         GridPane table = new GridPane();
         table.setVgap(5);
         table.setAlignment(Pos.CENTER);
-        Request request = new Request("/order/read_item", Method.GET);
         for (int i = 0; i < itemIDs.length; i++) {
-            request.putInBody("id", itemIDs[i]);
-            table.add(getItemLine(request.request().getResultAsJSON()), 0, i);
+            READ_ORDER_ITEM_REQUEST.putInBody("id", itemIDs[i]);
+            table.add(getItemLine(READ_ORDER_ITEM_REQUEST.request().getResultAsJSON()), 0, i);
         }
         return table;
-    }
-
-    private static Map<String, Object> getProductInfo(long productID) {
-        return productCache.computeIfAbsent(productID, id -> {
-            Request request = new Request("/product/read", Method.GET);
-            request.putInBody("id", id);
-            return request.request().getResultAsJSON();
-        });
     }
 
     private static HBox getItemLine(Map<String, Object> itemInfo) {
@@ -120,7 +103,7 @@ public class OrderInfoPaneRenderer {
                 editImgBtn, "editOrderItemImgBtn",
                 POSProcessorApplication.class.getResourceAsStream("images/buttons/editOrderItemImgBtn.png")
         );
-        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+        Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         setEditOnClick(
                 editImgBtn, TypeChanger.toLong(itemInfo.get("ID")),
                 TypeChanger.toInt(itemInfo.get("PEACE_QTY")), (String) productInfo.get("NAME")
@@ -142,14 +125,14 @@ public class OrderInfoPaneRenderer {
 
     private static AnchorPane getItemName(Map<String, Object> itemInfo) {
         AnchorPane name = new AnchorPane();
-        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        AdaptiveTextHelper.setTextCentre(name, (String) productInfo.get("NAME"), 5, null);
+        Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+        AdaptiveTextHelper.setTextCentre(name, (String) productInfo.get("NAME"), 13, null);
         return name;
     }
 
     private static AnchorPane getItemQTY(Map<String, Object> itemInfo) {
         AnchorPane qty = new AnchorPane();
-        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+        Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
         AdaptiveTextHelper.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, 4, null);
         return qty;
@@ -163,11 +146,7 @@ public class OrderInfoPaneRenderer {
                 itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class
         );
         for (Map.Entry<Long, Integer> pair : notDefaultAdditives.entrySet()) {
-            Map<String, Object> additiveInfo = additiveCache.computeIfAbsent(pair.getKey(), additiveID -> {
-                Request request = new Request("/product/read_additive", Method.GET);
-                request.putInBody("id", additiveID);
-                return request.request().getResultAsJSON();
-            });
+            Map<String, Object> additiveInfo = AdditivesCache.impl.get(pair.getKey());
             result.getChildren().add(getAdditiveLine(additiveInfo, pair.getValue()));
         }
         return result;
@@ -178,7 +157,7 @@ public class OrderInfoPaneRenderer {
         String line = additiveInfo.get("NAME") + " " + qty + (
                 additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
         );
-        AdaptiveTextHelper.setTextCentre(additiveLine, line, 35, null);
+        AdaptiveTextHelper.setTextCentre(additiveLine, line, 20, null);
         return additiveLine;
     }
 
@@ -194,6 +173,14 @@ public class OrderInfoPaneRenderer {
         orderDeliveryTopic.setText("");
         orderCreatedTimeTopic.setText("");
         orderNameTopic.setText("");
+    }
+
+    public static void init(ScrollPane scroll, AnchorPane orderCreatedTimeTopic, AnchorPane orderDeliveryTopic, AnchorPane orderNameTopic) {
+        OrderInfoPaneRenderer.scroll = scroll;
+        StringExpression miscInfoTopicsFontSize = AdaptiveTextHelper.getFontSize(orderDeliveryTopic, 12);
+        OrderInfoPaneRenderer.orderCreatedTimeTopic = AdaptiveTextHelper.setTextCentre(orderCreatedTimeTopic, "", miscInfoTopicsFontSize, null);
+        OrderInfoPaneRenderer.orderDeliveryTopic = AdaptiveTextHelper.setTextCentre(orderDeliveryTopic, "", miscInfoTopicsFontSize, null);
+        OrderInfoPaneRenderer.orderNameTopic = AdaptiveTextHelper.setTextCentre(orderNameTopic, "", 10, Color.BLACK);;
     }
 
 }

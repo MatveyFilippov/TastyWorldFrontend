@@ -33,6 +33,7 @@ public class OrderUpdatesListener {
     private static ScrollPane scroll;
     private static final GridPane orders = new GridPane();
     private static final Map<Long, Node> ordersCache = new ConcurrentHashMap<>();
+    private static final Request READ_ORDER_REQUEST = new Request("/order/read", Method.GET);
 
     static {
         orders.setVgap(5);
@@ -47,13 +48,12 @@ public class OrderUpdatesListener {
     }
 
     public static void process(long orderID) {
-        Request request = new Request("/order/read", Method.GET);
-        request.putInBody("id", orderID);
+        READ_ORDER_REQUEST.putInBody("id", orderID);
         Map<String, Object> orderInfo;
         String status = "NOT_EXISTS";
         String name = "UNKNOWN";
         try {
-            orderInfo = request.request().getResultAsJSON();
+            orderInfo = READ_ORDER_REQUEST.request().getResultAsJSON();
             status = (String) orderInfo.get("STATUS");
             name = (String) orderInfo.get("NAME");
         } catch (BadRequestException ignored) {}
@@ -99,7 +99,7 @@ public class OrderUpdatesListener {
         row.setStyle("-fx-border-color: #000000;");
         row.prefWidthProperty().bind(scroll.widthProperty());
         row.prefHeightProperty().bind(scroll.heightProperty().divide(10));
-        AdaptiveTextHelper.setTextCentre(row, name, 1.5, Colors.NOT_LOOKED);
+        AdaptiveTextHelper.setTextCentre(row, name, 2.5, Colors.NOT_LOOKED);
         PaneHelper.setOnMouseClickedWithPressingCountChecking(row, 2, event -> OrderInfoPaneRenderer.render(orderID));
         return row;
     }

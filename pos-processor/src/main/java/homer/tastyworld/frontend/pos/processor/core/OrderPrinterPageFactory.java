@@ -1,5 +1,7 @@
 package homer.tastyworld.frontend.pos.processor.core;
 
+import homer.tastyworld.frontend.pos.processor.core.cache.AdditivesCache;
+import homer.tastyworld.frontend.pos.processor.core.cache.ProductsCache;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.AppDateTime;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterPageFactory;
@@ -22,8 +24,8 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
 
     }
 
-    private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
-    private static final Map<Long, Map<String, Object>> additivesCache = new ConcurrentHashMap<>();
+    private static final Request READ_ORDER_REQUEST = new Request("/order/read", Method.GET);
+    private static final Request READ_ORDER_ITEM_REQUEST = new Request("/order/read_item", Method.GET);
     private final OrderToPrint orderToPrint;
 
     private OrderPrinterPageFactory(OrderToPrint orderToPrint) {
@@ -31,9 +33,8 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     }
 
     public static OrderPrinterPageFactory getFor(long orderID) {
-        Request request = new Request("/order/read", Method.GET);
-        request.putInBody("id", orderID);
-        Map<String, Object> orderInfo = request.request().getResultAsJSON();
+        READ_ORDER_REQUEST.putInBody("id", orderID);
+        Map<String, Object> orderInfo = READ_ORDER_REQUEST.request().getResultAsJSON();
         OrderToPrint orderToPrint = new OrderToPrint();
         orderToPrint.name = (String) orderInfo.get("NAME");
         orderToPrint.createdAt = AppDateTime.backendToLocal(AppDateTime.parseDateTime(
@@ -51,9 +52,8 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
         addEmptyLines(1);
         int lastItemIndex = itemIDs.length - 1;
         for (int i = 0; i < lastItemIndex + 1; i++) {
-            Request request = new Request("/order/read_item", Method.GET);
-            request.putInBody("id", itemIDs[i]);
-            addItemLine(request.request().getResultAsJSON());
+            READ_ORDER_ITEM_REQUEST.putInBody("id", itemIDs[i]);
+            addItemLine(READ_ORDER_ITEM_REQUEST.request().getResultAsJSON());
             addEmptyLines(1);
             if (i < lastItemIndex) {
                 addDivider('-');
@@ -63,13 +63,7 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     }
 
     private void addItemLine(Map<String, Object> itemInfo) throws IOException {
-        final Map<String, Object> productInfo = productCache.computeIfAbsent(
-                TypeChanger.toLong(itemInfo.get("PRODUCT_ID")), id -> {
-                    Request request = new Request("/product/read", Method.GET);
-                    request.putInBody("id", id);
-                    return request.request().getResultAsJSON();
-                }
-        );
+        final Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         addLineLeft((String) productInfo.get("NAME"));
         addLineLeft("Кол-во: " + TypeChanger.toBigDecimal(itemInfo.get("PEACE_QTY")) + " " + (productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт"));
         addAdditiveLines(TypeChanger.toMap(itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class));
@@ -82,13 +76,7 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
         addLineLeft("Добавки:");
         dropFontStyle();
         for (Map.Entry<Long, Integer> additive : additives.entrySet()) {
-            final Map<String, Object> additiveInfo = additivesCache.computeIfAbsent(
-                    additive.getKey(), id -> {
-                        Request request = new Request("/product/read_additive", Method.GET);
-                        request.putInBody("id", id);
-                        return request.request().getResultAsJSON();
-                    }
-            );
+            final Map<String, Object> additiveInfo = AdditivesCache.impl.get(additive.getKey());
             addLineLeft(
                     " - " + additiveInfo.get("NAME") + " " + additive.getValue() + " " + (additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт")
             );

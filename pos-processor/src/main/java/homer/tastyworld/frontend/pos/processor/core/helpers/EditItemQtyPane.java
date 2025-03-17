@@ -4,9 +4,11 @@ import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleMana
 import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleState;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import javafx.application.Platform;
+import javafx.beans.binding.StringExpression;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import java.util.Objects;
 
 public class EditItemQtyPane {
@@ -14,8 +16,8 @@ public class EditItemQtyPane {
     public static Long itemID = null;
     private static Integer startQTY = null;
     public static Integer qty = null;
-    private static AnchorPane editItemQtyPaneParent;
-    private static Label editItemQtyPaneNameTopic, editItemQtyPaneTotalTopic;
+    private static AnchorPane parent;
+    private static Label itemName, itemQTY;
     private static Thread thread;
 
     public static boolean isEdit() {
@@ -24,7 +26,7 @@ public class EditItemQtyPane {
 
     private static void setQTY(Integer qty) {
         EditItemQtyPane.qty = qty;
-        editItemQtyPaneTotalTopic.setText(String.valueOf(qty));
+        itemQTY.setText(String.valueOf(qty));
     }
 
     private static void startAskingScale() {
@@ -56,8 +58,8 @@ public class EditItemQtyPane {
         EditItemQtyPane.itemID = itemID;
         startQTY = qty;
         setQTY(qty);
-        editItemQtyPaneNameTopic.setText(name);
-        editItemQtyPaneParent.setVisible(true);
+        itemName.setText(name);
+        parent.setVisible(true);
         if (ScaleManager.IS_SCALE_AVAILABLE) {
             startAskingScale();
         }
@@ -69,16 +71,17 @@ public class EditItemQtyPane {
             thread = null;
         }
         itemID = null;
-        editItemQtyPaneNameTopic.setText("null");
+        itemName.setText("null");
         startQTY = null;
         setQTY(null);
-        editItemQtyPaneParent.setVisible(false);
+        parent.setVisible(false);
     }
 
-    private static AnchorPane getClickableNumberKbBtn(String toAppend) {
+    private static AnchorPane getClickableNumberKbBtn(int num, StringExpression fontSize) {
+        String toAppend = String.valueOf(num);
         AnchorPane btn = new AnchorPane();
-        btn.setStyle("-fx-border-color:  #000000; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
-        AdaptiveTextHelper.setTextCentre(btn, toAppend, 2, null);
+        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        AdaptiveTextHelper.setTextCentre(btn, toAppend, fontSize, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = String.valueOf(qty);
             setQTY(Integer.parseInt(oldQTY.equals("0") ? toAppend : oldQTY + toAppend));
@@ -88,8 +91,8 @@ public class EditItemQtyPane {
 
     private static AnchorPane getClickableShiftBackKbBtn() {
         AnchorPane btn = new AnchorPane();
-        btn.setStyle("-fx-border-color:  #000000; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
-        AdaptiveTextHelper.setTextCentre(btn, "<--", 3, null);
+        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        AdaptiveTextHelper.setTextCentre(btn, "<--", 3, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = String.valueOf(qty);
             int len = oldQTY.length();
@@ -98,19 +101,21 @@ public class EditItemQtyPane {
         return btn;
     }
 
-    private static void initKeyboard(GridPane editItemQtyPaneNumbersKeyboard) {
+    private static void initKeyboard(GridPane numbersKeyboard) {
+        AnchorPane shiftBackBtn = getClickableShiftBackKbBtn();
+        StringExpression numbersFontSize = AdaptiveTextHelper.getFontSize(shiftBackBtn, 3);
         for (int i = 0; i < 9; i++) {
-            editItemQtyPaneNumbersKeyboard.add(getClickableNumberKbBtn(String.valueOf(i + 1)), i % 3, i / 3);
+            numbersKeyboard.add(getClickableNumberKbBtn(i + 1, numbersFontSize), i % 3, i / 3);
         }
-        editItemQtyPaneNumbersKeyboard.add(getClickableNumberKbBtn("0"), 3, 0);
-        editItemQtyPaneNumbersKeyboard.add(getClickableShiftBackKbBtn(), 3, 1);
+        numbersKeyboard.add(getClickableNumberKbBtn(0, numbersFontSize), 3, 0);
+        numbersKeyboard.add(shiftBackBtn, 3, 1);
     }
 
-    public static void init(AnchorPane editItemQtyPaneParent, AnchorPane editItemQtyPaneNameTopic, AnchorPane editItemQtyPaneTotalTopic, GridPane editItemQtyPaneNumbersKeyboard) {
-        EditItemQtyPane.editItemQtyPaneNameTopic = AdaptiveTextHelper.setTextCentre(editItemQtyPaneNameTopic, "null", 2, null);
-        EditItemQtyPane.editItemQtyPaneTotalTopic = AdaptiveTextHelper.setTextCentre(editItemQtyPaneTotalTopic, "null", 2, null);
-        EditItemQtyPane.editItemQtyPaneParent = editItemQtyPaneParent;
-        initKeyboard(editItemQtyPaneNumbersKeyboard);
+    public static void init(AnchorPane parent, AnchorPane itemName, AnchorPane itemQTY, GridPane numbersKeyboard) {
+        EditItemQtyPane.parent = parent;
+        EditItemQtyPane.itemName = AdaptiveTextHelper.setTextCentre(itemName, "null", 10, null);
+        EditItemQtyPane.itemQTY = AdaptiveTextHelper.setTextCentre(itemQTY, "null", 10, null);
+        initKeyboard(numbersKeyboard);
     }
 
 }

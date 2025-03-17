@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.pos.processor;
 
 import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -17,6 +18,7 @@ public class POSProcessorApplication extends TastyWorldApplication {
 
     @Override
     public void start(Stage stage) throws IOException {
+        // CacheManager.setIsCacheAvailable(false);
         FXMLLoader fxmlLoader = new FXMLLoader(POSProcessorApplication.class.getResource("tastyworld-pos-processor.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("TastyWorld-POS-Processor");
