@@ -174,6 +174,7 @@ public class OrderInfoPaneRenderer {
         orderDeliveryTopic.setText("");
         orderCreatedTimeTopic.setText("");
         orderNameTopic.setText("");
+        scroll.setContent(null);
     }
 
     public static void init(ScrollPane scroll, AnchorPane orderCreatedTimeTopic, AnchorPane orderDeliveryTopic, AnchorPane orderNameTopic) {
