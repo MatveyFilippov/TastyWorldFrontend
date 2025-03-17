@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AddProductParentPane extends DynamicParentPane {
 
     private static final ScrollPane scroll = new ScrollPane();
-    private static Label productNameTopicLabel, productQTYTopicLabel;
+    private static Label productNameTopicLabel, productQTYTypeTopicLabel;
     private AnchorPane addProductCloseImgBtn, addProductSubmitImgBtn;
     private AnchorPane addProductNameTopic;
     private AnchorPane addProductPriceTopic;
@@ -75,7 +75,7 @@ public class AddProductParentPane extends DynamicParentPane {
         setProduct(productInfo);
 
         productNameTopicLabel.setText(Product.name);
-        productQTYTopicLabel.setText(Product.pieceType);
+        productQTYTypeTopicLabel.setText(Product.pieceType);
         addProductQTYFiled.setText(String.valueOf(Product.qty));
         recalculatePrice();
 
@@ -179,7 +179,7 @@ public class AddProductParentPane extends DynamicParentPane {
     protected void cleanTask() {
         Product.clean();
         productNameTopicLabel.setText("null");
-        productQTYTopicLabel.setText("");
+        productQTYTypeTopicLabel.setText("");
         addProductQTYFiled.setText("0");
         addProductTotalPriceField.setText("0");
     }
@@ -223,7 +223,7 @@ public class AddProductParentPane extends DynamicParentPane {
         AdaptiveTextHelper.setTextCentre(addProductPriceTopic, "Цена", 5, null);
         AdaptiveTextHelper.setTextCentre(addProductAdditivesTopic, "Добавки", 15, null);
         productNameTopicLabel = AdaptiveTextHelper.setTextCentre(addProductNameTopic, "", 20, null);
-        productQTYTopicLabel = AdaptiveTextHelper.setTextCentre(addProductQTYTypeTopic, "", 20, null);
+        productQTYTypeTopicLabel = AdaptiveTextHelper.setTextCentre(addProductQTYTypeTopic, "", 2.5, null);
     }
 
     private AnchorPane getClickableNumberKbBtn(int num, StringExpression fontSize) {

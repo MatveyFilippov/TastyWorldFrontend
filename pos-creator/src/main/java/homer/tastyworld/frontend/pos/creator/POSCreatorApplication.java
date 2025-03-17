@@ -20,7 +20,7 @@ public class POSCreatorApplication extends TastyWorldApplication {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // CacheManager.setIsCacheAvailable(false);
+        CacheManager.setIsCacheAvailable(true);
         FXMLLoader fxmlLoader = new FXMLLoader(POSCreatorApplication.class.getResource("tastyworld-pos-creator.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("TastyWorld-POS-Creator");

@@ -272,7 +272,9 @@ public class POSCreatorController {
 
     @FXML
     void mainPaneSettingsImgBtnPressed() {
-
+        AlertWindow.showInfo(
+                "К сожалению, нет доступа", "В настощий момент данный блок является недоступным к использованию", false
+        );
     }
 
     @FXML
