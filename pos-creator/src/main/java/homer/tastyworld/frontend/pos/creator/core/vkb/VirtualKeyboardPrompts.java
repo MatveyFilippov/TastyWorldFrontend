@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VirtualKeyboardPrompts {
 
     public static final int PROMPTS_QTY = 3;
-    private static final int spacePromptPercent = 100 / PROMPTS_QTY;
     private static final String pathBeforeFileName;
     private static final Map<String, PromptsProcessor> processors = new ConcurrentHashMap<>();
     private static final Label[] promptPlaces = new Label[PROMPTS_QTY];
@@ -29,14 +28,13 @@ public class VirtualKeyboardPrompts {
     }
 
     private static PromptsProcessor getProcessor(TextField field) {
-        final String processorName = field.getId();
         return processors.computeIfAbsent(
-                processorName, name -> new PromptsProcessor(pathBeforeFileName + processorName + ".vkbp")
+                field.getId(), name -> new PromptsProcessor(pathBeforeFileName + name + ".vkbp")
         );
     }
 
     public static void setPromptsContainer(HBox promptsContainer) {
-        promptsContainer.setSpacing(15);
+        promptsContainer.setSpacing(2);
         promptsContainer.setAlignment(Pos.CENTER);
         promptsContainer.setFillHeight(true);
         for (int i = 0; i < PROMPTS_QTY; i++) {
@@ -47,8 +45,9 @@ public class VirtualKeyboardPrompts {
     private static AnchorPane createClickablePrompt(HBox promptsContainer, int index) {
         AnchorPane prompt = new AnchorPane();
         HBox.setHgrow(prompt, Priority.ALWAYS);
-        prompt.prefWidthProperty().bind(promptsContainer.widthProperty().multiply(spacePromptPercent));
-        promptPlaces[index] = AdaptiveTextHelper.setTextCentre(prompt, "", 2, Color.web("#555555"));
+        prompt.prefHeightProperty().bind(promptsContainer.heightProperty().multiply(0.95));
+        prompt.prefWidthProperty().bind(promptsContainer.widthProperty().divide(PROMPTS_QTY));
+        promptPlaces[index] = AdaptiveTextHelper.setTextCentre(prompt, "", 15, Color.web("#555555"));
         return prompt;
     }
 
@@ -60,9 +59,11 @@ public class VirtualKeyboardPrompts {
         PromptsProcessor processor = getProcessor(field);
         clean();
         String[] prompts = processor.get(input, PROMPTS_QTY);
-        for (int i = 0; i < PROMPTS_QTY; i++) {
+        for (int i = 0; i < prompts.length; i++) {
+            System.out.println(prompts[i]);
             putClickablePrompt(field, prompts[i], i);
         }
+        System.out.println();
     }
 
     private static void putClickablePrompt(TextField field, String prompt, int index) {

@@ -8,6 +8,7 @@ import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -16,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -242,19 +244,13 @@ public class AddProductParentPane extends DynamicParentPane {
         AdaptiveTextHelper.setTextCentre(addProductAdditivesTopic, "Добавки", 15, null);
         productNameTopicLabel = AdaptiveTextHelper.setTextCentre(addProductNameTopic, "", 20, null);
         productQTYTopicLabel = AdaptiveTextHelper.setTextCentre(addProductQTYTypeTopic, "", 20, null);
-        addProductQTYFiled.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(Math.min(addProductQTYFiled.getWidth() / 10, addProductQTYFiled.getHeight() / 6)),
-                addProductQTYFiled.widthProperty(), addProductQTYFiled.heightProperty()
-        ));
-        addProductTotalPriceField.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(Math.min(addProductTotalPriceField.getWidth() / 10, addProductTotalPriceField.getHeight() / 6)),
-                addProductTotalPriceField.widthProperty(), addProductTotalPriceField.heightProperty()
-        ));
     }
 
-    private AnchorPane getClickableNumberKbBtn(String toAppend) {
+    private AnchorPane getClickableNumberKbBtn(int num, StringExpression fontSize) {
+        String toAppend = String.valueOf(num);
         AnchorPane btn = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(btn, toAppend, 2, null);
+        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        AdaptiveTextHelper.setTextCentre(btn, toAppend, fontSize, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");
             String newQTY = oldQTY.equals("0") ? toAppend : oldQTY + toAppend;
@@ -267,7 +263,8 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private AnchorPane getClickableShiftBackKbBtn() {
         AnchorPane btn = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(btn, "<--", 3, null);
+        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        AdaptiveTextHelper.setTextCentre(btn, "<--", 3, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");
             int len = oldQTY.length();
@@ -279,11 +276,13 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void initNumbersKeyboardInAddProductPane() {
+        AnchorPane shiftBackBtn = getClickableShiftBackKbBtn();
+        StringExpression numbersFontSize = AdaptiveTextHelper.getFontSize(shiftBackBtn, 3);
         for (int i = 0; i < 9; i++) {
-            addProductNumbersKeyboard.add(getClickableNumberKbBtn(String.valueOf(i + 1)), i % 3, i / 3);
+            addProductNumbersKeyboard.add(getClickableNumberKbBtn(i + 1, numbersFontSize), i % 3, i / 3);
         }
-        addProductNumbersKeyboard.add(getClickableNumberKbBtn("0"), 3, 0);
-        addProductNumbersKeyboard.add(getClickableShiftBackKbBtn(), 3, 1);
+        addProductNumbersKeyboard.add(getClickableNumberKbBtn(0, numbersFontSize), 3, 0);
+        addProductNumbersKeyboard.add(shiftBackBtn, 3, 1);
         addProductQTYFiled.setText("0");
     }
 

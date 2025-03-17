@@ -9,12 +9,12 @@ import java.io.ObjectOutputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 class PromptsProcessor {
 
@@ -45,7 +45,7 @@ class PromptsProcessor {
 
     private final Set<String> prompts;
     private final String path;
-    private static final Map<StringPair, Integer> levenshteinCache = new HashMap<>();
+    private static final Map<StringPair, Integer> levenshteinCache = new ConcurrentHashMap<>();
 
     public PromptsProcessor(String path) {
         Set<String> tempPrompts;

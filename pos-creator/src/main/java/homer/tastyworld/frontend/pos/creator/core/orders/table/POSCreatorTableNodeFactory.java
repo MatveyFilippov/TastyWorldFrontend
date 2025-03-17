@@ -28,7 +28,7 @@ public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
     private AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(pane, name, 1.5, null);
+        AdaptiveTextHelper.setTextCentre(pane, name, 2.5, null);
         pane.setOpacity(1.0);
         pane.setMinSize(0, 0);
         pane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);

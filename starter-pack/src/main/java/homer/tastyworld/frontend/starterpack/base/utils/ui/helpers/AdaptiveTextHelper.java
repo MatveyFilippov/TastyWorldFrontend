@@ -14,7 +14,7 @@ public class AdaptiveTextHelper {
     public static StringExpression getFontSize(AnchorPane pane, double divide) {
         return Bindings.concat(
                 "-fx-font-size: ",
-                Bindings.min(pane.widthProperty().divide(divide), pane.heightProperty().divide(divide)).asString("%.0f"),
+                pane.widthProperty().divide(divide).asString("%.0f"),
                 "px;"
         );
     }

@@ -19,7 +19,9 @@ public abstract class CacheProcessor<K, V> {
     }
 
     public void cache(K key) {
-        cache.put(key, compute(key));
+        if (CacheManager.isCacheAvailable()) {
+            cache.put(key, compute(key));
+        }
     }
 
     public void cacheIfAbsent(K key) {

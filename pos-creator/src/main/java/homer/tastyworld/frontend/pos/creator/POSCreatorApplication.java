@@ -3,6 +3,7 @@ package homer.tastyworld.frontend.pos.creator;
 import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderCreating;
 import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -19,6 +20,7 @@ public class POSCreatorApplication extends TastyWorldApplication {
 
     @Override
     public void start(Stage stage) throws IOException {
+        // CacheManager.setIsCacheAvailable(false);
         FXMLLoader fxmlLoader = new FXMLLoader(POSCreatorApplication.class.getResource("tastyworld-pos-creator.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("TastyWorld-POS-Creator");

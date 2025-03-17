@@ -4,7 +4,6 @@ import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.pos.creator.core.cache.MenuCache;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
-import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
@@ -18,7 +17,6 @@ import javafx.scene.paint.Color;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.apache.hc.core5.http.Method;
 import java.util.Map;
 
 @Getter

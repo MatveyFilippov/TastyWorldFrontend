@@ -14,6 +14,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import java.util.Arrays;
@@ -27,8 +29,10 @@ public class ProductsParentPane extends DynamicParentPane {
     private AnchorPane productsPaneMenuTopic;
     private GridPane productPaneImgProductsContainer;
     private DynamicParentPane addProductParentPane;
-    private static Label nameTopicLabel;
-    private static final ScrollPane scroll = new ScrollPane();
+    @Builder.Default
+    private Label nameTopicLabel = null;
+    @Builder.Default
+    private final ScrollPane scroll = new ScrollPane();
     private final CacheProcessor<Long, GridPane> productsInMenuCache = new CacheProcessor<>() {
         @Override protected GridPane compute(Long menuID) { return computeTable(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID).get("PRODUCT_IDs"))); }
     };
@@ -110,11 +114,11 @@ public class ProductsParentPane extends DynamicParentPane {
 
     @Override
     protected void cleanTask() {
-        productsPaneMenuTopic.getChildren().clear();
+        nameTopicLabel.setText("");
     }
 
     private void initNameTopic() {
-        nameTopicLabel = AdaptiveTextHelper.setTextCentre(productsPaneMenuTopic, "", 20, null);
+        nameTopicLabel = AdaptiveTextHelper.setTextCentre(productsPaneMenuTopic, "", 15, Color.web("#555555"));
     }
 
     private void initItemsTable() {
