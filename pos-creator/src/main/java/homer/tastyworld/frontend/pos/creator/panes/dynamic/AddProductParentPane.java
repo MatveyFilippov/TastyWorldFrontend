@@ -1,7 +1,9 @@
 package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
-import homer.tastyworld.frontend.starterpack.api.Request;
+import homer.tastyworld.frontend.pos.creator.core.cache.AdditivesCache;
+import homer.tastyworld.frontend.pos.creator.core.cache.ProductAdditivesCache;
+import homer.tastyworld.frontend.pos.creator.core.cache.ProductsCache;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
@@ -17,14 +19,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.apache.hc.core5.http.Method;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Getter
 @SuperBuilder
@@ -66,8 +63,6 @@ public class AddProductParentPane extends DynamicParentPane {
     private GridPane addProductAdditivesContainer;
     private static Label productNameTopicLabel, productQTYTopicLabel;
     private static final ScrollPane scroll = new ScrollPane();
-    private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
-    private static final Map<Long, List<Map<String, Object>>> additiveCache = new ConcurrentHashMap<>();
 
     @Override
     protected String getCacheProcess(int total, int actual) {
@@ -76,17 +71,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     @Override
     protected void cacheTask(Long productID) {
-        Request productRequest = new Request("/product/read", Method.GET);
-        Request additiveRequest = new Request("/product/read_additive", Method.GET);
-        productRequest.putInBody("id", productID);
-        Map<String, Object> productInfo = productRequest.request().getResultAsJSON();
-        productCache.put(productID, productInfo);
-        List<Map<String, Object>> additivesInfo = new ArrayList<>();
-        for (long additiveID : TypeChanger.toSortedLongArray(productInfo.get("ADDITIVE_IDs"))) {
-            additiveRequest.putInBody("id", additiveID);
-            additivesInfo.add(additiveRequest.request().getResultAsJSON());
-        }
-        additiveCache.put(productID, additivesInfo);
+        AdditivesCache.impl.cacheIfAbsent(ProductAdditivesCache.impl.get(productID));
     }
 
     private void setProduct(Map<String, Object> productInfo) {
@@ -107,11 +92,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     @Override
     public void fill(long productID) {
-        Map<String, Object> productInfo = productCache.computeIfAbsent(productID, id -> {
-            Request request = new Request("/product/read", Method.GET);
-            request.putInBody("id", productID);
-            return request.request().getResultAsJSON();
-        });
+        Map<String, Object> productInfo = ProductsCache.impl.get(productID);
         setProduct(productInfo);
 
         productNameTopicLabel.setText(Product.name);
@@ -119,7 +100,7 @@ public class AddProductParentPane extends DynamicParentPane {
         addProductQTYFiled.setText(String.valueOf(Product.qty));
         recalculatePrice();
 
-        scroll.setContent(computeAdditivesTable(productID, TypeChanger.toSortedLongArray(productInfo.get("ADDITIVE_IDs"))));
+        scroll.setContent(computeAdditivesTable(productID));
     }
 
     private void recalculatePrice() {
@@ -127,19 +108,13 @@ public class AddProductParentPane extends DynamicParentPane {
         addProductTotalPriceField.setText(totalPrice.toString());
     }
 
-    private GridPane computeAdditivesTable(long productID, Long[] additiveIDs) {
+    private GridPane computeAdditivesTable(long productID) {
         GridPane table = new GridPane();
         table.setVgap(5);
         table.setAlignment(Pos.CENTER);
-        List<Map<String, Object>> additivesInfo = additiveCache.computeIfAbsent(productID, ignored -> {
-            Request request = new Request("/product/read_additive", Method.GET);
-            return Arrays.stream(additiveIDs).map(additiveID -> {
-                request.putInBody("id", additiveID);
-                return request.request().getResultAsJSON();
-            }).collect(Collectors.toList());
-        });
-        for (int i = 0; i < additivesInfo.size(); i++) {
-            table.add(getAdditiveLine(additivesInfo.get(i)), 0, i);
+        Long[] additiveIDs = ProductAdditivesCache.impl.get(productID);
+        for (int i = 0; i < additiveIDs.length; i++) {
+            table.add(getAdditiveLine(AdditivesCache.impl.get(additiveIDs[i])), 0, i);
         }
         return table;
     }

@@ -1,5 +1,6 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.printer;
 
+import homer.tastyworld.frontend.pos.creator.core.cache.ProductsCache;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.AppDateTime;
@@ -24,7 +25,6 @@ public class OrderPageFactory extends PrinterPageFactory {
 
     }
 
-    private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
     private final OrderToPrint orderToPrint;
 
     private OrderPageFactory(OrderToPrint orderToPrint) {
@@ -54,13 +54,7 @@ public class OrderPageFactory extends PrinterPageFactory {
     }
 
     private void addItemLine(Map<String, Object> itemInfo) throws IOException {
-        final Map<String, Object> productInfo = productCache.computeIfAbsent(
-                TypeChanger.toLong(itemInfo.get("PRODUCT_ID")), id -> {
-                    Request request = new Request("/product/read", Method.GET);
-                    request.putInBody("id", id);
-                    return request.request().getResultAsJSON();
-                }
-        );
+        final Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         addFullLine(
                 String.format(
                         "%s %s %s",

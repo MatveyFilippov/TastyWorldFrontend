@@ -1,6 +1,8 @@
 package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
+import homer.tastyworld.frontend.pos.creator.core.cache.AdditivesCache;
+import homer.tastyworld.frontend.pos.creator.core.cache.ProductsCache;
 import homer.tastyworld.frontend.starterpack.api.Request;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
@@ -32,8 +34,6 @@ public class LookOrderParentPane extends DynamicParentPane {
     private Button lookOrderSetPaidBtn;
     private static Label nameTopicLabel, priceTopicLabel;
     private static final ScrollPane scroll = new ScrollPane();
-    private static final Map<Long, Map<String, Object>> productCache = new ConcurrentHashMap<>();
-    private static final Map<Long, Map<String, Object>> additiveCache = new ConcurrentHashMap<>();
 
     @Override
     protected String getCacheProcess(int ignored1, int ignored2) { return ""; }
@@ -66,14 +66,6 @@ public class LookOrderParentPane extends DynamicParentPane {
             table.add(getItemLine(request.request().getResultAsJSON()), 0, i);
         }
         return table;
-    }
-
-    private Map<String, Object> getProductInfo(long productID) {
-        return productCache.computeIfAbsent(productID, id -> {
-            Request request = new Request("/product/read", Method.GET);
-            request.putInBody("id", id);
-            return request.request().getResultAsJSON();
-        });
     }
 
     private HBox getItemLine(Map<String, Object> itemInfo) {
@@ -109,14 +101,14 @@ public class LookOrderParentPane extends DynamicParentPane {
 
     private AnchorPane getItemName(Map<String, Object> itemInfo) {
         AnchorPane name = new AnchorPane();
-        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+        Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         AdaptiveTextHelper.setTextCentre(name, (String) productInfo.get("NAME"), 13, null);
         return name;
     }
 
     private AnchorPane getItemQTY(Map<String, Object> itemInfo) {
         AnchorPane qty = new AnchorPane();
-        Map<String, Object> productInfo = getProductInfo(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
+        Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
         AdaptiveTextHelper.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, 4, null);
         return qty;
@@ -130,12 +122,7 @@ public class LookOrderParentPane extends DynamicParentPane {
                 itemInfo.get("NOT_DEFAULT_ADDITIVES"), Long.class, Integer.class
         );
         for (Map.Entry<Long, Integer> pair : notDefaultAdditives.entrySet()) {
-            Map<String, Object> additiveInfo = additiveCache.computeIfAbsent(pair.getKey(), additiveID -> {
-                Request request = new Request("/product/read_additive", Method.GET);
-                request.putInBody("id", additiveID);
-                return request.request().getResultAsJSON();
-            });
-            result.getChildren().add(getAdditiveLine(additiveInfo, pair.getValue()));
+            result.getChildren().add(getAdditiveLine(AdditivesCache.impl.get(pair.getKey()), pair.getValue()));
         }
         return result;
     }

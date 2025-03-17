@@ -1,8 +1,10 @@
 package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
+import homer.tastyworld.frontend.pos.creator.core.cache.MenuCache;
+import homer.tastyworld.frontend.pos.creator.core.cache.ProductsCache;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
-import homer.tastyworld.frontend.starterpack.api.Request;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
@@ -14,9 +16,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.apache.hc.core5.http.Method;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @SuperBuilder
@@ -28,7 +29,9 @@ public class ProductsParentPane extends DynamicParentPane {
     private DynamicParentPane addProductParentPane;
     private static Label nameTopicLabel;
     private static final ScrollPane scroll = new ScrollPane();
-    private static final Map<Long, GridPane> productsCache = new ConcurrentHashMap<>();
+    private final CacheProcessor<Long, GridPane> productsInMenuCache = new CacheProcessor<>() {
+        @Override protected GridPane compute(Long menuID) { return computeTable(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID).get("PRODUCT_IDs"))); }
+    };
 
     @Override
     protected String getCacheProcess(int total, int actual) {
@@ -37,28 +40,30 @@ public class ProductsParentPane extends DynamicParentPane {
 
     @Override
     protected void cacheTask(Long menuID) {
-        Request request = new Request("/menu/read", Method.GET);
-        request.putInBody("id", menuID);
-        Map<String, Object> menuInfo = request.request().getResultAsJSON();
-        productsCache.put(menuID, computeTable(menuInfo));
-        addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(menuInfo.get("PRODUCT_IDs")));
+        productsInMenuCache.cacheIfAbsent(menuID);
+    }
+
+    @Override
+    public void cacheAll(Long[] menuIDs) {
+        Arrays.stream(menuIDs).forEach(
+                menuID -> addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(
+                        MenuCache.impl.get(menuID).get("PRODUCT_IDs")
+                ))
+        );
+        super.cacheAll(menuIDs);
     }
 
     @Override
     public void fill(long menuID) {
-        Request request = new Request("/menu/read", Method.GET);
-        request.putInBody("id", menuID);
-        Map<String, Object> menuInfo = request.request().getResultAsJSON();
-        nameTopicLabel.setText((String) menuInfo.get("NAME"));
-        scroll.setContent(productsCache.computeIfAbsent(menuID, ignored -> computeTable(menuInfo)));
+        nameTopicLabel.setText((String) MenuCache.impl.get(menuID).get("NAME"));
+        scroll.setContent(productsInMenuCache.get(menuID));
     }
 
-    private GridPane computeTable(Map<String, Object> menuInfo) {
+    private GridPane computeTable(Long[] productIDs) {
         GridPane table = new GridPane();
         table.setHgap(25);
         table.setVgap(25);
         table.setAlignment(Pos.CENTER);
-        Long[] productIDs = TypeChanger.toSortedLongArray(menuInfo.get("PRODUCT_IDs"));
         for (int i = 0; i < productIDs.length; i++) {
             table.add(getProductImgBtn(productIDs[i]), i % 3, i / 3);
         }
@@ -98,10 +103,8 @@ public class ProductsParentPane extends DynamicParentPane {
 
     private AnchorPane getProductName(long productID) {
         AnchorPane result = new AnchorPane();
-        Request request = new Request("/product/read", Method.GET);
-        request.putInBody("id", productID);
-        Map<String, Object> info = request.request().getResultAsJSON();
-        AdaptiveTextHelper.setTextCentre(result, (String) info.get("NAME"), 12, null);
+        Map<String, Object> productInfo = ProductsCache.impl.get(productID);
+        AdaptiveTextHelper.setTextCentre(result, (String) productInfo.get("NAME"), 12, null);
         return result;
     }
 

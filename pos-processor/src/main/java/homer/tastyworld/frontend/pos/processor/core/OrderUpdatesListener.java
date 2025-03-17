@@ -47,7 +47,7 @@ public class OrderUpdatesListener {
     }
 
     public static void process(long orderID) {
-        Request request = new Request("order/read", Method.GET);
+        Request request = new Request("/order/read", Method.GET);
         request.putInBody("id", orderID);
         Map<String, Object> orderInfo;
         String status = "NOT_EXISTS";

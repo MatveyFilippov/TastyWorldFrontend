@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.pos.creator.panes.stable;
 
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
+import homer.tastyworld.frontend.pos.creator.core.cache.MenuCache;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
 import homer.tastyworld.frontend.starterpack.api.Request;
@@ -82,10 +83,8 @@ public class MenuParentPane extends StableParentPane {
 
     private AnchorPane getMenuName(long menuID) {
         AnchorPane result = new AnchorPane();
-        Request request = new Request("/menu/read", Method.GET);
-        request.putInBody("id", menuID);
-        Map<String, Object> info = request.request().getResultAsJSON();
-        AdaptiveTextHelper.setTextCentre(result, (String) info.get("NAME"), 15, null);
+        Map<String, Object> menuInfo = MenuCache.impl.get(menuID);
+        AdaptiveTextHelper.setTextCentre(result, (String) menuInfo.get("NAME"), 15, null);
         return result;
     }
 

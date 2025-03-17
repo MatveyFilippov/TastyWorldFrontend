@@ -39,7 +39,7 @@ public class OrderStatusUpdatesListener {
     }
 
     public static void process(long orderID, boolean notifyIfReady) {
-        Request request = new Request("order/read", Method.GET);
+        Request request = new Request("/order/read", Method.GET);
         request.putInBody("id", orderID);
         Response response;
         try {
