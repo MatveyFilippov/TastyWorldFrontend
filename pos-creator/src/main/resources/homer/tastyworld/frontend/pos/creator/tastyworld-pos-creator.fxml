@@ -214,7 +214,7 @@
                                 </rowConstraints>
                                  <children>
                                     <AnchorPane fx:id="addProductPriceTopic" />
-                                    <TextField fx:id="addProductTotalPriceField" editable="false" GridPane.columnIndex="1">
+                                    <TextField fx:id="addProductTotalPriceField" editable="false" focusTraversable="false" GridPane.columnIndex="1">
                                        <font>
                                           <Font size="35.0" />
                                        </font>
@@ -439,18 +439,18 @@
             </GridPane>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="lookOrderPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="lookOrderPaneParent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" />
-                  <ColumnConstraints hgrow="ALWAYS" percentWidth="85.0" />
-                <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="84.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="8.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="ALWAYS" />
-                <RowConstraints percentHeight="90.0" vgrow="ALWAYS" />
-                <RowConstraints vgrow="ALWAYS" />
+                <RowConstraints percentHeight="5.0" vgrow="NEVER" />
+                <RowConstraints percentHeight="90.0" vgrow="NEVER" />
+                <RowConstraints percentHeight="5.0" vgrow="NEVER" />
               </rowConstraints>
                <children>
                   <AnchorPane onMouseClicked="#closeLookOrderPane" />
