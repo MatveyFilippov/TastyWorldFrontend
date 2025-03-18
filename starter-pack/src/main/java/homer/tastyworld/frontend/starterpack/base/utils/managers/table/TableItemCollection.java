@@ -25,6 +25,14 @@ class TableItemCollection {
         fromNode.put(item.node, item);
     }
 
+    public boolean isExists(long id) {
+        return fromID.containsKey(id);
+    }
+
+    public boolean isExists(String name) {
+        return fromName.containsKey(name);
+    }
+
     public TableItem get(long id) {
         return fromID.get(id);
     }

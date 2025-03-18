@@ -24,13 +24,13 @@ public class OrderUpdatesListener {
 
     private static void route(TableForOrder table, long orderID, String name) {
         if (table == TableForOrder.NOT_IN_TABLE) {
-            cooking.remove(orderID);
-            ready.remove(orderID);
+            cooking.remove(name);
+            ready.remove(name);
         } else if (table == TableForOrder.COOKING) {
-            cooking.append(orderID, name);
+            cooking.put(orderID, name);
         } else if (table == TableForOrder.READY) {
-            cooking.remove(orderID);
-            ready.append(orderID, name);
+            cooking.remove(name);
+            ready.put(orderID, name);
         }
     }
 

@@ -89,7 +89,7 @@
                               <AnchorPane fx:id="doneOrderImgBtn" onMouseClicked="#doneOrderImgBtnPressed" GridPane.columnIndex="2" />
                            </children>
                         </GridPane>
-                        <ScrollPane fx:id="scrollItems" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
+                        <ScrollPane fx:id="scrollItems" focusTraversable="false" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                </children>

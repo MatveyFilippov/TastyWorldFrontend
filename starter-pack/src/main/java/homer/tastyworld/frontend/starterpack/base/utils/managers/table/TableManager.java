@@ -64,7 +64,10 @@ public class TableManager {
         }
     }
 
-    public void append(long id, String name) {
+    public void put(long id, String name) {
+        if (items.isExists(id) || items.isExists(name)) {
+            return;
+        }
         extendIfRequired();
         TableItem item = new TableItem(id, name, nodeFactory, nexFreeCell.cell());
         table.add(item.node, item.cell.x, item.cell.y);
@@ -81,19 +84,15 @@ public class TableManager {
     }
 
     public void remove(long id) {
-        TableItem item = items.get(id);
-        if (item == null) {
-            return;
+        if (items.isExists(id)) {
+            remove(items.get(id));
         }
-        remove(item);
     }
 
     public void remove(String name) {
-        TableItem item = items.get(name);
-        if (item == null) {
-            return;
+        if (items.isExists(name)) {
+            remove(items.get(name));
         }
-        remove(item);
     }
 
     private void shiftBackCellsFromRemoved(Point removed) {

@@ -234,7 +234,7 @@
                                 </rowConstraints>
                                  <children>
                                     <AnchorPane fx:id="addProductMinusQTYImgBtn" />
-                                    <TextField fx:id="addProductQTYFiled" alignment="CENTER" GridPane.columnIndex="2">
+                                    <TextField fx:id="addProductQTYFiled" alignment="CENTER" focusTraversable="false" GridPane.columnIndex="2">
                                        <font>
                                           <Font size="36.0" />
                                        </font>
@@ -426,7 +426,7 @@
                                     <Font size="20.0" />
                                  </font>
                               </TextField>
-                              <CheckBox fx:id="endOrderCreatingIsPaidCheckBox" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" text="Оплачен" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                              <CheckBox fx:id="endOrderCreatingIsPaidCheckBox" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" text="Оплачен" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="26.0" />
                                  </font>
@@ -439,7 +439,7 @@
             </GridPane>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="lookOrderPaneParent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="lookOrderPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>

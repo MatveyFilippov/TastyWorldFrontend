@@ -28,13 +28,13 @@ public class OrderStatusUpdatesListener {
             cooking.remove(orderID);
             ready.remove(orderID);
         } else if (table == TableForOrder.COOKING) {
-            cooking.append(orderID, name);
+            cooking.put(orderID, name);
         } else if (table == TableForOrder.READY) {
             if (notifyIfReady) {
                 AlertWindow.showInfo(String.format("Заказ #%s готов", name), "", false);
             }
             cooking.remove(orderID);
-            ready.append(orderID, name);
+            ready.put(orderID, name);
         }
     }
 
