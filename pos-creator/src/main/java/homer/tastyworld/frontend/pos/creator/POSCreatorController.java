@@ -236,12 +236,12 @@ public class POSCreatorController {
         }
         ParentPane.setBase(base);
         initLookOrderPane();
-        initMainPane();
         initAddProductPane();
         initProductsPane();
         initMenuPane();
         initEndOrderPane();
         initVirtualKeyboard();
+        initMainPane();
         mainPane.openAndCloseOther();
     }
 

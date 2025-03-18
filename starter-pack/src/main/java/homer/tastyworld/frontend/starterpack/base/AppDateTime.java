@@ -38,7 +38,11 @@ public class AppDateTime {
     }
 
     public static LocalDate getPasterDate(LocalDate firs, LocalDate second) {
-        return firs.isBefore(second) ? firs : second;
+        return firs.isAfter(second) ? firs : second;
+    }
+
+    public static LocalDate getEarlierDate(LocalDate first, LocalDate second) {
+        return first.isBefore(second) ? first : second;
     }
 
     public static long getDaysDiff(LocalDate from, LocalDate to) {

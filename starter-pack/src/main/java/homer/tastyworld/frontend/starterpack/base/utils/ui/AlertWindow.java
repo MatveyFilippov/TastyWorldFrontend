@@ -32,20 +32,20 @@ public class AlertWindow {
         }
     }
 
-    public static void showError(String errorName, String errorText, boolean wait) {
+    private static void showInFxApplicationThread(Alert alert, boolean wait) {
         if (Platform.isFxApplicationThread()) {
-            show(create(Alert.AlertType.ERROR, "Error", errorName, errorText), wait);
+            show(alert, wait);
         } else {
-            Platform.runLater(() -> show(create(Alert.AlertType.ERROR, "Error", errorName, errorText), wait));
+            Platform.runLater(() -> show(alert, wait));
         }
     }
 
+    public static void showError(String errorName, String errorText, boolean wait) {
+        showInFxApplicationThread(create(Alert.AlertType.ERROR, "Error", errorName, errorText), wait);
+    }
+
     public static void showInfo(String header, String content, boolean wait) {
-        if (Platform.isFxApplicationThread()) {
-            show(create(Alert.AlertType.INFORMATION, "Info", header, content), wait);
-        } else {
-            Platform.runLater(() -> show(create(Alert.AlertType.INFORMATION, "Info", header, content), wait));
-        }
+        showInFxApplicationThread(create(Alert.AlertType.INFORMATION, "Info", header, content), wait);
     }
 
 }
