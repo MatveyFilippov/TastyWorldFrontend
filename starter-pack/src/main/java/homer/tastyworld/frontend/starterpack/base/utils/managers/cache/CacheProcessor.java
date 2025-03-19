@@ -4,18 +4,14 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class CacheProcessor<K, V> {
+public abstract class CacheProcessor<K, V> extends CleanableCacheProcessor {
 
     protected final Map<K, V> cache = new ConcurrentHashMap<>();
-
-    protected CacheProcessor() {
-        CacheManager.register(this);
-    }
 
     protected abstract V compute(K key);
 
     public V get(K key) {
-        return cache.computeIfAbsent(key, this::compute);
+        return CacheManager.isCacheAvailable() ? cache.computeIfAbsent(key, this::compute) : compute(key);
     }
 
     public void cache(K key) {
@@ -38,6 +34,7 @@ public abstract class CacheProcessor<K, V> {
         Arrays.stream(keys).forEach(this::cacheIfAbsent);
     }
 
+    @Override
     public void clean() {
         cache.clear();
     }

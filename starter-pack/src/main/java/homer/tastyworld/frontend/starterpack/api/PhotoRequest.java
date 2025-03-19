@@ -13,6 +13,7 @@ public class PhotoRequest extends Request {
         return Requester.exchangeImage(getURL(endpoint), getToken(), body);
     }
 
+    @Deprecated
     @Override
     public Response request() {
         return null;
