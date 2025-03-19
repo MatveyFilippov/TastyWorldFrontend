@@ -20,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
@@ -29,8 +30,10 @@ import java.util.Map;
 @SuperBuilder
 public class EndOrderCreatingParentPane extends DynamicParentPane {
 
-    private static final ScrollPane scroll = new ScrollPane();
-    private static Label nameTopicLabel, priceTopicLabel;
+    @Builder.Default
+    private final ScrollPane scroll = new ScrollPane();
+    @Builder.Default
+    private Label nameTopicLabel = null, priceTopicLabel = null;
     private AnchorPane endOrderCreatingOpenMenuImgBtn, endOrderCreatingCommitImgBtn;
     private AnchorPane endOrderCreatingNameTopic, endOrderCreatingTotalPriceTopic;
     private GridPane endOrderCreatingItemsContainer;
@@ -38,7 +41,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private CheckBox endOrderCreatingIsPaidCheckBox;
 
     @Override
-    protected String getCacheProcess(int ignored1, int ignored2) {return "";}
+    protected String getCacheProcess(int ignored1, int ignored2) { return ""; }
 
     @Override
     protected void cacheTask(Long ignored) {}
@@ -104,10 +107,9 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     private AnchorPane getDeleteItem(Map<String, Object> itemInfo, ObservableList<Node> deleteFrom, Node toDelete) {
         AnchorPane delete = new AnchorPane();
-        PaneHelper.setImageBackgroundCentre(delete,
-                                            "EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn",
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                delete, "EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn",
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png")
         );
         delete.setOnMouseClicked(event -> {
             Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
@@ -204,13 +206,13 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInEndOrderCreatingPane() {
-        PaneHelper.setImageBackgroundBottom(endOrderCreatingOpenMenuImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/EndOrderCreatingPane/endOrderCreatingOpenMenuImgBtn.png")
+        PaneHelper.setImageBackgroundBottom(
+                endOrderCreatingOpenMenuImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingOpenMenuImgBtn.png")
         );
-        PaneHelper.setImageBackgroundBottom(endOrderCreatingCommitImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/EndOrderCreatingPane/endOrderCreatingCommitImgBtn.png")
+        PaneHelper.setImageBackgroundBottom(
+                endOrderCreatingCommitImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingCommitImgBtn.png")
         );
     }
 

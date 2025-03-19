@@ -4,6 +4,7 @@ import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.pos.creator.core.cache.MenuCache;
 import homer.tastyworld.frontend.pos.creator.core.cache.ProductsCache;
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
@@ -27,18 +28,13 @@ public class ProductsParentPane extends DynamicParentPane {
 
     @Builder.Default
     private final ScrollPane scroll = new ScrollPane();
+    @Builder.Default
+    private Label nameTopicLabel = null;
     private AnchorPane productsPaneBackInMenuImgBtn;
     private AnchorPane productsPaneMenuTopic;
     private GridPane productPaneImgProductsContainer;
     private DynamicParentPane addProductParentPane;
-    private final CacheProcessor<Long, GridPane> productsInMenuCache = new CacheProcessor<>() {
-        @Override
-        protected GridPane compute(Long menuID) {
-            return computeTable(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID).get("PRODUCT_IDs")));
-        }
-    };
-    @Builder.Default
-    private Label nameTopicLabel = null;
+    private final CacheProcessor<Long, GridPane> productsInMenuCache = CacheManager.register((menuID) -> computeTable(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID).get("PRODUCT_IDs"))));
 
     @Override
     protected String getCacheProcess(int total, int actual) {
@@ -128,9 +124,9 @@ public class ProductsParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInProductsPane() {
-        PaneHelper.setImageBackgroundCentre(productsPaneBackInMenuImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/ProductsPane/productsPaneBackInMenuImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                productsPaneBackInMenuImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/ProductsPane/productsPaneBackInMenuImgBtn.png")
         );
     }
 

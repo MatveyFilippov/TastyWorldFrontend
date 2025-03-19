@@ -31,17 +31,17 @@ public class OrderUpdatesListener {
 
     private static int rows = 0;
     private static ScrollPane scroll;
-    private static final GridPane orders = new GridPane();
-    private static final Map<Long, Node> ordersCache = new ConcurrentHashMap<>();
+    private static final GridPane ordersList = new GridPane();
+    private static final Map<Long, Node> ordersNode = new ConcurrentHashMap<>();
     private static final Request READ_ORDER_REQUEST = new Request("/order/read", Method.GET);
 
     static {
-        orders.setVgap(5);
-        orders.setAlignment(Pos.CENTER);
+        ordersList.setVgap(5);
+        ordersList.setAlignment(Pos.CENTER);
     }
 
     public static void init(ScrollPane scroll) {
-        scroll.setContent(orders);
+        scroll.setContent(ordersList);
         OrderUpdatesListener.scroll = scroll;
         Arrays.stream(MyParams.getActiveOrders()).forEach(OrderUpdatesListener::process);
         Subscriber.subscribe(Theme.ORDER_STATUS_CHANGED, orderID -> process(Long.parseLong(orderID)));
@@ -70,25 +70,25 @@ public class OrderUpdatesListener {
     }
 
     private static void putIfNotExists(long orderID, String name) {
-        if (!ordersCache.containsKey(orderID)) {
+        if (!ordersNode.containsKey(orderID)) {
             Node row = getClickableOrder(orderID, name);
-            orders.add(row, 0, rows);
-            ordersCache.put(orderID, row);
+            ordersList.add(row, 0, rows);
+            ordersNode.put(orderID, row);
             rows++;
         }
     }
 
     private static void remove(long orderID) {
         OrderInfoPaneRenderer.cleanIfFilled(orderID);
-        Node order = ordersCache.remove(orderID);
+        Node order = ordersNode.remove(orderID);
         if (order != null) {
-            orders.getChildren().remove(order);
+            ordersList.getChildren().remove(order);
             rows--;
         }
     }
 
     protected static void setColor(long orderID, Color color) {
-        AnchorPane order = (AnchorPane) ordersCache.get(orderID);
+        AnchorPane order = (AnchorPane) ordersNode.get(orderID);
         if (order != null) {
             ((Label) order.getChildren().getLast()).setTextFill(color);
         }

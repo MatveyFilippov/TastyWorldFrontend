@@ -19,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
@@ -29,8 +30,34 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuperBuilder
 public class AddProductParentPane extends DynamicParentPane {
 
-    private static final ScrollPane scroll = new ScrollPane();
-    private static Label productNameTopicLabel, productQTYTypeTopicLabel;
+    public static class Product {
+
+        public static final Map<Long, Integer> notDefaultAdditives = new ConcurrentHashMap<>();
+        public static Long menuID;
+        public static Long productID;
+        public static String name;
+        public static Integer pieceStep;
+        public static String pieceType;
+        public static BigDecimal price;
+        public static Integer qty;
+
+        public static void clean() {
+            menuID = null;
+            productID = null;
+            name = null;
+            pieceStep = null;
+            pieceType = null;
+            price = null;
+            qty = null;
+            notDefaultAdditives.clear();
+        }
+
+    }
+
+    @Builder.Default
+    private final ScrollPane scroll = new ScrollPane();
+    @Builder.Default
+    private Label productNameTopicLabel = null, productQTYTypeTopicLabel = null;
     private AnchorPane addProductCloseImgBtn, addProductSubmitImgBtn;
     private AnchorPane addProductNameTopic;
     private AnchorPane addProductPriceTopic;
@@ -148,15 +175,13 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void setPlusMinusAdditiveImgBtnsClickable(AnchorPane plus, AnchorPane minus, TextField additiveQTY, Map<String, Object> additiveInfo) {
-        PaneHelper.setImageBackgroundCentre(plus,
-                                            "AddProductPane/addProductAdditivePlusQTYImgBtn",
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                plus, "AddProductPane/addProductAdditivePlusQTYImgBtn",
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(minus,
-                                            "AddProductPane/addProductAdditiveMinusQTYImgBtn",
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                minus, "AddProductPane/addProductAdditiveMinusQTYImgBtn",
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png")
         );
         int step = additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? 100 : 1;
         long additiveID = TypeChanger.toLong(additiveInfo.get("ID"));
@@ -185,21 +210,21 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInAddProductPane() {
-        PaneHelper.setImageBackgroundCentre(addProductCloseImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/AddProductPane/addProductCloseImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                addProductCloseImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductCloseImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(addProductSubmitImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/AddProductPane/addProductSubmitImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                addProductSubmitImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductSubmitImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(addProductMinusQTYImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/AddProductPane/addProductMinusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                addProductMinusQTYImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductMinusQTYImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(addProductPlusQTYImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/AddProductPane/addProductPlusQTYImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                addProductPlusQTYImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductPlusQTYImgBtn.png")
         );
     }
 
@@ -280,30 +305,6 @@ public class AddProductParentPane extends DynamicParentPane {
         initTopicsInAddProductPane();
         initNumbersKeyboardInAddProductPane();
         initAdditiveLines();
-    }
-
-    public static class Product {
-
-        public static final Map<Long, Integer> notDefaultAdditives = new ConcurrentHashMap<>();
-        public static Long menuID;
-        public static Long productID;
-        public static String name;
-        public static Integer pieceStep;
-        public static String pieceType;
-        public static BigDecimal price;
-        public static Integer qty;
-
-        public static void clean() {
-            menuID = null;
-            productID = null;
-            name = null;
-            pieceStep = null;
-            pieceType = null;
-            price = null;
-            qty = null;
-            notDefaultAdditives.clear();
-        }
-
     }
 
 }

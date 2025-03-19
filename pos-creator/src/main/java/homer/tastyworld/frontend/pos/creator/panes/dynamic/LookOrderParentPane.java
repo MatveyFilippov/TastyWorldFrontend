@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
@@ -26,8 +27,10 @@ import java.util.Map;
 @SuperBuilder
 public class LookOrderParentPane extends DynamicParentPane {
 
-    private static final ScrollPane scroll = new ScrollPane();
-    private static Label nameTopicLabel, priceTopicLabel;
+    @Builder.Default
+    private final ScrollPane scroll = new ScrollPane();
+    @Builder.Default
+    private Label nameTopicLabel = null, priceTopicLabel = null;
     private AnchorPane lookOrderNameTopic, lookOrderTotalPriceTopic;
     private AnchorPane lookOrderClosePaneImgBtn, lookOrderSetDoneImgBtn;
     private GridPane lookOrderItemsContainer;
@@ -35,7 +38,7 @@ public class LookOrderParentPane extends DynamicParentPane {
     private Button lookOrderSetPaidBtn;
 
     @Override
-    protected String getCacheProcess(int ignored1, int ignored2) {return "";}
+    protected String getCacheProcess(int ignored1, int ignored2) { return ""; }
 
     @Override
     protected void cacheTask(Long ignored) {}
@@ -168,13 +171,13 @@ public class LookOrderParentPane extends DynamicParentPane {
     }
 
     private void initImgBtnsInLookOrderPane() {
-        PaneHelper.setImageBackgroundCentre(lookOrderClosePaneImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/LookOrderPane/lookOrderClosePaneImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                lookOrderClosePaneImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderClosePaneImgBtn.png")
         );
-        PaneHelper.setImageBackgroundCentre(lookOrderSetDoneImgBtn,
-                                            POSCreatorApplication.class.getResourceAsStream(
-                                                    "images/buttons/LookOrderPane/lookOrderSetDoneImgBtn.png")
+        PaneHelper.setImageBackgroundCentre(
+                lookOrderSetDoneImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderSetDoneImgBtn.png")
         );
     }
 

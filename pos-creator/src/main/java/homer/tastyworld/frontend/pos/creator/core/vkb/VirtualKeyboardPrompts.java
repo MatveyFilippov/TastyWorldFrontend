@@ -18,6 +18,7 @@ public class VirtualKeyboardPrompts {
 
     public static final int PROMPTS_QTY = 3;
     private static final String pathBeforeFileName;
+    private static final String fileExtension = ".twvkp";  // TastyWorldVirtualKeyboardPrompts
     private static final Map<String, PromptsProcessor> processors = new ConcurrentHashMap<>();
     private static final Label[] promptPlaces = new Label[PROMPTS_QTY];
 
@@ -29,7 +30,7 @@ public class VirtualKeyboardPrompts {
 
     private static PromptsProcessor getProcessor(TextField field) {
         return processors.computeIfAbsent(
-                field.getId(), name -> new PromptsProcessor(pathBeforeFileName + name + ".vkbp")
+                field.getId(), name -> new PromptsProcessor(pathBeforeFileName + name + fileExtension)
         );
     }
 
