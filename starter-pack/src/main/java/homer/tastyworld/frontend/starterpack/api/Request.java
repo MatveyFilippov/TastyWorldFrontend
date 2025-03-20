@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Request {
 
-    private static final CacheProcessor<String, String> urlCache = CacheManager.register(endpoint -> {
+    public static final CacheProcessor<String, String> urlCache = CacheManager.register(endpoint -> {
         if (!endpoint.startsWith("/")) {
             endpoint = "/" + endpoint;
         }

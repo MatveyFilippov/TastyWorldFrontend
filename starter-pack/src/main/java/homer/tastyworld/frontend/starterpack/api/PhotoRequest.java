@@ -10,7 +10,7 @@ public class PhotoRequest extends Request {
     }
 
     public InputStream read() {
-        return Requester.exchangeImage(getURL(endpoint), getToken(), body);
+        return Requester.exchangeImage(urlCache.get(endpoint), getToken(), body);
     }
 
     @Deprecated
