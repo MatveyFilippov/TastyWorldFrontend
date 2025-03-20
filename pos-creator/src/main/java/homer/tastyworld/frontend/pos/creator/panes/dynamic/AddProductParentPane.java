@@ -23,6 +23,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,6 +59,10 @@ public class AddProductParentPane extends DynamicParentPane {
     private final ScrollPane scroll = new ScrollPane();
     @Builder.Default
     private Label productNameTopicLabel = null, productQTYTypeTopicLabel = null;
+    @Builder.Default
+    private URL plusAdditiveImgBtnResource = POSCreatorApplication.class.getResource("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png");
+    @Builder.Default
+    private URL minusAdditiveImgBtnResource = POSCreatorApplication.class.getResource("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png");
     private AnchorPane addProductCloseImgBtn, addProductSubmitImgBtn;
     private AnchorPane addProductNameTopic;
     private AnchorPane addProductPriceTopic;
@@ -90,8 +95,7 @@ public class AddProductParentPane extends DynamicParentPane {
             Product.pieceStep = 1;
             Product.pieceType = "Шт";
         }
-        Product.price = TypeChanger.toBigDecimal(productInfo.get("PRICE_PEER_PEACE"))
-                                   .divide(BigDecimal.valueOf(Product.pieceStep));
+        Product.price = TypeChanger.toBigDecimal(productInfo.get("PRICE_PEER_PEACE")).divide(BigDecimal.valueOf(Product.pieceStep));
         Product.qty = TypeChanger.toInt(productInfo.get("DEFAULT_PEACE_QTY"));
         Product.notDefaultAdditives.clear();
     }
@@ -175,14 +179,8 @@ public class AddProductParentPane extends DynamicParentPane {
     }
 
     private void setPlusMinusAdditiveImgBtnsClickable(AnchorPane plus, AnchorPane minus, TextField additiveQTY, Map<String, Object> additiveInfo) {
-        PaneHelper.setImageBackgroundCentre(
-                plus, "AddProductPane/addProductAdditivePlusQTYImgBtn",
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditivePlusQTYImgBtn.png")
-        );
-        PaneHelper.setImageBackgroundCentre(
-                minus, "AddProductPane/addProductAdditiveMinusQTYImgBtn",
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/AddProductPane/addProductAdditiveMinusQTYImgBtn.png")
-        );
+        PaneHelper.setImageBackgroundCentre(plus, plusAdditiveImgBtnResource);
+        PaneHelper.setImageBackgroundCentre(minus, minusAdditiveImgBtnResource);
         int step = additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? 100 : 1;
         long additiveID = TypeChanger.toLong(additiveInfo.get("ID"));
         plus.setOnMouseClicked(event -> {
@@ -254,8 +252,7 @@ public class AddProductParentPane extends DynamicParentPane {
     private AnchorPane getClickableNumberKbBtn(int num, StringExpression fontSize) {
         String toAppend = String.valueOf(num);
         AnchorPane btn = new AnchorPane();
-        btn.setStyle(
-                "-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
         AdaptiveTextHelper.setTextCentre(btn, toAppend, fontSize, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");
@@ -269,8 +266,7 @@ public class AddProductParentPane extends DynamicParentPane {
 
     private AnchorPane getClickableShiftBackKbBtn() {
         AnchorPane btn = new AnchorPane();
-        btn.setStyle(
-                "-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
+        btn.setStyle("-fx-border-color: #555555; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25");
         AdaptiveTextHelper.setTextCentre(btn, "<--", 3, Color.BLACK);
         btn.setOnMouseClicked(event -> {
             String oldQTY = addProductQTYFiled.getText().replace(" ", "");

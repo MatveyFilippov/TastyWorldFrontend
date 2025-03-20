@@ -20,10 +20,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.apache.hc.core5.http.Method;
+import java.net.URL;
 import java.util.Map;
 
 public class OrderInfoPaneRenderer {
 
+    private static final URL editItemImgBtnResource = POSProcessorApplication.class.getResource("images/buttons/editOrderItemImgBtn.png");
     public static Long orderID = null;
     public static boolean isEditable = false;
     private static final Request READ_ORDER_REQUEST = new Request("/order/read", Method.GET);
@@ -99,10 +101,7 @@ public class OrderInfoPaneRenderer {
 
     private static AnchorPane getEditImgBtn(Map<String, Object> itemInfo) {
         AnchorPane editImgBtn = new AnchorPane();
-        PaneHelper.setImageBackgroundCentre(
-                editImgBtn, "editOrderItemImgBtn",
-                POSProcessorApplication.class.getResourceAsStream("images/buttons/editOrderItemImgBtn.png")
-        );
+        PaneHelper.setImageBackgroundCentre(editImgBtn, editItemImgBtnResource);
         Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
         setEditOnClick(
                 editImgBtn, TypeChanger.toLong(itemInfo.get("ID")),

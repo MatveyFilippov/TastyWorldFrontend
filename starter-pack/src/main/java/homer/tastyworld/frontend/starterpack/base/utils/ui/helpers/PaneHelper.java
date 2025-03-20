@@ -1,5 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.utils.ui.helpers;
 
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,7 +18,10 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javafx.util.Duration;
@@ -24,12 +29,29 @@ import javafx.util.Duration;
 public class PaneHelper {
 
     private static final Map<Node, Integer> nodeClickedCount = new ConcurrentHashMap<>();
-    private static final Map<String, Background> backgroundImageFromResourcesCache = new ConcurrentHashMap<>();
+    private static final BackgroundSize imageBackgroundSize = new BackgroundSize(-1, -1, true, true, true, false);
     private static final BackgroundPosition imageBackgroundBottomPosition = new BackgroundPosition(
             BackgroundPosition.CENTER.getHorizontalSide(), BackgroundPosition.CENTER.getHorizontalPosition(),
             true, null, 1, true
     );
-    private static final BackgroundSize imageBackgroundSize = new BackgroundSize(-1, -1, true, true, true, false);
+    private static final CacheProcessor<String, Background> imageBackgroundCentreCache = CacheManager.register(
+            url -> {
+                try {
+                    return getImageBackground(new Image(URI.create(url).toURL().openStream()), BackgroundPosition.CENTER);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+    );
+    private static final CacheProcessor<String, Background> imageBackgroundBottomCache = CacheManager.register(
+            url -> {
+                try {
+                    return getImageBackground(new Image(URI.create(url).toURL().openStream()), imageBackgroundBottomPosition);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+    );
 
     public static void setColorRoundBackground(AnchorPane pane, int radius, Color color) {
         pane.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), Insets.EMPTY)));
@@ -46,22 +68,16 @@ public class PaneHelper {
         pane.setBackground(getImageBackground(new Image(img), BackgroundPosition.CENTER));
     }
 
-    public static void setImageBackgroundCentre(AnchorPane pane, String keyToCache, InputStream img) {
-        Background backgroundImage = backgroundImageFromResourcesCache.computeIfAbsent(
-                keyToCache, ignored -> getImageBackground(new Image(img), BackgroundPosition.CENTER)
-        );
-        pane.setBackground(backgroundImage);
+    public static void setImageBackgroundCentre(AnchorPane pane, URL image) {
+        pane.setBackground(imageBackgroundCentreCache.get(image.toString()));
     }
 
     public static void setImageBackgroundBottom(AnchorPane pane, InputStream img) {
         pane.setBackground(getImageBackground(new Image(img), imageBackgroundBottomPosition));
     }
 
-    public static void setImageBackgroundBottom(AnchorPane pane, String keyToCache, InputStream img) {
-        Background backgroundImage = backgroundImageFromResourcesCache.computeIfAbsent(
-                keyToCache, ignored -> getImageBackground(new Image(img), imageBackgroundBottomPosition)
-        );
-        pane.setBackground(backgroundImage);
+    public static void setImageBackgroundBottom(AnchorPane pane, URL image) {
+        pane.setBackground(imageBackgroundBottomCache.get(image.toString()));
     }
 
     public static void setOnMouseClickedWithPressingTimeChecking(Node node, Duration requiredPressingTime, EventHandler<ActionEvent> event) {

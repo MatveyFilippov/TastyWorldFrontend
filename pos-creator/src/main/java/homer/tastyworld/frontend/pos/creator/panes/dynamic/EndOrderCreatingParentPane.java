@@ -24,6 +24,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.hc.core5.http.Method;
+import java.net.URL;
 import java.util.Map;
 
 @Getter
@@ -34,6 +35,8 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private final ScrollPane scroll = new ScrollPane();
     @Builder.Default
     private Label nameTopicLabel = null, priceTopicLabel = null;
+    @Builder.Default
+    private URL deleteItemImgBtnResource = POSCreatorApplication.class.getResource("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png");
     private AnchorPane endOrderCreatingOpenMenuImgBtn, endOrderCreatingCommitImgBtn;
     private AnchorPane endOrderCreatingNameTopic, endOrderCreatingTotalPriceTopic;
     private GridPane endOrderCreatingItemsContainer;
@@ -107,20 +110,13 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     private AnchorPane getDeleteItem(Map<String, Object> itemInfo, ObservableList<Node> deleteFrom, Node toDelete) {
         AnchorPane delete = new AnchorPane();
-        PaneHelper.setImageBackgroundCentre(
-                delete, "EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn",
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/EndOrderCreatingPane/endOrderCreatingDeleteItemImgBtn.png")
-        );
+        PaneHelper.setImageBackgroundCentre(delete, deleteItemImgBtnResource);
         delete.setOnMouseClicked(event -> {
             Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-            if (!DialogWindow.askBool("Да",
-                                      "Нет",
-                                      "Редактирование заказа",
-                                      String.format(
-                                              "Вы уверены что хотите удалить '%s' из заказа?",
-                                              productInfo.get("NAME")
-                                      ),
-                                      "Продолжить?"
+            if (!DialogWindow.askBool(
+                    "Да", "Нет", "Редактирование заказа",
+                    String.format("Вы уверены что хотите удалить '%s' из заказа?", productInfo.get("NAME")),
+                    "Продолжить?"
             )) {
                 return;
             }
