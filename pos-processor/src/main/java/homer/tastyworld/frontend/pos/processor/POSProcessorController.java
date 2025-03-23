@@ -115,6 +115,10 @@ public class POSProcessorController {
     @FXML
     void editItemQtyPaneCommitImgBtnPressed() {
         if (EditItemQtyPane.itemID != null && EditItemQtyPane.qty != null && EditItemQtyPane.isEdit()) {
+            if (EditItemQtyPane.qty == 0) {
+                AlertWindow.showError("Недопустимые изменния", "Нельзя сделать кол-во продукта равным нулю", true);
+                return;
+            }
             OrderActions.editItemQTY(EditItemQtyPane.itemID, EditItemQtyPane.qty);
             OrderInfoPaneRenderer.rerender();
         }

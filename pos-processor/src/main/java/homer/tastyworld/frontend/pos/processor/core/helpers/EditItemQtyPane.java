@@ -18,7 +18,7 @@ public class EditItemQtyPane {
     public static Integer qty = null;
     private static AnchorPane parent;
     private static Label itemName, itemQTY;
-    private static Thread thread;
+    private static Thread scaleAskingThread;
 
     public static boolean isEdit() {
         return !Objects.equals(startQTY, qty);
@@ -30,17 +30,23 @@ public class EditItemQtyPane {
     }
 
     private static void startAskingScale() {
-        thread = new Thread(() -> {
+        if (!ScaleManager.IS_SCALE_AVAILABLE) {
+            return;
+        }
+        scaleAskingThread = new Thread(() -> {
             try (ScaleManager scaleManager = new ScaleManager()) {
                 while (true) {
                     if (Thread.interrupted()) {
                         return;
                     }
                     ScaleState state = scaleManager.getScaleState();
-                    if (state.STATUS == ScaleState.Status.STABLE) {
+                    if (state.STATUS == ScaleState.Status.STABLE && state.WEIGHT > 0) {
                         int weight = 0;
                         if (state.UNIT == ScaleState.Unit.KG) {
                             weight = (int) (state.WEIGHT * 1000);
+                        }
+                        if (weight == 0) {
+                            continue;
                         }
                         final int finalWeight = weight;
                         Platform.runLater(() -> setQTY(finalWeight));
@@ -49,9 +55,16 @@ public class EditItemQtyPane {
                 }
             } catch (InterruptedException ignored) {}
         });
-        thread.setDaemon(true);
-        thread.setName("Scale asking while edit item qty");
-        thread.start();
+        scaleAskingThread.setDaemon(true);
+        scaleAskingThread.setName("Scale asking while edit item qty");
+        scaleAskingThread.start();
+    }
+
+    private static void stopAskingScale() {
+        if (scaleAskingThread != null && scaleAskingThread.isAlive()) {
+            scaleAskingThread.interrupt();
+            scaleAskingThread = null;
+        }
     }
 
     public static void open(long itemID, int qty, String name) {
@@ -60,16 +73,11 @@ public class EditItemQtyPane {
         setQTY(qty);
         itemName.setText(name);
         parent.setVisible(true);
-        if (ScaleManager.IS_SCALE_AVAILABLE) {
-            startAskingScale();
-        }
+        startAskingScale();
     }
 
     public static void close() {
-        if (thread != null && thread.isAlive()) {
-            thread.interrupt();
-            thread = null;
-        }
+        stopAskingScale();
         itemID = null;
         itemName.setText("null");
         startQTY = null;
