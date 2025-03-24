@@ -173,6 +173,7 @@ public class OrderInfoPaneRenderer {
         orderDeliveryTopic.setText("");
         orderCreatedTimeTopic.setText("");
         orderNameTopic.setText("");
+        scroll.setVvalue(0.0);
         scroll.setContent(null);
     }
 

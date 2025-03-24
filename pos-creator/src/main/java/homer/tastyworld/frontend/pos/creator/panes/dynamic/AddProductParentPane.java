@@ -201,6 +201,7 @@ public class AddProductParentPane extends DynamicParentPane {
     @Override
     protected void cleanTask() {
         Product.clean();
+        scroll.setVvalue(0.0);
         productNameTopicLabel.setText("null");
         productQTYTypeTopicLabel.setText("");
         addProductQTYFiled.setText("0");

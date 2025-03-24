@@ -185,6 +185,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
 
     @Override
     protected void cleanTask() {
+        scroll.setVvalue(0.0);
         nameTopicLabel.setText("");
         priceTopicLabel.setText("");
         endOrderCreatingDeliveryField.clear();

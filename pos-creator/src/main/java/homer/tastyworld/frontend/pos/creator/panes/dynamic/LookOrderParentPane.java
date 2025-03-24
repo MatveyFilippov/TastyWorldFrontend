@@ -154,6 +154,7 @@ public class LookOrderParentPane extends DynamicParentPane {
 
     @Override
     protected void cleanTask() {
+        scroll.setVvalue(0.0);
         nameTopicLabel.setText("");
         priceTopicLabel.setText("");
         lookOrderDeliveryField.clear();
