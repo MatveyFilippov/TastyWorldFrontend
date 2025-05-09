@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class CacheProcessor<K, V> extends CleanableCacheProcessor {
+public abstract class SimpleCacheProcessor<K, V> extends CleanableCacheProcessor {
 
     protected final Map<K, V> cache = new ConcurrentHashMap<>();
 

@@ -3,14 +3,14 @@ package homer.tastyworld.frontend.starterpack.api;
 import homer.tastyworld.frontend.starterpack.api.engine.Requester;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.SimpleCacheProcessor;
 import org.apache.hc.core5.http.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Request {
 
-    public static final CacheProcessor<String, String> urlCache = CacheManager.register(endpoint -> {
+    public static final SimpleCacheProcessor<String, String> urlCache = CacheManager.register(endpoint -> {
         if (!endpoint.startsWith("/")) {
             endpoint = "/" + endpoint;
         }

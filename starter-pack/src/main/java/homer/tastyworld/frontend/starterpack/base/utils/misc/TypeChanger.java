@@ -55,6 +55,10 @@ public class TypeChanger {
         return ((List<Object>) object).stream().map(TypeChanger::toLong).sorted().toArray(Long[]::new);
     }
 
+    public static long[] toPrimitiveLongArray(Object object) {
+        return ((List<Object>) object).stream().map(TypeChanger::toLong).mapToLong(Long::longValue).toArray();
+    }
+
     public static <K, V> Map<K, V> toMap(Object object, Class<K> keyType, Class<V> valueType) {
         Map<K, V> result = new HashMap<>();
         ((Map<Object, Object>) object).forEach(

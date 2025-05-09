@@ -21,8 +21,8 @@ public class CacheManager {
         caches.add(cache);
     }
 
-    public static <K, V> CacheProcessor<K, V> register(Function<? super K, ? extends V> mappingFunction) {
-        return new CacheProcessor<>() {
+    public static <K, V> SimpleCacheProcessor<K, V> register(Function<? super K, ? extends V> mappingFunction) {
+        return new SimpleCacheProcessor<>() {
 
             @Override
             protected V compute(K key) {
@@ -32,7 +32,7 @@ public class CacheManager {
         };
     }
 
-    private static void cleanAll() {
+    public static void cleanAll() {
         caches.forEach(CleanableCacheProcessor::clean);
     }
 

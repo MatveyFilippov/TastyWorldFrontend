@@ -15,6 +15,9 @@ module homer.tastyworld.frontend.starterpack {
     exports homer.tastyworld.frontend.starterpack.api.requests;
     exports homer.tastyworld.frontend.starterpack.base;
     exports homer.tastyworld.frontend.starterpack.base.config;
+    exports homer.tastyworld.frontend.starterpack.base.entity;
+    exports homer.tastyworld.frontend.starterpack.base.entity.misc;
+    exports homer.tastyworld.frontend.starterpack.base.entity.implementations;
     exports homer.tastyworld.frontend.starterpack.base.exceptions;
     exports homer.tastyworld.frontend.starterpack.base.exceptions.response;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.table;
