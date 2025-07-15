@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.table;
 
-import homer.tastyworld.frontend.pos.creator.core.orders.internal.OrderLooking;
+import homer.tastyworld.frontend.pos.creator.core.orders.table.listeners.OrderPaidMarkUpdateListener;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
@@ -12,17 +12,16 @@ import javafx.scene.layout.Region;
 
 public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
-    private final DynamicParentPane lookOrderPane;
+    private final DynamicParentPane LOOK_ORDER_PANE;
 
     public POSCreatorTableNodeFactory(DynamicParentPane lookOrderPane) {
-        this.lookOrderPane = lookOrderPane;
+        this.LOOK_ORDER_PANE = lookOrderPane;
     }
 
     private void setOnTouch(Node node, long orderID) {
         node.setOnMouseClicked(event -> {
-            lookOrderPane.fill(orderID);
-            OrderLooking.start(orderID);
-            lookOrderPane.getParent().setVisible(true);
+            LOOK_ORDER_PANE.fill(orderID);
+            LOOK_ORDER_PANE.open();
         });
     }
 

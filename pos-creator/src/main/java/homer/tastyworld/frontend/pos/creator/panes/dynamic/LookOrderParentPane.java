@@ -1,12 +1,11 @@
 package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
-import homer.tastyworld.frontend.pos.creator.core.cache.AdditivesCache;
-import homer.tastyworld.frontend.pos.creator.core.cache.ProductsCache;
-import homer.tastyworld.frontend.starterpack.api.Request;
-import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.order.Order;
+import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
+import homer.tastyworld.frontend.starterpack.order.core.items.OrderItemAdditive;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,60 +16,55 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.apache.hc.core5.http.Method;
-import java.util.Map;
+import java.math.BigDecimal;
 
-@Getter
 @SuperBuilder
 public class LookOrderParentPane extends DynamicParentPane {
 
-    @Builder.Default
+    private static Long currentOrderID = null;
+    private final AnchorPane nameTopic, totalPriceTopic;
+    private final AnchorPane closePaneImgBtn, setDoneImgBtn;
+    private final GridPane itemsContainer;
+    private final TextField deliveryInfoField;
+    private final Button setPaidBtn;
+    @Getter(lazy = true, value = AccessLevel.PRIVATE)
+    private final Label nameTopicLabel = AdaptiveTextHelper.setTextCentre(nameTopic, "", 6, null);
+    @Getter(lazy = true, value = AccessLevel.PRIVATE)
+    private final Label priceTopicLabel = AdaptiveTextHelper.setTextCentre(totalPriceTopic, "", 10, null);
     private final ScrollPane scroll = new ScrollPane();
-    @Builder.Default
-    private Label nameTopicLabel = null, priceTopicLabel = null;
-    private AnchorPane lookOrderNameTopic, lookOrderTotalPriceTopic;
-    private AnchorPane lookOrderClosePaneImgBtn, lookOrderSetDoneImgBtn;
-    private GridPane lookOrderItemsContainer;
-    private TextField lookOrderDeliveryField;
-    private Button lookOrderSetPaidBtn;
+
+    public static Long getCurrentOrderID() {
+        return currentOrderID;
+    }
 
     @Override
-    protected String getCacheProcess(int ignored1, int ignored2) { return ""; }
-
-    @Override
-    protected void cacheTask(Long ignored) {}
+    protected void cacheTask(long ignored) {}
 
     @Override
     public void fill(long orderID) {
-        Request request = new Request("/order/read", Method.GET);
-        request.putInBody("id", orderID);
-        Map<String, Object> orderInfo = request.request().getResultAsJSON();
-        String deliveryAddress = (String) orderInfo.get("DELIVERY_ADDRESS");
-        if (!deliveryAddress.equals("NOT FOR DELIVERY")) {
-            lookOrderDeliveryField.setText(deliveryAddress);
-        }
-        nameTopicLabel.setText("Заказ #" + orderInfo.get("NAME"));
-        priceTopicLabel.setText("Стоимость: " + orderInfo.get("TOTAL_PRICE"));
-        lookOrderSetPaidBtn.setDisable(TypeChanger.toBool(orderInfo.get("IS_PAID")));
-        scroll.setContent(computeItemsTable(TypeChanger.toSortedLongArray(orderInfo.get("ITEM_IDs"))));
+        Order order = Order.get(orderID);
+        currentOrderID = orderID;
+        deliveryInfoField.setText(order.getDeliveryInfo());
+        getNameTopicLabel().setText("Заказ " + order.name);
+        getPriceTopicLabel().setText("Стоимость: " + order.getTotalPrice());
+        setPaidBtn.setDisable(order.isPaid());
+        scroll.setContent(computeItemsTable(order.getItems()));
     }
 
-    public GridPane computeItemsTable(Long[] itemIDs) {
+    public GridPane computeItemsTable(OrderItem[] items) {
         GridPane table = new GridPane();
         table.setVgap(5);
         table.setAlignment(Pos.CENTER);
-        Request request = new Request("/order/read_item", Method.GET);
-        for (int i = 0; i < itemIDs.length; i++) {
-            request.putInBody("id", itemIDs[i]);
-            table.add(getItemLine(request.request().getResultAsJSON()), 0, i);
+        for (int i = 0; i < items.length; i++) {
+            table.add(getItemLine(items[i]), 0, i);
         }
         return table;
     }
 
-    private HBox getItemLine(Map<String, Object> itemInfo) {
+    private HBox getItemLine(OrderItem item) {
         HBox row = new HBox(7);
         row.setStyle("-fx-border-color: #000000;");
         row.prefWidthProperty().bind(scroll.widthProperty());
@@ -78,22 +72,22 @@ public class LookOrderParentPane extends DynamicParentPane {
         row.setAlignment(Pos.CENTER);
 
         AnchorPane space1 = new AnchorPane();
-        AnchorPane name = getItemName(itemInfo);
-        AnchorPane qty = getItemQTY(itemInfo);
-        VBox additives = getAdditives(itemInfo);
-        AnchorPane price = getItemPrice(itemInfo);
+        AnchorPane name = getItemName(item);
+        AnchorPane pieceQTY = getItemQTY(item);
+        VBox additives = getAdditives(item);
+        AnchorPane price = getItemPrice(item);
         AnchorPane space2 = new AnchorPane();
 
-        row.getChildren().addAll(space1, name, qty, additives, price, space2);
+        row.getChildren().addAll(space1, name, pieceQTY, additives, price, space2);
         HBox.setHgrow(space1, Priority.ALWAYS);
         HBox.setHgrow(name, Priority.ALWAYS);
-        HBox.setHgrow(qty, Priority.ALWAYS);
+        HBox.setHgrow(pieceQTY, Priority.ALWAYS);
         HBox.setHgrow(additives, Priority.ALWAYS);
         HBox.setHgrow(price, Priority.ALWAYS);
         HBox.setHgrow(space2, Priority.ALWAYS);
         space1.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
         name.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
-        qty.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
+        pieceQTY.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
         additives.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
         price.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
         space2.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
@@ -101,51 +95,41 @@ public class LookOrderParentPane extends DynamicParentPane {
         return row;
     }
 
-    private AnchorPane getItemName(Map<String, Object> itemInfo) {
+    private AnchorPane getItemName(OrderItem item) {
         AnchorPane name = new AnchorPane();
-        Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        AdaptiveTextHelper.setTextCentre(name, (String) productInfo.get("NAME"), 13, null);
+        AdaptiveTextHelper.setTextCentre(name, item.productName(), 13, null);
         return name;
     }
 
-    private AnchorPane getItemQTY(Map<String, Object> itemInfo) {
-        AnchorPane qty = new AnchorPane();
-        Map<String, Object> productInfo = ProductsCache.impl.get(TypeChanger.toLong(itemInfo.get("PRODUCT_ID")));
-        String peaceType = productInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? "Гр" : "Шт";
-        AdaptiveTextHelper.setTextCentre(qty, itemInfo.get("PEACE_QTY") + " " + peaceType, 4, null);
-        return qty;
+    private AnchorPane getItemQTY(OrderItem item) {
+        AnchorPane pieceQTY = new AnchorPane();
+        AdaptiveTextHelper.setTextCentre(pieceQTY, item.pieceQTY() + " " + item.pieceType().shortName, 4, null);
+        return pieceQTY;
     }
 
-    private VBox getAdditives(Map<String, Object> itemInfo) {
+    private VBox getAdditives(OrderItem item) {
         VBox result = new VBox();
         result.setFillWidth(true);
         result.setAlignment(Pos.CENTER);
-        Map<Long, Integer> notDefaultAdditives = TypeChanger.toMap(
-                itemInfo.get("NOT_DEFAULT_ADDITIVES"),
-                Long.class,
-                Integer.class
-        );
-        for (Map.Entry<Long, Integer> pair : notDefaultAdditives.entrySet()) {
-            result.getChildren().add(getAdditiveLine(AdditivesCache.impl.get(pair.getKey()), pair.getValue()));
+        for (OrderItemAdditive additive : item.getNotDefaultAdditives()) {
+            result.getChildren().add(getAdditiveLine(additive));
         }
         return result;
     }
 
-    private AnchorPane getAdditiveLine(Map<String, Object> additiveInfo, int qty) {
+    private AnchorPane getAdditiveLine(OrderItemAdditive additive) {
         AnchorPane additiveLine = new AnchorPane();
         additiveLine.setStyle("-fx-border-color: #000000;");
-        String line = additiveInfo.get("NAME") + " " + qty + (
-                additiveInfo.get("PIECE_TYPE").equals("ONE_HUNDRED_GRAMS") ? " Гр" : " Шт"
-        );
+        String line = additive.additiveName() + " " + additive.pieceQTY() + additive.pieceType().shortName;
         AdaptiveTextHelper.setTextCentre(additiveLine, line, 15, null);
         return additiveLine;
     }
 
-    private AnchorPane getItemPrice(Map<String, Object> itemInfo) {
+    private AnchorPane getItemPrice(OrderItem item) {
         AnchorPane price = new AnchorPane();
         AdaptiveTextHelper.setTextCentre(
                 price,
-                TypeChanger.toBigDecimal(itemInfo.get(("ITEM_PRICE"))).toString(),
+                item.pricePerPiece().multiply(BigDecimal.valueOf(item.pieceQTY())).toString(),
                 4,
                 null
         );
@@ -155,30 +139,26 @@ public class LookOrderParentPane extends DynamicParentPane {
     @Override
     protected void cleanTask() {
         scroll.setVvalue(0.0);
-        nameTopicLabel.setText("");
-        priceTopicLabel.setText("");
-        lookOrderDeliveryField.clear();
-        lookOrderSetPaidBtn.setDisable(true);
+        getNameTopicLabel().setText("");
+        getPriceTopicLabel().setText("");
+        deliveryInfoField.clear();
+        setPaidBtn.setDisable(true);
+        currentOrderID = null;
     }
 
     private void initItemsTable() {
         scroll.setFitToWidth(true);
-        lookOrderItemsContainer.add(scroll, 1, 1);
-    }
-
-    private void initTopics() {
-        nameTopicLabel = AdaptiveTextHelper.setTextCentre(lookOrderNameTopic, "", 6, null);
-        priceTopicLabel = AdaptiveTextHelper.setTextCentre(lookOrderTotalPriceTopic, "", 10, null);
+        itemsContainer.add(scroll, 1, 1);
     }
 
     private void initImgBtnsInLookOrderPane() {
         PaneHelper.setImageBackgroundCentre(
-                lookOrderClosePaneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderClosePaneImgBtn.png")
+                closePaneImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/ClosePane.png")
         );
         PaneHelper.setImageBackgroundCentre(
-                lookOrderSetDoneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/lookOrderSetDoneImgBtn.png")
+                setDoneImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/SetDone.png")
         );
     }
 
@@ -186,7 +166,6 @@ public class LookOrderParentPane extends DynamicParentPane {
     public void initialize() {
         initItemsTable();
         initImgBtnsInLookOrderPane();
-        initTopics();
     }
 
 }

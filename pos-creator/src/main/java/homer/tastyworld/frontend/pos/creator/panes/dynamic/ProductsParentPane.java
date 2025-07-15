@@ -1,12 +1,10 @@
 package homer.tastyworld.frontend.pos.creator.panes.dynamic;
 
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
-import homer.tastyworld.frontend.pos.creator.core.cache.MenuCache;
-import homer.tastyworld.frontend.pos.creator.core.cache.ProductsCache;
-import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
+import homer.tastyworld.frontend.starterpack.entity.Menu;
+import homer.tastyworld.frontend.starterpack.entity.Product;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
-import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
 import javafx.geometry.Pos;
@@ -16,124 +14,101 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import java.util.Arrays;
-import java.util.Map;
 
-@Getter
 @SuperBuilder
 public class ProductsParentPane extends DynamicParentPane {
 
-    @Builder.Default
+    private final AnchorPane goBackInMenuImgBtn;
+    private final AnchorPane paneNameTopic;
+    private final GridPane productsImgBtnContainer;
+    private final DynamicParentPane addProductToOrderParentPane;
     private final ScrollPane scroll = new ScrollPane();
-    @Builder.Default
-    private Label nameTopicLabel = null;
-    private AnchorPane productsPaneBackInMenuImgBtn;
-    private AnchorPane productsPaneMenuTopic;
-    private GridPane productPaneImgProductsContainer;
-    private DynamicParentPane addProductParentPane;
-    private final CacheProcessor<Long, GridPane> productsInMenuCache = CacheManager.register((menuID) -> computeTable(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID).get("PRODUCT_IDs"))));
+    @Getter(lazy = true, value = AccessLevel.PRIVATE)
+    private final Label menuNameTopicLabel = AdaptiveTextHelper.setTextCentre(paneNameTopic, "", 15, Color.web("#555555"));;
+    private final CacheProcessor<Long, GridPane> productsInMenuCache = CacheManager.register(
+            (menuID) -> computeTable(Menu.get(menuID).getProductIDs())
+    );
 
     @Override
-    protected String getCacheProcess(int total, int actual) {
-        return String.format("Getting menu (%s/%s)", actual, total);
-    }
-
-    @Override
-    protected void cacheTask(Long menuID) {
+    protected void cacheTask(long menuID) {
         productsInMenuCache.cacheIfAbsent(menuID);
     }
 
     @Override
-    public void cacheAll(Long[] menuIDs) {
-        Arrays.stream(menuIDs)
-              .forEach(menuID -> addProductParentPane.cacheAll(TypeChanger.toSortedLongArray(MenuCache.impl.get(menuID)
-                                                                                                           .get("PRODUCT_IDs"))));
-        super.cacheAll(menuIDs);
-    }
-
-    @Override
     public void fill(long menuID) {
-        nameTopicLabel.setText((String) MenuCache.impl.get(menuID).get("NAME"));
+        getMenuNameTopicLabel().setText(Menu.get(menuID).getName());
         scroll.setContent(productsInMenuCache.get(menuID));
     }
 
-    private GridPane computeTable(Long[] productIDs) {
+    private GridPane computeTable(long[] productIDs) {
         GridPane table = new GridPane();
         table.setHgap(25);
         table.setVgap(25);
         table.setAlignment(Pos.CENTER);
-        for (int i = 0; i < productIDs.length; i++) {
-            table.add(getProductImgBtn(productIDs[i]), i % 3, i / 3);
+        long[] activeProductIDs = Arrays.stream(productIDs)
+                                        .mapToObj(Product::get)
+                                        .filter(Product::isActive)
+                                        .mapToLong(Product::getId)
+                                        .toArray();
+        for (int i = 0; i < activeProductIDs.length; i++) {
+            table.add(getProductImgBtn(activeProductIDs[i]), i % 3, i / 3);
         }
         return table;
     }
 
     private VBox getProductImgBtn(long productID) {
-        VBox product = new VBox();
-        product.setFillWidth(true);
-        product.prefWidthProperty().bind(scroll.widthProperty());
-        product.prefHeightProperty().bind(scroll.heightProperty().divide(2));
+        VBox result = new VBox();
+        result.setFillWidth(true);
+        result.prefWidthProperty().bind(scroll.widthProperty());
+        result.prefHeightProperty().bind(scroll.heightProperty().divide(2));
 
-        PaneHelper.setOnMouseClickedWithPressingCountChecking(product, 2, event -> {
-            addProductParentPane.fill(productID);
-            addProductParentPane.openAndCloseFrom(parent);
+        PaneHelper.setOnMouseClickedWithPressingCountChecking(result, 2, event -> {
+            addProductToOrderParentPane.fill(productID);
+            addProductToOrderParentPane.openAndCloseFrom(current);
             clean();
         });
 
-        AnchorPane topPaneWithImage = getProductImage(productID);
-        AnchorPane bottomPaneWithName = getProductName(productID);
-        product.getChildren().addAll(topPaneWithImage, bottomPaneWithName);
+        Product product = Product.get(productID);
+
+        AnchorPane topPaneWithImage = new AnchorPane();
+        PaneHelper.setImageBackgroundBottom(topPaneWithImage, product.getPhoto());
+
+        AnchorPane bottomPaneWithName = new AnchorPane();
+        AdaptiveTextHelper.setTextCentre(bottomPaneWithName, product.getName(), 12, null);
+
+        result.getChildren().addAll(topPaneWithImage, bottomPaneWithName);
         VBox.setVgrow(topPaneWithImage, javafx.scene.layout.Priority.ALWAYS);
         VBox.setVgrow(bottomPaneWithName, javafx.scene.layout.Priority.ALWAYS);
-        topPaneWithImage.prefHeightProperty().bind(product.heightProperty().multiply(0.90));
-        bottomPaneWithName.prefHeightProperty().bind(product.heightProperty().multiply(0.10));
+        topPaneWithImage.prefHeightProperty().bind(result.heightProperty().multiply(0.90));
+        bottomPaneWithName.prefHeightProperty().bind(result.heightProperty().multiply(0.10));
 
-        return product;
-    }
-
-    private AnchorPane getProductImage(long productID) {
-        AnchorPane result = new AnchorPane();
-        PhotoRequest request = new PhotoRequest("/product/get_photo");
-        request.putInBody("id", productID);
-        PaneHelper.setImageBackgroundBottom(result, request.read());
-        return result;
-    }
-
-    private AnchorPane getProductName(long productID) {
-        AnchorPane result = new AnchorPane();
-        Map<String, Object> productInfo = ProductsCache.impl.get(productID);
-        AdaptiveTextHelper.setTextCentre(result, (String) productInfo.get("NAME"), 12, null);
         return result;
     }
 
     @Override
     protected void cleanTask() {
         scroll.setVvalue(0.0);
-        nameTopicLabel.setText("");
-    }
-
-    private void initNameTopic() {
-        nameTopicLabel = AdaptiveTextHelper.setTextCentre(productsPaneMenuTopic, "", 15, Color.web("#555555"));
+        getMenuNameTopicLabel().setText("");
     }
 
     private void initItemsTable() {
         scroll.setFitToWidth(true);
-        productPaneImgProductsContainer.add(scroll, 1, 0);
+        productsImgBtnContainer.add(scroll, 1, 0);
     }
 
     private void initImgBtnsInProductsPane() {
         PaneHelper.setImageBackgroundCentre(
-                productsPaneBackInMenuImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/ProductsPane/productsPaneBackInMenuImgBtn.png")
+                goBackInMenuImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/ProductsPane/BackInMenu.png")
         );
     }
 
     @Override
     public void initialize() {
-        initNameTopic();
         initImgBtnsInProductsPane();
         initItemsTable();
     }

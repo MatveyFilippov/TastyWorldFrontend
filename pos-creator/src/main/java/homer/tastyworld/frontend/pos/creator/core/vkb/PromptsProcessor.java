@@ -3,6 +3,7 @@ package homer.tastyworld.frontend.pos.creator.core.vkb;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,54 +15,26 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 class PromptsProcessor {
 
-    static class StringPair {
+    record StringPair(String first, String second) {}
 
-        public final String first;
-        public final String second;
-
-        public StringPair(String first, String second) {
-            this.first = first.intern();
-            this.second = second.intern();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            StringPair that = (StringPair) o;
-            return this.first == that.first && this.second == that.second;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(first, second);
-        }
-
-    }
-
+    private static final AppLogger logger = AppLogger.getFor(PromptsProcessor.class);
     private static final CacheProcessor<StringPair, Integer> levenshteinCache = CacheManager.register(PromptsProcessor::levenshteinDistance);
-    private final Set<String> prompts;
-    private final String path;
+    private final Set<String> usedPromptsSet;
+    private final File usedPromptsFile;
 
-    public PromptsProcessor(String path) {
+    public PromptsProcessor(File usedPrompts) {
         Set<String> tempPrompts;
-        try (FileInputStream fileIn = new FileInputStream(path); ObjectInputStream in = new ObjectInputStream(fileIn)) {
+        try (FileInputStream fileIn = new FileInputStream(usedPrompts); ObjectInputStream in = new ObjectInputStream(fileIn)) {
             tempPrompts = (Set<String>) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             tempPrompts = new HashSet<>();
         }
-        prompts = tempPrompts;
-        this.path = path;
+        usedPromptsSet = tempPrompts;
+        this.usedPromptsFile = usedPrompts;
     }
 
     private static int levenshteinDistance(StringPair pair) {
@@ -84,7 +57,7 @@ class PromptsProcessor {
 
     public String[] get(String input, int qty) {
         List<Map.Entry<String, Integer>> similarityList = new ArrayList<>();
-        for (String str : prompts) {
+        for (String str : usedPromptsSet) {
             int distance = levenshteinCache.get(new StringPair(input, str));
             similarityList.add(new AbstractMap.SimpleEntry<>(str, distance));
         }
@@ -98,14 +71,14 @@ class PromptsProcessor {
     }
 
     public void put(String input) {
-        prompts.add(input);
+        usedPromptsSet.add(input);
     }
 
     public void save() {
-        try (FileOutputStream fileOut = new FileOutputStream(path); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-            out.writeObject(prompts);
+        try (FileOutputStream fileOut = new FileOutputStream(usedPromptsFile); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(usedPromptsSet);
         } catch (IOException ex) {
-            AppLogger.GLOBAL_LOGGER.errorOnlyServerNotify("Can't save VirtualKeyboard prompts to file", ex);
+            logger.errorOnlyServerNotify("Can't save VirtualKeyboard used prompts to file", ex);
         }
     }
 

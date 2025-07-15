@@ -11,10 +11,7 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
-dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
-}
+dependencies {}
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

@@ -1,10 +1,9 @@
 package homer.tastyworld.frontend.pos.creator.panes.stable;
 
 import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
-import homer.tastyworld.frontend.pos.creator.core.orders.table.OrderStatusUpdatesListener;
+import homer.tastyworld.frontend.pos.creator.core.orders.table.listeners.OrderStatusUpdatesListener;
 import homer.tastyworld.frontend.pos.creator.core.orders.table.POSCreatorTableNodeFactory;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
-import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors.DefaultTableCursor;
@@ -12,30 +11,37 @@ import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.entity.current.ClientPoint;
+import homer.tastyworld.frontend.starterpack.entity.current.Token;
 import javafx.beans.binding.StringExpression;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
-@Getter
 @SuperBuilder
 public class MainParentPane extends StableParentPane {
 
-    private GridPane parentPlace;
-    private AnchorPane daysLeftAlert, daysLeftAlertTopic;
-    private AnchorPane mainPaneClientPointNameTopic;
-    private AnchorPane mainPaneSettingsImgBtn, mainPaneNewOrderImgBtn;
-    private AnchorPane mainPaneCookingOrdersTopic, mainPaneReadyOrdersTopic;
-    private GridPane mainPaneCookingOrdersTable, mainPaneReadyOrdersTable;
-    private DynamicParentPane lookOrderParentPane;
+    private final GridPane parentPlace;
+    private final AnchorPane daysLeftAlert, daysLeftAlertTopic;
+    private final AnchorPane clientPointNameTopic;
+    private final AnchorPane openSettingsImgBtn, startNewOrderImgBtn;
+    private final AnchorPane cookingOrdersTableTopic, readyOrdersTableTopic;
+    private final GridPane cookingOrdersTable, readyOrdersTable;
+    private final DynamicParentPane lookOrderParentPane;
+
+    private void initClientPointTopicInMainPane() {
+        AdaptiveTextHelper.setTextCentre(
+                clientPointNameTopic, ClientPoint.name, 17, Color.web("#808080")
+        );
+    }
 
     private void initDaysLeftAlert() {
-        daysLeftAlert.setVisible(false);
-        long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
+        long subscriptionAvailableDays = Token.getTokenSubscriptionAvailableDays();
         boolean isAlertTopicRequired = subscriptionAvailableDays <= 5;
+
+        daysLeftAlert.setVisible(false);
         if (subscriptionAvailableDays <= 7) {
             String text = String.format(
                     "Если не оплатить подписку, то через %s программа перестанет работать",
@@ -53,34 +59,30 @@ public class MainParentPane extends StableParentPane {
         }
     }
 
-    private void initClientPointTopicInMainPane() {
-        AdaptiveTextHelper.setTextCentre(
-                mainPaneClientPointNameTopic, (String) MyParams.getClientPointInfo().get("NAME"), 17, Color.web("#808080")
-        );
-    }
-
     private void initImgBtnsInMainPane() {
         PaneHelper.setImageBackgroundCentre(
-                mainPaneNewOrderImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/mainPaneNewOrderImgBtn.png")
+                startNewOrderImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/NewOrder.png")
         );
         PaneHelper.setImageBackgroundCentre(
-                mainPaneSettingsImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/mainPaneSettingsImgBtn.png")
+                openSettingsImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/Settings.png")
         );
     }
 
     private void initTablesInMainPane() {
-        StringExpression topicFontSize = AdaptiveTextHelper.getFontSize(mainPaneCookingOrdersTopic, 17);
+        StringExpression topicFontSize = AdaptiveTextHelper.getFontSize(cookingOrdersTableTopic, 16);
         Color topicsColor = Color.web("#555555");
-        AdaptiveTextHelper.setTextCentre(mainPaneCookingOrdersTopic, "Заказ готовится", topicFontSize, topicsColor);
-        AdaptiveTextHelper.setTextCentre(mainPaneReadyOrdersTopic, "Готов к выдаче", topicFontSize, topicsColor);
-        mainPaneCookingOrdersTable.setAlignment(Pos.CENTER);
-        mainPaneReadyOrdersTable.setAlignment(Pos.CENTER);
+
+        AdaptiveTextHelper.setTextCentre(cookingOrdersTableTopic, "Готовится", topicFontSize, topicsColor);
+        AdaptiveTextHelper.setTextCentre(readyOrdersTableTopic, "На выдаче", topicFontSize, topicsColor);
+        cookingOrdersTable.setAlignment(Pos.CENTER);
+        readyOrdersTable.setAlignment(Pos.CENTER);
+
         TableNodeFactory tableNodeFactory = new POSCreatorTableNodeFactory(lookOrderParentPane);
         OrderStatusUpdatesListener.init(
-                new TableManager(mainPaneCookingOrdersTable, new DefaultTableCursor(4, 3), tableNodeFactory),
-                new TableManager(mainPaneReadyOrdersTable, new DefaultTableCursor(4, 2), tableNodeFactory)
+                new TableManager(cookingOrdersTable, new DefaultTableCursor(4, 3), tableNodeFactory),
+                new TableManager(readyOrdersTable, new DefaultTableCursor(4, 2), tableNodeFactory)
         );
     }
 

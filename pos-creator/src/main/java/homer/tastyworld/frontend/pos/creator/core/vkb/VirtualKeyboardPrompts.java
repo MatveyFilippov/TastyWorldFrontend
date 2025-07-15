@@ -17,20 +17,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VirtualKeyboardPrompts {
 
     public static final int PROMPTS_QTY = 3;
-    private static final String pathBeforeFileName;
-    private static final String fileExtension = ".twvkp";  // TastyWorldVirtualKeyboardPrompts
+    private static final File USED_PROMPTS_DIR = new File(AppConfig.APP_DATA_DIR, "VirtualKeyboardPrompts");
+    private static final String USED_PROMPTS_FILE_EXTENSION = ".twvkp";  // TastyWorldVirtualKeyboardPrompts
+    private static final Label[] PROMPTS_PLACE = new Label[PROMPTS_QTY];
     private static final Map<String, PromptsProcessor> processors = new ConcurrentHashMap<>();
-    private static final Label[] promptPlaces = new Label[PROMPTS_QTY];
 
     static {
-        File dir = new File(AppConfig.APP_DATA_DIR, "VirtualKeyboardPrompts");
-        dir.mkdirs();
-        pathBeforeFileName = dir.getAbsolutePath() + File.separator;
+        USED_PROMPTS_DIR.mkdirs();
     }
 
     private static PromptsProcessor getProcessor(TextField field) {
         return processors.computeIfAbsent(
-                field.getId(), name -> new PromptsProcessor(pathBeforeFileName + name + fileExtension)
+                field.getId(), name -> new PromptsProcessor(new File(USED_PROMPTS_DIR, name + USED_PROMPTS_FILE_EXTENSION))
         );
     }
 
@@ -48,7 +46,7 @@ public class VirtualKeyboardPrompts {
         HBox.setHgrow(prompt, Priority.ALWAYS);
         prompt.prefHeightProperty().bind(promptsContainer.heightProperty().multiply(0.95));
         prompt.prefWidthProperty().bind(promptsContainer.widthProperty().divide(PROMPTS_QTY));
-        promptPlaces[index] = AdaptiveTextHelper.setTextCentre(prompt, "", 15, Color.web("#555555"));
+        PROMPTS_PLACE[index] = AdaptiveTextHelper.setTextCentre(prompt, "", 15, Color.web("#555555"));
         return prompt;
     }
 
@@ -61,15 +59,13 @@ public class VirtualKeyboardPrompts {
         clean();
         String[] prompts = processor.get(input, PROMPTS_QTY);
         for (int i = 0; i < prompts.length; i++) {
-            System.out.println(prompts[i]);
             putClickablePrompt(field, prompts[i], i);
         }
-        System.out.println();
     }
 
     private static void putClickablePrompt(TextField field, String prompt, int index) {
-        promptPlaces[index].setText(prompt);
-        promptPlaces[index].setOnMouseClicked(event -> {
+        PROMPTS_PLACE[index].setText(prompt);
+        PROMPTS_PLACE[index].setOnMouseClicked(event -> {
             clean();
             field.setText(prompt);
         });
@@ -82,7 +78,7 @@ public class VirtualKeyboardPrompts {
     }
 
     public static void clean() {
-        Arrays.stream(promptPlaces).forEach(place -> {
+        Arrays.stream(PROMPTS_PLACE).forEach(place -> {
             place.setText("");
             place.setOnMouseClicked(e -> {});
         });

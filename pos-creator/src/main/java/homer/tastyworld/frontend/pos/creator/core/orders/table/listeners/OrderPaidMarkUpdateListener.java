@@ -1,16 +1,12 @@
-package homer.tastyworld.frontend.pos.creator.core.orders.table;
+package homer.tastyworld.frontend.pos.creator.core.orders.table.listeners;
 
 import homer.tastyworld.frontend.pos.creator.core.orders.printer.OrderPageFactory;
-import homer.tastyworld.frontend.starterpack.api.Request;
-import homer.tastyworld.frontend.starterpack.api.Response;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
-import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
-import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.order.Order;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.apache.hc.core5.http.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,24 +32,10 @@ public class OrderPaidMarkUpdateListener {
 
     public static void process(long orderID) {
         Label waiter = waiters.get(orderID);
-        if (waiter == null) {
-            return;
-        }
-        Request request = new Request("order/is_paid", Method.GET);
-        request.putInBody("id", orderID);
-        Response response;
-        try {
-            response = request.request();
-        } catch (BadRequestException ex) {
-            waiters.remove(orderID);
-            return;
-        }
-        if (TypeChanger.toBool(response.result)) {
+        if (waiter != null && Order.get(orderID).isPaid()) {
             PrinterManager.print(OrderPageFactory.getFor(orderID));
             waiter.setTextFill(MarkColors.PAID);
             waiters.remove(orderID);
-        } else {
-            waiter.setTextFill(MarkColors.UNPAID);
         }
     }
 
