@@ -21,20 +21,14 @@ import java.util.Map;
 public class Requester {
 
     private static HttpUriRequestBase createEmptyHttpRequest(Method method, String url) {
-        switch (method) {
-            case GET:
-                return new HttpGet(url);
-            case POST:
-                return new HttpPost(url);
-            case PUT:
-                return new HttpPut(url);
-            case DELETE:
-                return new HttpDelete(url);
-            case HEAD:
-                return new HttpHead(url);
-            default:
-                throw new IllegalArgumentException("Unsupported HTTP method: " + method);
-        }
+        return switch (method) {
+            case GET -> new HttpGet(url);
+            case POST -> new HttpPost(url);
+            case PUT -> new HttpPut(url);
+            case DELETE -> new HttpDelete(url);
+            case HEAD -> new HttpHead(url);
+            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + method);
+        };
     }
 
     private static HttpUriRequestBase createFullHttpRequest(Method method, String url, String token, String jsonBody) {

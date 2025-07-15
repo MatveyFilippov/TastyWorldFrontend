@@ -9,14 +9,14 @@ import java.io.InputStream;
 
 public class AppConfig {
 
-    private static final String TW_SERVER_IP = "tastyworld-pos.ru";
-    public static final String API_URL = "http://" + TW_SERVER_IP + "/api";
-    public static final String NOTIFICATION_HOST = "tastyworld-pos.ru";
-    public static final int NOTIFICATION_PORT = 5672;
-    public static final String NOTIFICATION_VIRTUAL_HOST = "main";
+    public static final String TW_SRA_URL = "http://localhost/api";  // TastyWorld Service-REST-API
+    public static final String TW_MN_HOST = "tastyworld-pos.ru";  // TastyWorld Microservice-Notifier
+    public static final int TW_MN_PORT = 5672;  // TastyWorld Microservice-Notifier
+    public static final String TW_MN_VHOST = "playground";  // TastyWorld Microservice-Notifier
     public static final File APP_DATA_DIR = new File(System.getProperty("user.home"), ".TastyWorld");
     private static final PropertiesProcessor properties;
-    private static String token, appName, appVersion;
+    private static String token, appIdentifierName, appVersion, appTitle;
+    private static boolean appIsCacheAvailable;
 
     static {
         APP_DATA_DIR.mkdirs();
@@ -32,14 +32,25 @@ public class AppConfig {
         try {
             inputStream.close();
         } catch (IOException ignored) {}
-        appName = appProperties.getValue(ConfigKey.APP_NAME);
+        appIdentifierName = appProperties.getValue(ConfigKey.APP_IDENTIFIER_NAME);
         appVersion = appProperties.getValue(ConfigKey.APP_VERSION);
-        if (appName == null || appName.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_NAME.propertiesKey + "'");
+        if (appIdentifierName == null || appIdentifierName.replace(" ", "").isEmpty()) {
+            throw new CantInitAppConfigException("Can't find required app resources property '" + ConfigKey.APP_IDENTIFIER_NAME.propertiesKey + "'");
         }
         if (appVersion == null || appVersion.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find app resources property '" + ConfigKey.APP_VERSION.propertiesKey + "'");
+            throw new CantInitAppConfigException("Can't find required app resources property '" + ConfigKey.APP_VERSION.propertiesKey + "'");
         }
+        appTitle = appProperties.getValue(ConfigKey.APP_TITLE, "TastyWorld");
+        appIsCacheAvailable = Boolean.parseBoolean(appProperties.getValue(ConfigKey.APP_CACHE_AVAILABLE, Boolean.TRUE.toString()));
+    }
+
+    public static void setToken(String newToken) {
+        if (newToken == null) {
+            properties.deleteValue(ConfigKey.API_TOKEN);
+        } else {
+            properties.setValue(ConfigKey.API_TOKEN, newToken);
+        }
+        token = newToken;
     }
 
     public static String getToken() {
@@ -61,21 +72,20 @@ public class AppConfig {
         return token;
     }
 
-    public static void setToken(String newToken) {
-        if (newToken == null) {
-            properties.deleteValue(ConfigKey.API_TOKEN);
-        } else {
-            properties.setValue(ConfigKey.API_TOKEN, newToken);
-        }
-        token = newToken;
-    }
-
-    public static String getAppName() {
-        return appName;
+    public static String getAppIdentifierName() {
+        return appIdentifierName;
     }
 
     public static String getAppVersion() {
         return appVersion;
+    }
+
+    public static String getAppTitle() {
+        return appTitle;
+    }
+
+    public static boolean isCacheAvailable() {
+        return appIsCacheAvailable;
     }
 
     public static String getAppDateTimeZoneID() {

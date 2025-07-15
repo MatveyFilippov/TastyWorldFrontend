@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class TypeChanger {
 
+    private static final AppLogger logger = AppLogger.getFor(TypeChanger.class);
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public static String toDaysFormat(long days) {
@@ -26,7 +27,7 @@ public class TypeChanger {
         try {
             return OBJECT_MAPPER.writeValueAsString(map);
         } catch (JsonProcessingException ex) {
-            AppLogger.GLOBAL_LOGGER.errorOnlyServerNotify("Can't export Map to JSON str", ex);
+            logger.errorOnlyServerNotify("Can't export Map to JSON str", ex);
         }
         return "{}";
     }
@@ -59,14 +60,18 @@ public class TypeChanger {
         return ((List<Object>) object).stream().map(TypeChanger::toLong).mapToLong(Long::longValue).toArray();
     }
 
+    public static long[] toSortedPrimitiveLongArray(Object object) {
+        return ((List<Object>) object).stream().map(TypeChanger::toLong).sorted().mapToLong(Long::longValue).toArray();
+    }
+
     public static <K, V> Map<K, V> toMap(Object object, Class<K> keyType, Class<V> valueType) {
         Map<K, V> result = new HashMap<>();
         ((Map<Object, Object>) object).forEach(
                 (k, v) -> result.put(
-                        keyType == String.class ? (K) String.valueOf(k)
-                                                  : OBJECT_MAPPER.convertValue(String.valueOf(k), keyType),
-                        valueType == Object.class ? (V) v
-                                                  : OBJECT_MAPPER.convertValue(String.valueOf(v), valueType)
+                        keyType == String.class
+                        ? (K) String.valueOf(k) : OBJECT_MAPPER.convertValue(String.valueOf(k), keyType),
+                        valueType == Object.class
+                        ? (V) v : OBJECT_MAPPER.convertValue(String.valueOf(v), valueType)
                 )
         );
         return result;

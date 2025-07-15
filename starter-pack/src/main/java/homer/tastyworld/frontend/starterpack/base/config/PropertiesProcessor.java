@@ -1,5 +1,6 @@
 package homer.tastyworld.frontend.starterpack.base.config;
 
+import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.util.Properties;
 
 class PropertiesProcessor {
 
+    private static final AppLogger logger = AppLogger.getFor(PropertiesProcessor.class);
     private final Properties properties = new Properties();
     private final String filePath;
 
@@ -25,8 +27,12 @@ class PropertiesProcessor {
         this.filePath = filePath;
     }
 
+    public String getValue(ConfigKey key, String defaultValue) {
+        return properties.getProperty(key.propertiesKey, defaultValue);
+    }
+
     public String getValue(ConfigKey key) {
-        return properties.getProperty(key.propertiesKey);
+        return getValue(key, null);
     }
 
     public void setValue(ConfigKey key, String value) {
@@ -45,8 +51,8 @@ class PropertiesProcessor {
         }
         try (FileOutputStream output = new FileOutputStream(filePath)) {
             properties.store(output, "TastyWorldApplication");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            logger.errorOnlyServerNotify("Can't save properties", ex);
         }
     }
 

@@ -17,10 +17,6 @@ public abstract class TastyWorldApplication extends Application {
 
     protected abstract Scene getScene() throws IOException;
 
-    protected boolean isCacheAvailable() { return true; }
-
-    protected String getAppTitle() { return "TastyWorld"; }
-
     protected String getFullScreenExitHint() { return ""; }
 
     protected void onEscape(Stage stage) {
@@ -33,7 +29,7 @@ public abstract class TastyWorldApplication extends Application {
     public void init() {
         Thread.setDefaultUncaughtExceptionHandler(ErrorHandler::appErrorHandler);
         AppConfig.init(getClass());
-        CacheManager.setIsCacheAvailable(isCacheAvailable());
+        CacheManager.setIsCacheAvailable(AppConfig.isCacheAvailable());
         StartupPrinterCheck.check();
         StartupScaleCheck.check();
     }
@@ -54,7 +50,7 @@ public abstract class TastyWorldApplication extends Application {
         });
         stage.setScene(scene);
         stage.setOnCloseRequest(ignored -> onEscape(stage));
-        stage.setTitle(getAppTitle());
+        stage.setTitle(AppConfig.getAppTitle());
         stage.setFullScreen(true);
         stage.setAlwaysOnTop(true);
         stage.setFullScreenExitHint(getFullScreenExitHint());

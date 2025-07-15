@@ -6,6 +6,16 @@ import java.util.function.Function;
 
 public class CacheManager {
 
+    public abstract static class CleanableCacheProcessor {
+
+        public CleanableCacheProcessor() {
+            CacheManager.register(this);
+        }
+
+        public abstract void clean();
+
+    }
+
     private static final Set<CleanableCacheProcessor> caches = new HashSet<>();
     private static boolean isCacheAvailable = true;
 
@@ -21,8 +31,8 @@ public class CacheManager {
         caches.add(cache);
     }
 
-    public static <K, V> SimpleCacheProcessor<K, V> register(Function<? super K, ? extends V> mappingFunction) {
-        return new SimpleCacheProcessor<>() {
+    public static <K, V> CacheProcessor<K, V> register(Function<? super K, ? extends V> mappingFunction) {
+        return new CacheProcessor<>() {
 
             @Override
             protected V compute(K key) {

@@ -11,7 +11,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,11 +28,11 @@ class SubscribeClient {
 
     public SubscribeClient() {
         factory = new ConnectionFactory();
-        factory.setHost(AppConfig.NOTIFICATION_HOST);
-        factory.setPort(AppConfig.NOTIFICATION_PORT);
+        factory.setHost(AppConfig.TW_MN_HOST);
+        factory.setPort(AppConfig.TW_MN_PORT);
         factory.setUsername(SHA256.hash(AppConfig.getToken()));
         factory.setPassword(AppConfig.getToken());
-        factory.setVirtualHost(AppConfig.NOTIFICATION_VIRTUAL_HOST);
+        factory.setVirtualHost(AppConfig.TW_MN_VHOST);
         factory.setAutomaticRecoveryEnabled(true);
         factory.setNetworkRecoveryInterval(5000);
         factory.setRequestedHeartbeat(60);
@@ -58,7 +57,7 @@ class SubscribeClient {
     private void subscribe(Channel channel, String queue, AnswerProcessor processor) {
         DefaultConsumer consumer = new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                 processor.process(new String(body, StandardCharsets.UTF_8));
             }
         };

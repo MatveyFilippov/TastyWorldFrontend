@@ -21,9 +21,6 @@ import java.util.logging.SimpleFormatter;
 
 public class AppLogger {
 
-    public static final AppLogger GLOBAL_LOGGER;
-    private final Logger logger;
-
     static {
         ConsoleHandler defaultConsoleHandler = new ConsoleHandler();
         defaultConsoleHandler.setLevel(Level.ALL);
@@ -84,12 +81,6 @@ public class AppLogger {
         root.addHandler(defaultConsoleHandler);
         root.addHandler(defaultFileHandler);
         root.setLevel(Level.INFO);
-
-        GLOBAL_LOGGER = getFor(AppLogger.class);
-    }
-
-    private AppLogger(Logger logger) {
-        this.logger = logger;
     }
 
     private static String getErrorStackTrace(final Throwable throwable) {
@@ -101,6 +92,12 @@ public class AppLogger {
 
     public static AppLogger getFor(Class<?> clazz) {
         return new AppLogger(LoggerFactory.getLogger(clazz));
+    }
+
+    private final Logger logger;
+
+    private AppLogger(Logger logger) {
+        this.logger = logger;
     }
 
     public void errorOnlyWrite(String message, Throwable throwable) {
@@ -121,7 +118,7 @@ public class AppLogger {
 
     public void notifyServerAboutError(String message, Throwable throwable) {
         Request request = new Request("/frontend_app/error", Method.POST);
-        request.putInBody("app_name", AppConfig.getAppName());
+        request.putInBody("app_name", AppConfig.getAppIdentifierName());
         request.putInBody("app_version", AppConfig.getAppVersion());
         request.putInBody("error", message);
         if (throwable != null) {

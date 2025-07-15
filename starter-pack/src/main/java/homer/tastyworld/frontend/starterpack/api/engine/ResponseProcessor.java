@@ -27,18 +27,15 @@ class ResponseProcessor {
         int statusCode = response.getCode();
         if (statusCode == 200) {
             return;
-        } else if (statusCode == 400) {
-            throw new BadRequestException(jsonStrToResponse(response.getEntity()));
-        } else if (statusCode == 401) {
-            throw new UnauthorizedRequestException(jsonStrToResponse(response.getEntity()));
-        } else if (statusCode == 403) {
-            throw new AccessForbiddenOnRequestException(jsonStrToResponse(response.getEntity()));
-        } else if (statusCode == 404) {
-            throw new NotFoundRequestException(jsonStrToResponse(response.getEntity()));
-        } else if (statusCode == 500) {
-            throw new InternalServerException();
         }
-        throw new UnknownResponseCodeException(statusCode);
+        switch (statusCode) {
+            case 400 -> throw new BadRequestException(jsonStrToResponse(response.getEntity()));
+            case 401 -> throw new UnauthorizedRequestException(jsonStrToResponse(response.getEntity()));
+            case 403 -> throw new AccessForbiddenOnRequestException(jsonStrToResponse(response.getEntity()));
+            case 404 -> throw new NotFoundRequestException(jsonStrToResponse(response.getEntity()));
+            case 500 -> throw new InternalServerException();
+            default -> throw new UnknownResponseCodeException(statusCode);
+        }
     }
 
     private static InputStream processStreamResponse(ClassicHttpResponse response) {

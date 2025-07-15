@@ -1,9 +1,8 @@
 package homer.tastyworld.frontend.starterpack.api.notifications;
 
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
-import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.SHA256;
-import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.entity.current.ClientPoint;
 
 public enum Theme {
 
@@ -11,7 +10,7 @@ public enum Theme {
     ORDER_PAID_MARKED;
 
     private static final String QUEUE_STARTS_WITH = String.format(
-            "ClientPoint_%s.", TypeChanger.toLong(MyParams.getClientPointInfo().get("ID"))
+            "ClientPoint_%s.", ClientPoint.id
     );
 
     String getQueueName() {

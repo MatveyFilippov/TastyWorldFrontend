@@ -1,7 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.utils.ui.helpers;
 
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.SimpleCacheProcessor;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,7 +34,7 @@ public class PaneHelper {
             BackgroundPosition.CENTER.getHorizontalSide(), BackgroundPosition.CENTER.getHorizontalPosition(),
             true, null, 1, true
     );
-    private static final SimpleCacheProcessor<String, Background> imageBackgroundCentreCache = CacheManager.register(
+    private static final CacheProcessor<String, Background> imageBackgroundCentreCache = CacheManager.register(
             url -> {
                 try {
                     return getImageBackground(new Image(URI.create(url).toURL().openStream()), BackgroundPosition.CENTER);
@@ -43,7 +43,7 @@ public class PaneHelper {
                 }
             }
     );
-    private static final SimpleCacheProcessor<String, Background> imageBackgroundBottomCache = CacheManager.register(
+    private static final CacheProcessor<String, Background> imageBackgroundBottomCache = CacheManager.register(
             url -> {
                 try {
                     return getImageBackground(new Image(URI.create(url).toURL().openStream()), imageBackgroundBottomPosition);
