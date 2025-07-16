@@ -1,4 +1,4 @@
-package homer.tastyworld.frontend.pos.processor.core.helpers;
+package homer.tastyworld.frontend.pos.processor.core;
 
 import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.ScaleState;
@@ -13,15 +13,23 @@ import java.util.Objects;
 
 public class EditItemQtyPane {
 
-    public static Long itemID = null;
+    private static Long itemID = null;
     private static Integer startQTY = null;
-    public static Integer qty = null;
-    private static AnchorPane parent;
+    private static Integer qty = null;
+    private static AnchorPane current;
     private static Label itemName, itemQTY;
     private static Thread scaleAskingThread;
 
     public static boolean isEdit() {
         return !Objects.equals(startQTY, qty);
+    }
+
+    public static Long getItemID() {
+        return itemID;
+    }
+
+    public static Integer getQTY() {
+        return qty;
     }
 
     private static void setQTY(Integer qty) {
@@ -72,7 +80,7 @@ public class EditItemQtyPane {
         startQTY = qty;
         setQTY(qty);
         itemName.setText(name);
-        parent.setVisible(true);
+        current.setVisible(true);
         startAskingScale();
     }
 
@@ -82,7 +90,7 @@ public class EditItemQtyPane {
         itemName.setText("null");
         startQTY = null;
         setQTY(null);
-        parent.setVisible(false);
+        current.setVisible(false);
     }
 
     private static AnchorPane getClickableNumberKbBtn(int num, StringExpression fontSize) {
@@ -119,8 +127,8 @@ public class EditItemQtyPane {
         numbersKeyboard.add(shiftBackBtn, 3, 1);
     }
 
-    public static void init(AnchorPane parent, AnchorPane itemName, AnchorPane itemQTY, GridPane numbersKeyboard) {
-        EditItemQtyPane.parent = parent;
+    public static void init(AnchorPane current, AnchorPane itemName, AnchorPane itemQTY, GridPane numbersKeyboard) {
+        EditItemQtyPane.current = current;
         EditItemQtyPane.itemName = AdaptiveTextHelper.setTextCentre(itemName, "null", 10, null);
         EditItemQtyPane.itemQTY = AdaptiveTextHelper.setTextCentre(itemQTY, "null", 10, null);
         initKeyboard(numbersKeyboard);

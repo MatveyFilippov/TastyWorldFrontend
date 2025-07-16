@@ -1,15 +1,20 @@
 package homer.tastyworld.frontend.pos.processor;
 
-import homer.tastyworld.frontend.pos.processor.core.OrderActions;
-import homer.tastyworld.frontend.pos.processor.core.helpers.OrderInfoPaneRenderer;
-import homer.tastyworld.frontend.pos.processor.core.OrderUpdatesListener;
-import homer.tastyworld.frontend.pos.processor.core.helpers.EditItemQtyPane;
-import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
+import homer.tastyworld.frontend.pos.processor.core.printer.OrderPrinterPageFactory;
+import homer.tastyworld.frontend.pos.processor.core.OrderInfoPaneRenderer;
+import homer.tastyworld.frontend.pos.processor.core.EditItemQtyPane;
+import homer.tastyworld.frontend.pos.processor.core.queue.OrdersScrollQueue;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.entity.Product;
+import homer.tastyworld.frontend.starterpack.entity.current.Token;
+import homer.tastyworld.frontend.starterpack.entity.misc.OrderStatus;
+import homer.tastyworld.frontend.starterpack.order.Order;
+import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
+import homer.tastyworld.frontend.starterpack.order.core.items.OrderItemFetcher;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -39,12 +44,12 @@ public class POSProcessorController {
         initImgBtnsInMainPane();
         initImgBtnsInEditItemQtyPane();
         OrderInfoPaneRenderer.init(scrollItems, orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic);
-        OrderUpdatesListener.init(scrollOrders);
+        OrdersScrollQueue.init(scrollOrders);
         EditItemQtyPane.init(editItemQtyPaneParent, editItemQtyPaneNameTopic, editItemQtyPaneTotalTopic, editItemQtyPaneNumbersKeyboard);
     }
 
     private void checkDaysLeft() {
-        long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
+        long subscriptionAvailableDays = Token.getTokenSubscriptionAvailableDays();
         if (subscriptionAvailableDays < 0) {
             throw new SubscriptionDaysAreOverError();
         }
@@ -85,7 +90,7 @@ public class POSProcessorController {
 
     @FXML
     void startOrderImgBtnPressed() {
-        if (OrderInfoPaneRenderer.orderID == null) {
+        if (OrderInfoPaneRenderer.order == null) {
             AlertWindow.showInfo(
                     "Заказ не выбран",
                     PrinterManager.isPrinterAvailable()
@@ -95,16 +100,17 @@ public class POSProcessorController {
             );
             return;
         }
-        OrderActions.print(OrderInfoPaneRenderer.orderID);
+        PrinterManager.print(new OrderPrinterPageFactory(OrderInfoPaneRenderer.order));
+        OrdersScrollQueue.setChecked(OrderInfoPaneRenderer.order.id);
     }
 
     @FXML
     void doneOrderImgBtnPressed() {
-        if (OrderInfoPaneRenderer.orderID == null) {
+        if (OrderInfoPaneRenderer.order == null) {
             AlertWindow.showInfo("Заказ не выбран", "Завершать нечего, для начала откройте заказ", true);
             return;
         }
-        OrderActions.setProcessed(OrderInfoPaneRenderer.orderID);
+        OrderInfoPaneRenderer.order.setStatus(OrderStatus.PROCESSED);
     }
 
     @FXML
@@ -114,12 +120,20 @@ public class POSProcessorController {
 
     @FXML
     void editItemQtyPaneCommitImgBtnPressed() {
-        if (EditItemQtyPane.itemID != null && EditItemQtyPane.qty != null && EditItemQtyPane.isEdit()) {
-            if (EditItemQtyPane.qty == 0) {
-                AlertWindow.showError("Недопустимые изменния", "Нельзя сделать кол-во продукта равным нулю", true);
+        Order order = OrderInfoPaneRenderer.order;
+        if (order != null && EditItemQtyPane.getItemID() != null && EditItemQtyPane.isEdit()) {
+            OrderItem item = OrderItemFetcher.getItem(EditItemQtyPane.getItemID());
+            Product product = Product.get(item.productID());
+            int newQTY = EditItemQtyPane.getQTY();
+            if (newQTY < product.getMinPieceQTY() || newQTY > product.getMaxPieceQTY()) {
+                AlertWindow.showInfo(
+                        "Недопустимое количество",
+                        "Продукт должен быть в рамках [%s-%s] %s".formatted(product.getMinPieceQTY(), product.getMaxPieceQTY(), product.getPieceType().shortName),
+                        true
+                );
                 return;
             }
-            OrderActions.editItemQTY(EditItemQtyPane.itemID, EditItemQtyPane.qty);
+            order.editItem(item.id(), newQTY);
             OrderInfoPaneRenderer.rerender();
         }
         closeEditItemQtyPane();
