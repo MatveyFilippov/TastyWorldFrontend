@@ -4,6 +4,6 @@ import homer.tastyworld.frontend.starterpack.entity.misc.ProductPieceType;
 import java.math.BigDecimal;
 
 public record OrderItemAdditive(
-        long id, long orderItemID, String additiveName, Long additiveID,
+        long id, long orderItemID, String productAdditiveName, Long productAdditiveID,
         int pieceQTY, BigDecimal pricePerPiece, ProductPieceType pieceType
 ) {}

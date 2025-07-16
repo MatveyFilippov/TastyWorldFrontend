@@ -14,7 +14,7 @@ public record OrderItem(
     public OrderItemAdditive[] getNotDefaultAdditives() {
         return Arrays.stream(additives).filter(additive -> {
             try {
-                ProductAdditive origin = ProductAdditive.get(additive.id());
+                ProductAdditive origin = ProductAdditive.get(additive.productAdditiveID());
                 return origin.getDefaultPieceQTY() != additive.pieceQTY();
             } catch (BadRequestException ignored) {
                 return true;

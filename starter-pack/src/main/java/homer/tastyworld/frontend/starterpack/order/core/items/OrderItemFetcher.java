@@ -13,7 +13,7 @@ public class OrderItemFetcher {
     private static final Request READ_ADDITIVE = new Request("/order/read_item_additive", Method.GET);
     private static final Request READ_ITEM = new Request("/order/read_item", Method.GET);
 
-    public static Map<String, Object> readAdditive(long id) {
+    private static Map<String, Object> readAdditive(long id) {
         READ_ADDITIVE.putInBody("id", id);
         Response response = READ_ADDITIVE.request();
         return response.getResultAsJSON();
