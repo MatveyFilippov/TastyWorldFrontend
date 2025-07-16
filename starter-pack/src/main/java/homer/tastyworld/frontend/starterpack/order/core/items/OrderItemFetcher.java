@@ -29,8 +29,8 @@ public class OrderItemFetcher {
                 (String) info.get("PRODUCT_ADDITIVE_NAME"),
                 additiveID,
                 TypeChanger.toInt(info.get("PEACE_QTY")),
-                TypeChanger.toInt(info.get("PEACE_QTY")),
-                TypeChanger.toBigDecimal(info.get("PRODUCT_ADDITIVE_DEFAULT_PIECE_QTY")),
+                TypeChanger.toInt(info.get("PRODUCT_ADDITIVE_DEFAULT_PIECE_QTY")),
+                TypeChanger.toBigDecimal(info.get("PRICE_PEER_PEACE")),
                 ProductPieceType.valueOf((String) info.get("PEACE_TYPE"))
         );
     }
