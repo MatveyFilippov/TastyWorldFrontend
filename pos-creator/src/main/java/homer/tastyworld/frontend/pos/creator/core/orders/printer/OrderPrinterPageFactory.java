@@ -24,11 +24,13 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     }
 
     private void setItemAdditive(OrderItemAdditive additive) throws IOException {
-        addFullLine(
-                " * Добавка %s %s %s".formatted(additive.productAdditiveName(), additive.pieceQTY(), additive.pieceType().shortName),
-                '.',
-                additive.pricePerPiece().multiply(BigDecimal.valueOf(additive.pieceQTY())) + " р"
-        );
+        if (additive.pieceQTY() > additive.productAdditiveDefaultPieceQTY()) {
+            addFullLine(
+                    " * Добавка %s %s %s".formatted(additive.productAdditiveName(), additive.pieceQTY(), additive.pieceType().shortName),
+                    '.',
+                    additive.pricePerPiece().multiply(BigDecimal.valueOf(additive.pieceQTY() - additive.productAdditiveDefaultPieceQTY())) + " р"
+            );
+        }
     }
 
     private void setPieceItem(OrderItem item) throws IOException {

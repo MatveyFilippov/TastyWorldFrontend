@@ -90,9 +90,8 @@ public class AddProductParentPane extends DynamicParentPane {
             ProductAdditive additive = ProductAdditive.get(additiveID);
             int additivePieceQTY = ProductToAdd.notDefaultAdditives.getOrDefault(additiveID, additive.getDefaultPieceQTY());
             if (additivePieceQTY > additive.getDefaultPieceQTY()) {
-                total = total.add(
-                        additive.getPricePerPiece().multiply(BigDecimal.valueOf(additivePieceQTY)).multiply(additiveMultiplier)
-                );
+                BigDecimal additiveOverPieceQTY = BigDecimal.valueOf(additivePieceQTY - additive.getDefaultPieceQTY());
+                total = total.add(additive.getPricePerPiece().multiply(additiveOverPieceQTY).multiply(additiveMultiplier));
             }
         }
         totalPriceField.setText(total.toString());
