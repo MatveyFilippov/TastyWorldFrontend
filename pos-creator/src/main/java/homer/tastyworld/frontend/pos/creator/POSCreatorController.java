@@ -354,7 +354,7 @@ public class POSCreatorController {
             try {
                 order.editDeliveryInfo(deliveryInfo);
             } catch (BadRequestException ex) {
-                if (!ex.response.note.equals("Nothing was edit")) {
+                if (!Objects.equals(ex.response.note, "Nothing was edit")) {
                     logger.error("Something is wrong when edit delivery info in end order creating", ex);
                 }
             }
@@ -369,6 +369,7 @@ public class POSCreatorController {
     @FXML
     void closeLookOrderPane() {
         Order order = Order.get(LookOrderParentPane.getCurrentOrderID());
+
         String deliveryInfo = lookOrderDeliveryField.getText();
         if (deliveryInfo != null && !deliveryInfo.isBlank()) {
             VirtualKeyboardPrompts.appendVar(lookOrderDeliveryField);
@@ -377,11 +378,12 @@ public class POSCreatorController {
             try {
                 order.editDeliveryInfo(deliveryInfo);
             } catch (BadRequestException ex) {
-                if (!ex.response.note.equals("Nothing was edit")) {
+                if (!Objects.equals(ex.response.note, "Nothing was edit")) {
                     logger.error("Something is wrong when edit delivery info in look order", ex);
                 }
             }
         }
+
         lookOrderPane.clean();
         lookOrderPaneParent.setVisible(false);
     }

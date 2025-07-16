@@ -5,6 +5,7 @@ import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequest
 import homer.tastyworld.frontend.starterpack.order.Order;
 import homer.tastyworld.frontend.starterpack.order.core.names.NameController;
 import homer.tastyworld.frontend.starterpack.order.core.names.NumericalNameController;
+import java.util.Objects;
 
 public class OrderCreator {
 
@@ -28,7 +29,7 @@ public class OrderCreator {
             try {
                 creating.delete(NAME_CONTROLLER);
             } catch (BadRequestException ex) {
-                if (!ex.response.error.equals("ExistenceException: The Order with id '%s' probably doesn't exist".formatted(creating.id))) {
+                if (!Objects.equals(ex.response.error, "ExistenceException: The Order with id '%s' probably doesn't exist".formatted(creating.id))) {
                     logger.error("Something is wrong when canceling the order creation", ex);
                 }
             }

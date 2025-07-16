@@ -39,7 +39,7 @@ public class ScaleState {
     static Unit parseUnit(byte[] packet) {
         String unitStr = new String(Arrays.copyOfRange(packet, 10, 12)).toLowerCase();
         for (Unit unit : Unit.values()) {
-            if (unitStr.equals(unit.name().toLowerCase())) {
+            if (unitStr.equalsIgnoreCase(unit.name())) {
                 return unit;
             }
         }
