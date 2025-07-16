@@ -5,5 +5,5 @@ import java.math.BigDecimal;
 
 public record OrderItemAdditive(
         long id, long orderItemID, String productAdditiveName, Long productAdditiveID,
-        int pieceQTY, BigDecimal pricePerPiece, ProductPieceType pieceType
+        int pieceQTY, int productAdditiveDefaultPieceQTY, BigDecimal pricePerPiece, ProductPieceType pieceType
 ) {}
