@@ -29,7 +29,7 @@ public class OrderStatusUpdatesListener {
             cooking.put(orderID, name);
         } else if (table == TableForOrder.READY) {
             if (notifyIfReady) {
-                AlertWindow.showInfo(String.format("Заказ %s готов", name), "", false);
+                AlertWindow.showInfo("Заказ %s готов".formatted(name), "", false);
             }
             cooking.remove(orderID);
             ready.put(orderID, name);

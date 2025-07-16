@@ -28,7 +28,7 @@ public class OrderCreator {
             try {
                 creating.delete(NAME_CONTROLLER);
             } catch (BadRequestException ex) {
-                if (!ex.response.error.equals("ExistenceException: The Order with id '" + creating.id + "' probably doesn't exist")) {
+                if (!ex.response.error.equals("ExistenceException: The Order with id '%s' probably doesn't exist".formatted(creating.id))) {
                     logger.error("Something is wrong when canceling the order creation", ex);
                 }
             }

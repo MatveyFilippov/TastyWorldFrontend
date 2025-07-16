@@ -120,8 +120,12 @@ public class LookOrderParentPane extends DynamicParentPane {
     private AnchorPane getAdditiveLine(OrderItemAdditive additive) {
         AnchorPane additiveLine = new AnchorPane();
         additiveLine.setStyle("-fx-border-color: #000000;");
-        String line = additive.additiveName() + " " + additive.pieceQTY() + additive.pieceType().shortName;
-        AdaptiveTextHelper.setTextCentre(additiveLine, line, 15, null);
+        AdaptiveTextHelper.setTextCentre(
+                additiveLine,
+                "%s %s %s".formatted(additive.productAdditiveName(), additive.pieceQTY(), additive.pieceType().shortName),
+                15,
+                null
+        );
         return additiveLine;
     }
 

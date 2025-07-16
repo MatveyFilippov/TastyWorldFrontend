@@ -102,7 +102,7 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
         delete.setOnMouseClicked(event -> {
             if (!DialogWindow.askBool(
                     "Да", "Нет", "Редактирование заказа",
-                    String.format("Вы уверены что хотите удалить '%s' из заказа?", item.productName()),
+                    "Вы уверены что хотите удалить '%s' из заказа?".formatted(item.productName()),
                     "Продолжить?"
             )) {
                 return;
@@ -141,8 +141,12 @@ public class EndOrderCreatingParentPane extends DynamicParentPane {
     private AnchorPane getAdditiveLine(OrderItemAdditive additive) {
         AnchorPane additiveLine = new AnchorPane();
         additiveLine.setStyle("-fx-border-color: #000000;");
-        String line = additive.additiveName() + " " + additive.pieceQTY() + additive.pieceType().shortName;
-        AdaptiveTextHelper.setTextCentre(additiveLine, line, 17, null);
+        AdaptiveTextHelper.setTextCentre(
+                additiveLine,
+                "%s %s %s".formatted(additive.productAdditiveName(), additive.pieceQTY(), additive.pieceType().shortName),
+                17,
+                null
+        );
         return additiveLine;
     }
 

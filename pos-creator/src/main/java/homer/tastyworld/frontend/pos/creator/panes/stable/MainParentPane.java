@@ -43,8 +43,7 @@ public class MainParentPane extends StableParentPane {
 
         daysLeftAlert.setVisible(false);
         if (subscriptionAvailableDays <= 7) {
-            String text = String.format(
-                    "Если не оплатить подписку, то через %s программа перестанет работать",
+            String text = "Если не оплатить подписку, то через %s программа перестанет работать".formatted(
                     TypeChanger.toDaysFormat(subscriptionAvailableDays)
             );
             if (isAlertTopicRequired) {
