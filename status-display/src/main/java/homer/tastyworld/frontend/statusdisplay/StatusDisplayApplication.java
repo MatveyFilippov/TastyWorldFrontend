@@ -1,8 +1,8 @@
 package homer.tastyworld.frontend.statusdisplay;
 
 import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
-import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.entity.current.Token;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -21,13 +21,8 @@ public class StatusDisplayApplication extends TastyWorldApplication {
     }
 
     @Override
-    protected String getAppTitle() {
-        return "TastyWorld-StatusDisplay";
-    }
-
-    @Override
     protected String getFullScreenExitHint() {
-        long subscriptionAvailableDays = MyParams.getTokenSubscriptionAvailableDays();
+        long subscriptionAvailableDays = Token.getTokenSubscriptionAvailableDays();
         if (subscriptionAvailableDays < 0) {
             return "Подписка закончилась. Оплатите для возобновления работы...";
         } else if (subscriptionAvailableDays <= 7) {

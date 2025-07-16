@@ -1,10 +1,10 @@
 package homer.tastyworld.frontend.statusdisplay;
 
-import homer.tastyworld.frontend.starterpack.api.requests.MyParams;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors.DefaultTableCursor;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
+import homer.tastyworld.frontend.starterpack.entity.current.Token;
 import homer.tastyworld.frontend.statusdisplay.core.OrderUpdatesListener;
 import homer.tastyworld.frontend.statusdisplay.core.StatusDisplayTableNodeFactory;
 import javafx.beans.binding.StringExpression;
@@ -29,7 +29,7 @@ public class StatusDisplayController {
         AdaptiveTextHelper.setTextLeft(readyTopic, "Готов к выдаче", topicsFontSize, topicsColor);
         cookingOrders.setAlignment(Pos.CENTER);
         readyOrders.setAlignment(Pos.CENTER);
-        if (MyParams.getTokenSubscriptionAvailableDays() >= 0) {
+        if (Token.getTokenSubscriptionAvailableDays() >= 0) {
             TableNodeFactory tableNodeFactory = new StatusDisplayTableNodeFactory();
             OrderUpdatesListener.init(
                     new TableManager(cookingOrders, new DefaultTableCursor(5, 3), tableNodeFactory),
