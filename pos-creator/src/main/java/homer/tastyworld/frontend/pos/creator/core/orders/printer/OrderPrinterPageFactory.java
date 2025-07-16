@@ -8,16 +8,16 @@ import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class OrderPageFactory extends PrinterPageFactory {
+public class OrderPrinterPageFactory extends PrinterPageFactory {
 
     private final Order toPrint;
 
-    public OrderPageFactory(Order toPrint) {
+    public OrderPrinterPageFactory(Order toPrint) {
         this.toPrint = toPrint;
     }
 
-    public static OrderPageFactory getFor(long orderID) {
-        return new OrderPageFactory(Order.get(orderID));
+    public static OrderPrinterPageFactory getFor(long orderID) {
+        return new OrderPrinterPageFactory(Order.get(orderID));
     }
 
     @Override

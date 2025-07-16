@@ -17,6 +17,7 @@ import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.VirtualKeyboard;
 import homer.tastyworld.frontend.starterpack.entity.Product;
 import homer.tastyworld.frontend.starterpack.entity.current.Token;
+import homer.tastyworld.frontend.starterpack.entity.misc.OrderStatus;
 import homer.tastyworld.frontend.starterpack.order.Order;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -352,6 +353,7 @@ public class POSCreatorController {
         if (!Objects.equals(deliveryInfo, order.getDeliveryInfo())) {
             order.editDeliveryInfo(deliveryInfo);
         }
+        order.setStatus(OrderStatus.CREATED);
         OrderCreator.finish();
         endOrderCreatingPane.clean();
         mainPane.openAndCloseFrom(endOrderCreatingPaneParent);
