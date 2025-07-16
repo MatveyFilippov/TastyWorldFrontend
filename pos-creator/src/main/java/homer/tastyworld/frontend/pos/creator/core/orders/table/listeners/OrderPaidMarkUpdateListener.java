@@ -27,15 +27,17 @@ public class OrderPaidMarkUpdateListener {
 
     public static void addWaiter(long orderID, Label waiter) {
         waiters.put(orderID, waiter);
-        process(orderID);
+        waiter.setTextFill(Order.get(orderID).isPaid() ? MarkColors.PAID : MarkColors.UNPAID);
     }
 
     public static void process(long orderID) {
-        Label waiter = waiters.get(orderID);
-        if (waiter != null && Order.get(orderID).isPaid()) {
+        if (Order.get(orderID).isPaid()) {
             PrinterManager.print(OrderPrinterPageFactory.getFor(orderID));
-            waiter.setTextFill(MarkColors.PAID);
-            waiters.remove(orderID);
+            Label waiter = waiters.get(orderID);
+            if (waiter != null) {
+                waiter.setTextFill(MarkColors.PAID);
+                waiters.remove(orderID);
+            }
         }
     }
 
