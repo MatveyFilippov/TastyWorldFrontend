@@ -11,7 +11,9 @@ import homer.tastyworld.frontend.pos.creator.panes.dynamic.ProductsParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.stable.MainParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.stable.MenuParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.stable.StableParentPane;
+import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
+import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.VirtualKeyboard;
@@ -29,6 +31,8 @@ import javafx.scene.layout.HBox;
 import java.util.Objects;
 
 public class POSCreatorController {
+
+    private static final AppLogger logger = AppLogger.getFor(POSCreatorController.class);
 
     @FXML
     private AnchorPane base;
@@ -328,31 +332,34 @@ public class POSCreatorController {
             );
             return;
         }
-        if (endOrderCreatingIsPaidCheckBox.isSelected()) {
-            boolean isAccess = DialogWindow.askBool(
-                    "Оплачен", "Нет", "Оплата заказа",
-                    "Отметить заказ как оплаченный и получить чек?",
-                    "Позиции заказа будут закрыты для редактирования, отменить это действие нльзя"
-            );
-            if (isAccess) {
-                order.markAsPaid();
-            } else {
-                endOrderCreatingIsPaidCheckBox.setSelected(false);
-                return;
-            }
+
+        boolean isPaidSelected = endOrderCreatingIsPaidCheckBox.isSelected();
+        boolean isAccess = DialogWindow.askBool(
+                "Отправить", "Нет", "Оплата заказа",
+                "Отправить заказ на кухню%s?".formatted(isPaidSelected ? " и отметить ОПЛАЧЕННЫМ" : ""),
+                "%sтменить это действие нльзя".formatted(isPaidSelected ? "Позиции заказа будут ЗАКРЫТЫ для редактирования, о" : "О")
+        );
+        if (!isAccess) {
+            endOrderCreatingIsPaidCheckBox.setSelected(false);
+            return;
+        } else if (isPaidSelected) {
+            order.markAsPaid();
         }
+
         String deliveryInfo = endOrderCreatingDeliveryField.getText();
-        if (deliveryInfo != null) {
-            deliveryInfo = deliveryInfo.trim();
-            if (deliveryInfo.equals("")) {
-                deliveryInfo = null;
-            } else {
-                VirtualKeyboardPrompts.appendVar(endOrderCreatingDeliveryField);
-            }
+        if (deliveryInfo != null && !deliveryInfo.isBlank()) {
+            VirtualKeyboardPrompts.appendVar(endOrderCreatingDeliveryField);
         }
         if (!Objects.equals(deliveryInfo, order.getDeliveryInfo())) {
-            order.editDeliveryInfo(deliveryInfo);
+            try {
+                order.editDeliveryInfo(deliveryInfo);
+            } catch (BadRequestException ex) {
+                if (!ex.response.note.equals("Nothing was edit")) {
+                    logger.error("Something is wrong when edit delivery info in end order creating", ex);
+                }
+            }
         }
+
         order.setStatus(OrderStatus.CREATED);
         OrderCreator.finish();
         endOrderCreatingPane.clean();
@@ -362,18 +369,17 @@ public class POSCreatorController {
     @FXML
     void closeLookOrderPane() {
         Order order = Order.get(LookOrderParentPane.getCurrentOrderID());
-        if (!order.isPaid()) {
-            String deliveryInfo = lookOrderDeliveryField.getText();
-            if (deliveryInfo != null) {
-                deliveryInfo = deliveryInfo.trim();
-                if (deliveryInfo.equals("")) {
-                    deliveryInfo = null;
-                } else {
-                    VirtualKeyboardPrompts.appendVar(endOrderCreatingDeliveryField);
-                }
-            }
-            if (!Objects.equals(deliveryInfo, order.getDeliveryInfo())) {
+        String deliveryInfo = lookOrderDeliveryField.getText();
+        if (deliveryInfo != null && !deliveryInfo.isBlank()) {
+            VirtualKeyboardPrompts.appendVar(lookOrderDeliveryField);
+        }
+        if (!Objects.equals(deliveryInfo, order.getDeliveryInfo())) {
+            try {
                 order.editDeliveryInfo(deliveryInfo);
+            } catch (BadRequestException ex) {
+                if (!ex.response.note.equals("Nothing was edit")) {
+                    logger.error("Something is wrong when edit delivery info in look order", ex);
+                }
             }
         }
         lookOrderPane.clean();

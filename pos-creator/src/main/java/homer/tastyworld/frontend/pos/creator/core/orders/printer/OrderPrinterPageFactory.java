@@ -44,7 +44,7 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
                 addFullLine(
                         "%s 1 %s".formatted(item.productName(), item.pieceType().shortName),
                         '.',
-                        item.pricePerPiece().multiply(BigDecimal.valueOf(item.pieceQTY())) + " р"
+                        item.pricePerPiece() + " р"
                 );
                 for (OrderItemAdditive additive : notDefaultAdditive) {
                     setItemAdditive(additive);

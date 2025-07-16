@@ -21,6 +21,7 @@ class PromptsProcessor {
 
     record StringPair(String first, String second) {}
 
+    private static final String[] EMPTY_RESULT = new String[0];
     private static final AppLogger logger = AppLogger.getFor(PromptsProcessor.class);
     private static final CacheProcessor<StringPair, Integer> levenshteinCache = CacheManager.register(PromptsProcessor::levenshteinDistance);
     private final Set<String> usedPromptsSet;
@@ -56,6 +57,9 @@ class PromptsProcessor {
     }
 
     public String[] get(String input, int qty) {
+        if (input == null || input.isBlank()) {
+            return EMPTY_RESULT;
+        }
         List<Map.Entry<String, Integer>> similarityList = new ArrayList<>();
         for (String str : usedPromptsSet) {
             int distance = levenshteinCache.get(new StringPair(input, str));

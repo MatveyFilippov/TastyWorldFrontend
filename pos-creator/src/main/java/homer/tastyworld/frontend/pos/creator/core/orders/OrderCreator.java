@@ -32,6 +32,7 @@ public class OrderCreator {
                     logger.error("Something is wrong when canceling the order creation", ex);
                 }
             }
+            creating = null;
         }
     }
 
