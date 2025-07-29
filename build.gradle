@@ -9,6 +9,11 @@ allprojects {
 
     repositories {
         mavenCentral()
+        if (javafx.platform.classifier == "linux-aarch64") {
+            maven {
+                url "https://nexus.gluonhq.com/nexus/content/repositories/releases/"  // only for javaFX -v21.0.1
+            }
+        }
         maven {
             url uri("${rootDir}/local-repo")
         }
