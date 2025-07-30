@@ -14,7 +14,7 @@ public class POSProcessorApplication extends TastyWorldApplication {
     protected Scene getScene() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(POSProcessorApplication.class.getResource("tastyworld-pos-processor.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-//        scene.setCursor(Cursor.NONE);
+        // scene.setCursor(Cursor.NONE);
         return scene;
     }
 
