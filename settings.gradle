@@ -1,1 +1,2 @@
-include 'starter-pack', 'status-display', 'pos-creator', 'pos-processor'
+rootProject.name = "TastyWorldFrontend"
+include ':starter-pack', ':status-display', ':pos-creator', ':pos-processor'
