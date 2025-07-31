@@ -5,9 +5,9 @@ import java.util.Set;
 
 public enum TableForOrder {
 
-    COOKING (Set.of(OrderStatus.PROCESSING)),
+    COOKING (Set.of(OrderStatus.CREATED, OrderStatus.PROCESSING)),
     READY (Set.of(OrderStatus.PROCESSED)),
-    NOT_IN_TABLE (Set.of());
+    NOT_IN_TABLE (Set.of(OrderStatus.CREATING, OrderStatus.PROCESSED));
 
     public final Set<OrderStatus> statuses;
 
