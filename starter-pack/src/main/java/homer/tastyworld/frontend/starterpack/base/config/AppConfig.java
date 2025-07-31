@@ -92,6 +92,10 @@ public class AppConfig {
         return properties.getValue(ConfigKey.APP_DATETIME_ZONE_OFFSET);
     }
 
+    public static Boolean isSoundsUnavailable() {
+        return Boolean.parseBoolean(properties.getValue(ConfigKey.APP_SOUNDS_UNAVAILABLE));
+    }
+
     public static String getPrinterName() {
         return properties.getValue(ConfigKey.PRINTER_NAME);
     }

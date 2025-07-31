@@ -5,6 +5,7 @@ import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.StartupPrinterCheck;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.scale.StartupScaleCheck;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.sound.StartupSoundCheck;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -30,8 +31,11 @@ public abstract class TastyWorldApplication extends Application {
         Thread.setDefaultUncaughtExceptionHandler(ErrorHandler::appErrorHandler);
         AppConfig.init(getClass());
         CacheManager.setIsCacheAvailable(AppConfig.isCacheAvailable());
-        StartupPrinterCheck.check();
-        StartupScaleCheck.check();
+        Platform.runLater(() -> {
+            StartupPrinterCheck.check();
+            StartupScaleCheck.check();
+            StartupSoundCheck.check();
+        });
     }
 
     @Override

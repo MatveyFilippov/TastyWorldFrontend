@@ -20,6 +20,7 @@ module homer.tastyworld.frontend.starterpack {
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.cache;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.printer;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.scale;
+    exports homer.tastyworld.frontend.starterpack.base.utils.managers.sound;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.table;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors;
     exports homer.tastyworld.frontend.starterpack.base.utils.misc;

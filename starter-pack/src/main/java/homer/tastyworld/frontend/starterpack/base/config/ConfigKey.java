@@ -20,6 +20,7 @@ enum ConfigKey {
 
     // Not required
     APP_DATETIME_ZONE_OFFSET("app.datetime_zone.offset"),
+    APP_SOUNDS_UNAVAILABLE ("app.sounds.unavailable"),
     PRINTER_NAME ("printer.name"),
     SCALE_COM_PORT("scale.com_port");
 
