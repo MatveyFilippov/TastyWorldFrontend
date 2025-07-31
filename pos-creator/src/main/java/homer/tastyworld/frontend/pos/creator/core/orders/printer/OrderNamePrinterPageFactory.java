@@ -18,15 +18,16 @@ public class OrderNamePrinterPageFactory extends PrinterPageFactory {
 
     @Override
     protected void setContent() throws IOException {
-        setFontStyle(new byte[] {0x1B, 0x21, 0x20}, 24);  // 2x high + bold
+        setFontStyle(24);
+        setFontStyle(new byte[] {0x1B, 0x21, 0x20});  // 2x high + bold
         addLineCenter("Ваш заказ:");
         addEmptyLines(2);
         setFontStyle(new byte[] {0x1D, 0x21, 0x33});  // 8x high + 2x width
         addLineCenter(toPrint.name);
-        setFontStyle(new byte[] {0x1B, 0x21, 0x20}, 24);  // 2x high + bold
+        setFontStyle(new byte[] {0x1B, 0x21, 0x20});  // 2x high + bold
         addEmptyLines(2);
         addLineCenter("Готовится с любовью!");
-        addEmptyLines(4);
+        addEmptyLines(6);
     }
 
 }
