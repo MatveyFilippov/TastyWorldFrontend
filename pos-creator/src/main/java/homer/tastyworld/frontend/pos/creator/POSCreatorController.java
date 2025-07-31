@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.pos.creator;
 
 import homer.tastyworld.frontend.pos.creator.core.orders.OrderCreator;
+import homer.tastyworld.frontend.pos.creator.core.orders.printer.OrderNamePrinterPageFactory;
 import homer.tastyworld.frontend.pos.creator.core.vkb.VirtualKeyboardPrompts;
 import homer.tastyworld.frontend.pos.creator.panes.ParentPane;
 import homer.tastyworld.frontend.pos.creator.panes.dynamic.AddProductParentPane;
@@ -14,6 +15,7 @@ import homer.tastyworld.frontend.pos.creator.panes.stable.StableParentPane;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.VirtualKeyboard;
@@ -335,7 +337,7 @@ public class POSCreatorController {
 
         boolean isPaidSelected = endOrderCreatingIsPaidCheckBox.isSelected();
         boolean isAccess = DialogWindow.askBool(
-                "Отправить", "Нет", "Оплата заказа",
+                "Отправить", "Нет", "Создание заказа",
                 "Отправить заказ на кухню%s?".formatted(isPaidSelected ? " и отметить ОПЛАЧЕННЫМ" : ""),
                 "%sтменить это действие нльзя".formatted(isPaidSelected ? "Позиции заказа будут ЗАКРЫТЫ для редактирования, о" : "О")
         );
@@ -364,6 +366,9 @@ public class POSCreatorController {
         OrderCreator.finish();
         endOrderCreatingPane.clean();
         mainPane.openAndCloseFrom(endOrderCreatingPaneParent);
+        if (!isPaidSelected) {
+            PrinterManager.print(OrderNamePrinterPageFactory.getFor(order.id));
+        }
     }
 
     @FXML

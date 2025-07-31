@@ -9,18 +9,17 @@ import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
 import homer.tastyworld.frontend.starterpack.order.core.items.OrderItemAdditive;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 
-public class OrderPrinterPageFactory extends PrinterPageFactory {
+public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
 
     private final Order toPrint;
 
-    public OrderPrinterPageFactory(Order toPrint) {
+    public OrderWithItemsPrinterPageFactory(Order toPrint) {
         this.toPrint = toPrint;
     }
 
-    public static OrderPrinterPageFactory getFor(long orderID) {
-        return new OrderPrinterPageFactory(Order.get(orderID));
+    public static OrderWithItemsPrinterPageFactory getFor(long orderID) {
+        return new OrderWithItemsPrinterPageFactory(Order.get(orderID));
     }
 
     private void setItemAdditive(OrderItemAdditive additive) throws IOException {

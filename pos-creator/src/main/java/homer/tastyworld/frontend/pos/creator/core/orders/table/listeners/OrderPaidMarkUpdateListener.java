@@ -1,6 +1,6 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.table.listeners;
 
-import homer.tastyworld.frontend.pos.creator.core.orders.printer.OrderPrinterPageFactory;
+import homer.tastyworld.frontend.pos.creator.core.orders.printer.OrderWithItemsPrinterPageFactory;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
@@ -32,7 +32,7 @@ public class OrderPaidMarkUpdateListener {
 
     public static void process(long orderID) {
         if (Order.get(orderID).isPaid()) {
-            PrinterManager.print(OrderPrinterPageFactory.getFor(orderID));
+            PrinterManager.print(OrderWithItemsPrinterPageFactory.getFor(orderID));
             Label waiter = waiters.get(orderID);
             if (waiter != null) {
                 waiter.setTextFill(MarkColors.PAID);
