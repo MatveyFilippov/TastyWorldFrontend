@@ -6,23 +6,23 @@ import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import org.apache.hc.core5.http.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 public class AppDateTime {
 
-    public static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    public static final ZoneId BACKEND_DATETIME_ZONE_ID;
-    public static final ZoneId LOCAL_DATETIME_ZONE_ID;
+    public static final ZoneOffset BACKEND_DATETIME_ZONE_OFFSET;
+    public static final ZoneOffset LOCAL_DATETIME_ZONE_OFFSET;
 
     static {
-        Request request = new Request("/frontend_app/datetime_zone", Method.GET);
+        Request request = new Request("/frontend_app/datetime_zone_offset", Method.GET);
         Response response = request.request();
-        BACKEND_DATETIME_ZONE_ID = ZoneId.of((String) response.result);
-        String localZoneID = AppConfig.getAppDateTimeZoneID();
-        LOCAL_DATETIME_ZONE_ID = localZoneID != null ? ZoneId.of(localZoneID) : BACKEND_DATETIME_ZONE_ID;
+        BACKEND_DATETIME_ZONE_OFFSET = ZoneOffset.of((String) response.result);
+        String localZoneOffset = AppConfig.getAppDateTimeZoneOffset();
+        LOCAL_DATETIME_ZONE_OFFSET = localZoneOffset != null ? ZoneOffset.of(localZoneOffset) : OffsetDateTime.now().getOffset();;
     }
 
     public static LocalDate parseDate(String date) {
@@ -30,7 +30,7 @@ public class AppDateTime {
     }
 
     public static LocalDate getBackendNowDate() {
-        return LocalDate.now(BACKEND_DATETIME_ZONE_ID);
+        return LocalDate.now(BACKEND_DATETIME_ZONE_OFFSET);
     }
 
     public static LocalDate plusDaysFromBackendNow(long days) {
@@ -49,18 +49,18 @@ public class AppDateTime {
         return from.isBefore(to) ? from.datesUntil(to).count() : (to.datesUntil(from).count() * -1);
     }
 
-    public static LocalDateTime parseDateTime(String date) {
-        return LocalDateTime.parse(date);
+    public static LocalDateTime parseDateTime(String datetime) {
+        return OffsetDateTime.parse(datetime).toLocalDateTime();
     }
 
     public static LocalDateTime getBackendNowDateTime() {
-        return LocalDateTime.now(BACKEND_DATETIME_ZONE_ID);
+        return LocalDateTime.now(BACKEND_DATETIME_ZONE_OFFSET);
     }
 
     public static LocalDateTime backendToLocal(LocalDateTime backend) {
-        ZonedDateTime sourceZonedDateTime = backend.atZone(BACKEND_DATETIME_ZONE_ID);
-        ZonedDateTime targetZonedDateTime = sourceZonedDateTime.withZoneSameInstant(LOCAL_DATETIME_ZONE_ID);
-        return targetZonedDateTime.toLocalDateTime();
+        OffsetDateTime sourceOffsetDateTime = backend.atOffset(BACKEND_DATETIME_ZONE_OFFSET);
+        OffsetDateTime targetOffsetDateTime = sourceOffsetDateTime.withOffsetSameInstant(LOCAL_DATETIME_ZONE_OFFSET);
+        return targetOffsetDateTime.toLocalDateTime();
     }
 
 }

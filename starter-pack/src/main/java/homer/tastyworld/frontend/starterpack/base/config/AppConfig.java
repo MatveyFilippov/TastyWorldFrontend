@@ -88,8 +88,8 @@ public class AppConfig {
         return appIsCacheAvailable;
     }
 
-    public static String getAppDateTimeZoneID() {
-        return properties.getValue(ConfigKey.APP_DATETIME_ZONE_ID);
+    public static String getAppDateTimeZoneOffset() {
+        return properties.getValue(ConfigKey.APP_DATETIME_ZONE_OFFSET);
     }
 
     public static String getPrinterName() {

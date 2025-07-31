@@ -19,7 +19,7 @@ enum ConfigKey {
     API_TOKEN ("api.token"),
 
     // Not required
-    APP_DATETIME_ZONE_ID ("app.datetime_zone.id"),
+    APP_DATETIME_ZONE_OFFSET("app.datetime_zone.offset"),
     PRINTER_NAME ("printer.name"),
     SCALE_COM_PORT("scale.com_port");
 
