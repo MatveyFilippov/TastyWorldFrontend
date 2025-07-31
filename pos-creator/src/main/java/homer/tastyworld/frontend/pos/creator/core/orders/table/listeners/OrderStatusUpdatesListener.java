@@ -1,9 +1,11 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.table.listeners;
 
+import homer.tastyworld.frontend.pos.creator.POSCreatorApplication;
 import homer.tastyworld.frontend.pos.creator.core.orders.table.TableForOrder;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.sound.SoundManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableManager;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.entity.current.ClientPoint;
@@ -30,6 +32,7 @@ public class OrderStatusUpdatesListener {
         } else if (table == TableForOrder.READY) {
             if (notifyIfReady) {
                 AlertWindow.showInfo("Заказ %s готов".formatted(name), "", false);
+                SoundManager.playAlert();
             }
             cooking.remove(orderID);
             ready.put(orderID, name);

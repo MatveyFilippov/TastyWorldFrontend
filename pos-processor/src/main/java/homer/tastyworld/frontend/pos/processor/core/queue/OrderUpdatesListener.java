@@ -4,6 +4,7 @@ import homer.tastyworld.frontend.pos.processor.core.OrderInfoPaneRenderer;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.sound.SoundManager;
 import homer.tastyworld.frontend.starterpack.entity.current.ClientPoint;
 import homer.tastyworld.frontend.starterpack.entity.misc.OrderStatus;
 import homer.tastyworld.frontend.starterpack.order.Order;
@@ -37,6 +38,7 @@ class OrderUpdatesListener {
 
     private static void handleProcessing(long orderID, String name) {
         OrdersScrollQueue.putIfNotExists(orderID, name);
+        SoundManager.playAlert();
     }
 
     private static void handleOthers(long orderID) {
