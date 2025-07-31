@@ -50,8 +50,8 @@ public class AppLogger {
                     AppConfig.APP_DATA_DIR.getAbsolutePath() + File.separator + "TastyWorldApp.log",
                     Long.MAX_VALUE, 1, true
             );
-        } catch (IOException e) {
-            throw new CantInitAppLoggerException(e);
+        } catch (IOException ex) {
+            throw new CantInitAppLoggerException(ex);
         }
         defaultFileHandler.setLevel(Level.ALL);
         defaultFileHandler.setFormatter(new SimpleFormatter() {

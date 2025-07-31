@@ -31,7 +31,7 @@ class PromptsProcessor {
         Set<String> tempPrompts;
         try (FileInputStream fileIn = new FileInputStream(usedPrompts); ObjectInputStream in = new ObjectInputStream(fileIn)) {
             tempPrompts = (Set<String>) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException ex) {
             tempPrompts = new HashSet<>();
         }
         usedPromptsSet = tempPrompts;
