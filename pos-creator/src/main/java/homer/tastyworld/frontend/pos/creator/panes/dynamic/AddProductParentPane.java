@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -101,9 +102,12 @@ public class AddProductParentPane extends DynamicParentPane {
         GridPane table = new GridPane();
         table.setVgap(5);
         table.setAlignment(Pos.CENTER);
-        long[] additiveIDs = product.getAdditiveIDs();
-        for (int i = 0; i < additiveIDs.length; i++) {
-            table.add(getAdditiveLine(ProductAdditive.get(additiveIDs[i])), 0, i);
+        ProductAdditive[] additives = Arrays.stream(product.getAdditiveIDs())
+                                            .mapToObj(ProductAdditive::get)
+                                            .filter(ProductAdditive::isActive)
+                                            .toArray(ProductAdditive[]::new);
+        for (int i = 0; i < additives.length; i++) {
+            table.add(getAdditiveLine(additives[i]), 0, i);
         }
         return table;
     }
