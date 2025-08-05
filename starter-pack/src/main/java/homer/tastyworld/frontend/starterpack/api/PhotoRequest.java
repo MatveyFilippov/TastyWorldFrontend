@@ -1,22 +1,22 @@
 package homer.tastyworld.frontend.starterpack.api;
 
+import homer.tastyworld.frontend.starterpack.api.engine.RequestCreator;
 import homer.tastyworld.frontend.starterpack.api.engine.Requester;
+import org.apache.hc.core5.http.Method;
 import java.io.InputStream;
 
-public class PhotoRequest extends Request {
+public class PhotoRequest extends RequestCreator {
 
     public PhotoRequest(String endpoint) {
-        super(endpoint, null);
+        super(endpoint, Method.GET);
     }
 
     public InputStream read() {
-        return Requester.exchangeImage(urlCache.get(endpoint), getToken(), body);
+        return Requester.exchangeStream(this);
     }
 
-    @Deprecated
-    @Override
-    public Response request() {
-        return null;
+    public PhotoResponse request() {
+        return Requester.exchangeImage(this);
     }
 
 }

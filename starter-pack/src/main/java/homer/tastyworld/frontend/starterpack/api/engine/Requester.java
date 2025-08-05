@@ -1,7 +1,11 @@
 package homer.tastyworld.frontend.starterpack.api.engine;
 
+import homer.tastyworld.frontend.starterpack.api.PhotoResponse;
 import homer.tastyworld.frontend.starterpack.api.Response;
+import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.api.rest.CantMakeRequestException;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
 import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -20,47 +24,72 @@ import java.util.Map;
 
 public class Requester {
 
-    private static HttpUriRequestBase createEmptyHttpRequest(Method method, String url) {
-        return switch (method) {
-            case GET -> new HttpGet(url);
-            case POST -> new HttpPost(url);
-            case PUT -> new HttpPut(url);
-            case DELETE -> new HttpDelete(url);
-            case HEAD -> new HttpHead(url);
-            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + method);
+    public static final CacheProcessor<String, String> URL_CACHE = CacheManager.register(endpoint -> {
+        if (!endpoint.startsWith("/")) {
+            endpoint = "/" + endpoint;
+        }
+        return AppConfig.TW_SRA_URL + endpoint;
+    });
+
+    private static HttpUriRequestBase createEmptyHttpRequest(RequestCreator creator) {
+        return switch (creator.method) {
+            case GET -> new HttpGet(URL_CACHE.get(creator.endpoint));
+            case POST -> new HttpPost(URL_CACHE.get(creator.endpoint));
+            case PUT -> new HttpPut(URL_CACHE.get(creator.endpoint));
+            case DELETE -> new HttpDelete(URL_CACHE.get(creator.endpoint));
+            case HEAD -> new HttpHead(URL_CACHE.get(creator.endpoint));
+            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + creator.method);
         };
     }
 
-    private static HttpUriRequestBase createFullHttpRequest(Method method, String url, String token, String jsonBody) {
-        HttpUriRequestBase request = createEmptyHttpRequest(method, url);
+    private static HttpUriRequestBase createFullHttpRequest(RequestCreator creator) {
+        HttpUriRequestBase request = createEmptyHttpRequest(creator);
+
+        String token = creator.getToken();
         if (token != null) {
             request.setHeader("token", token);
         }
+
+        String jsonBody = creator.getBodyAsJSON();
         if (jsonBody != null) {
             request.setHeader("Content-Type", ContentType.APPLICATION_JSON);
             StringEntity entity = new StringEntity(jsonBody, ContentType.APPLICATION_JSON);
             request.setEntity(entity);
         }
+
         return request;
     }
 
-    public static Response exchange(Method method, String url, String token, Map<String, Object> jsonBody) {
-        String jsonBodyStr = TypeChanger.toJSON(jsonBody);
+    public static Response exchange(RequestCreator creator) {
+        HttpUriRequestBase request = createFullHttpRequest(creator);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpUriRequestBase request = createFullHttpRequest(method, url, token, jsonBodyStr);
             return client.execute(request, ResponseProcessor.JSON_RESPONSE_HANDLER);
         } catch (IOException ex) {
-            throw new CantMakeRequestException(method, url, token, jsonBodyStr, ex);
+            throw new CantMakeRequestException(
+                    creator.method, URL_CACHE.get(creator.endpoint), creator.getToken(), creator.getBodyAsJSON(), ex
+            );
         }
     }
 
-    public static InputStream exchangeImage(String url, String token, Map<String, Object> jsonBody) {
-        String jsonBodyStr = TypeChanger.toJSON(jsonBody);
+    public static InputStream exchangeStream(RequestCreator creator) {
+        HttpUriRequestBase request = createFullHttpRequest(creator);
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpUriRequestBase request = createFullHttpRequest(Method.GET, url, token, jsonBodyStr);
             return client.execute(request, ResponseProcessor.STREAM_RESPONSE_HANDLER);
         } catch (IOException ex) {
-            throw new CantMakeRequestException(Method.GET, url, token, jsonBodyStr, ex);
+            throw new CantMakeRequestException(
+                    creator.method, URL_CACHE.get(creator.endpoint), creator.getToken(), creator.getBodyAsJSON(), ex
+            );
+        }
+    }
+
+    public static PhotoResponse exchangeImage(RequestCreator creator) {
+        HttpUriRequestBase request = createFullHttpRequest(creator);
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            return client.execute(request, ResponseProcessor.IMAGE_RESPONSE_HANDLER);
+        } catch (IOException ex) {
+            throw new CantMakeRequestException(
+                    creator.method, URL_CACHE.get(creator.endpoint), creator.getToken(), creator.getBodyAsJSON(), ex
+            );
         }
     }
 

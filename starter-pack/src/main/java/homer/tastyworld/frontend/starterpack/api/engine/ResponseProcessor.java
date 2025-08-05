@@ -1,5 +1,6 @@
 package homer.tastyworld.frontend.starterpack.api.engine;
 
+import homer.tastyworld.frontend.starterpack.api.PhotoResponse;
 import homer.tastyworld.frontend.starterpack.api.Response;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.AccessForbiddenOnRequestException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
@@ -12,6 +13,7 @@ import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import java.io.ByteArrayInputStream;
@@ -21,7 +23,16 @@ import java.io.InputStream;
 class ResponseProcessor {
 
     public static final HttpClientResponseHandler<InputStream> STREAM_RESPONSE_HANDLER = ResponseProcessor::processStreamResponse;
+    public static final HttpClientResponseHandler<PhotoResponse> IMAGE_RESPONSE_HANDLER = ResponseProcessor::processImageResponse;
     public static final HttpClientResponseHandler<Response> JSON_RESPONSE_HANDLER = ResponseProcessor::processJSONResponse;
+
+    private static Response jsonStrToResponse(HttpEntity response) {
+        try {
+            return TypeChanger.OBJECT_MAPPER.readValue(EntityUtils.toString(response), Response.class);
+        } catch (IOException | ParseException ex) {
+            throw new CantProcessResponseException(ex);
+        }
+    }
 
     private static void throwIfNotOkStatus(ClassicHttpResponse response) {
         int statusCode = response.getCode();
@@ -57,17 +68,30 @@ class ResponseProcessor {
         }
     }
 
+    private static PhotoResponse processImageResponse(ClassicHttpResponse response) {
+        throwIfNotOkStatus(response);
+        try {
+            String abstractPath = response.getHeader("X-Image-AbstractPath").getValue();
+            String hashSHA256 = response.getHeader("X-Image-SHA256-Hash").getValue();
+//            InputStream inputStream = response.getEntity().getContent();
+//            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+//            byte[] data = new byte[8192];
+//            int bytesRead;
+//            while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+//                buffer.write(data, 0, bytesRead);
+//            }
+//            buffer.flush();
+//            byte[] imageBytes = buffer.toByteArray();
+            byte[] imageBytes = response.getEntity().getContent().readAllBytes();
+            return new PhotoResponse(abstractPath, hashSHA256, imageBytes);
+        } catch (IOException | ProtocolException ex) {
+            throw new CantProcessResponseException(ex);
+        }
+    }
+
     private static Response processJSONResponse(ClassicHttpResponse response) {
         throwIfNotOkStatus(response);
         return jsonStrToResponse(response.getEntity());
-    }
-
-    private static Response jsonStrToResponse(HttpEntity response) {
-        try {
-            return TypeChanger.OBJECT_MAPPER.readValue(EntityUtils.toString(response), Response.class);
-        } catch (IOException | ParseException ex) {
-            throw new CantProcessResponseException(ex);
-        }
     }
 
 }
