@@ -3,12 +3,13 @@ package homer.tastyworld.frontend.pos.processor.core.queue;
 import homer.tastyworld.frontend.pos.processor.core.OrderInfoPaneRenderer;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,16 +23,17 @@ public class OrdersScrollQueue {
 
     }
 
-    private static int rows = 0;
     private static ScrollPane scroll;
-    private static final GridPane queue = new GridPane();
+    private static ObservableList<Node> queue = null;
     private static final Map<Long, Node> nodes = new ConcurrentHashMap<>();
 
     public static void init(ScrollPane scroll) {
-        queue.setVgap(5);
-        queue.setAlignment(Pos.CENTER);
-        scroll.setContent(queue);
+        VBox rows = new VBox(5);
+        rows.setFillWidth(true);
+        rows.setAlignment(Pos.CENTER);
+        scroll.setContent(rows);
         OrdersScrollQueue.scroll = scroll;
+        OrdersScrollQueue.queue = rows.getChildren();
         OrderUpdatesListener.init();
     }
 
@@ -63,9 +65,8 @@ public class OrdersScrollQueue {
     protected static void putIfNotExists(long orderID, String name) {
         if (!nodes.containsKey(orderID)) {
             Node row = getNewClickableOrder(orderID, name);
-            queue.add(row, 0, rows);
+            queue.add(row);
             nodes.put(orderID, row);
-            rows++;
         } else {
             setWaited(orderID);
         }
@@ -74,8 +75,7 @@ public class OrdersScrollQueue {
     protected static void removeIfExists(long orderID) {
         Node order = nodes.remove(orderID);
         if (order != null) {
-            queue.getChildren().remove(order);
-            rows--;
+            queue.remove(order);
         }
     }
 
