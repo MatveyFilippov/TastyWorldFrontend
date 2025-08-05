@@ -15,8 +15,8 @@ public class PreparedRequests {
     private static final Request EDIT_ITEM = new Request("/order/edit_item", Method.POST);
     private static final Request EDIT_ITEM_ADDITIVE = new Request("/order/edit_item_additive", Method.POST);
     private static final Request REMOVE_ITEM = new Request("/order/remove_item", Method.POST);
-    private static final Request GET_STATUS = new Request("/order/get_status", Method.GET);
-    private static final Request SET_STATUS = new Request("/order/set_status", Method.POST);
+    private static final Request GET_STATUS = new Request("/order/status", Method.GET);
+    private static final Request SET_STATUS = new Request("/order/status", Method.POST);
     private static final Request CLOSE = new Request("/order/close", Method.POST);
     private static final Request READ = new Request("/order/read", Method.GET);
     private static final Request IS_PAID = new Request("/order/is_paid", Method.GET);

@@ -21,8 +21,8 @@ import java.util.Map;
 public class Menu {
 
     private static final Request ENTITY_REQUEST = new Request("/menu/read", Method.GET);
-    private static final Request PHOTO_INFO_REQUEST = new Request("/menu/get_photo_info", Method.GET);
-    private static final PhotoRequest PHOTO_REQUEST = new PhotoRequest("/menu/get_photo");
+    private static final Request PHOTO_INFO_REQUEST = new Request("/menu/photo_info", Method.GET);
+    private static final PhotoRequest PHOTO_REQUEST = new PhotoRequest("/menu/photo");
     public static final CacheProcessor<Long, Menu> CACHE = CacheManager.register(Menu::readFromBackend);
 
     private final long id;

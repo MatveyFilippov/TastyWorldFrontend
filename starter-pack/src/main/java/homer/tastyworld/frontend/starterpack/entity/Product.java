@@ -22,8 +22,8 @@ import java.util.Map;
 public class Product {
 
     private static final Request ENTITY_REQUEST = new Request("/product/read", Method.GET);
-    private static final Request PHOTO_INFO_REQUEST = new Request("/product/get_photo_info", Method.GET);
-    private static final PhotoRequest PHOTO_REQUEST = new PhotoRequest("/product/get_photo");
+    private static final Request PHOTO_INFO_REQUEST = new Request("/product/photo_info", Method.GET);
+    private static final PhotoRequest PHOTO_REQUEST = new PhotoRequest("/product/photo");
     public static final CacheProcessor<Long, Product> CACHE = CacheManager.register(Product::readFromBackend);
 
     private final long id;
