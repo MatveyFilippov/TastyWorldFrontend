@@ -1,6 +1,11 @@
 package homer.tastyworld.frontend.starterpack.base.utils.misc;
 
 import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.init.CantInitSHA256;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -9,7 +14,9 @@ import java.util.Map;
 public class SHA256 {
 
     private static final MessageDigest DIGEST;
-    private static final Map<String, String> cache = new HashMap<>();
+    private static final CacheProcessor<String, String> cache = CacheManager.register(
+            decrypted -> bytes2string(hashBytes(string2bites(decrypted)))
+    );
 
     static {
         try {
@@ -40,7 +47,23 @@ public class SHA256 {
     }
 
     public static String hash(String input) {
-        return cache.computeIfAbsent(input, decrypted -> bytes2string(hashBytes(string2bites(decrypted))));
+        return cache.get(input);
+    }
+
+    public static String hash(File file) throws IOException {
+        DIGEST.reset();
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                DIGEST.update(buffer, 0, bytesRead);
+            }
+        }
+        StringBuilder hash = new StringBuilder();
+        for (byte b : DIGEST.digest()) {
+            hash.append(String.format("%02x", b));
+        }
+        return hash.toString();
     }
 
 }

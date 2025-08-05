@@ -18,6 +18,7 @@ module homer.tastyworld.frontend.starterpack {
     exports homer.tastyworld.frontend.starterpack.base.exceptions;
     exports homer.tastyworld.frontend.starterpack.base.exceptions.response;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.cache;
+    exports homer.tastyworld.frontend.starterpack.base.utils.managers.cache.photo;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.printer;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.scale;
     exports homer.tastyworld.frontend.starterpack.base.utils.managers.sound;
