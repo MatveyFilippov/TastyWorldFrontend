@@ -29,7 +29,7 @@ public class PreparedRequests {
         CREATE.putInBody("name", name);
         CREATE.putInBody("delivery_info", deliveryInfo);
         Response response = CREATE.request();
-        return TypeChanger.toLong(response.result);
+        return TypeChanger.toLong(response.result());
     }
 
     public static long appendItem(long id, long productID, Integer pieceQTY, Map<Long, Integer> netDefaultAdditives) {
@@ -68,7 +68,7 @@ public class PreparedRequests {
     public static OrderStatus getStatus(long id) {
         GET_STATUS.putInBody("id", id);
         Response response = GET_STATUS.request();
-        return OrderStatus.valueOf((String) response.result);
+        return OrderStatus.valueOf((String) response.result());
     }
 
     public static void setStatus(long id, OrderStatus status) {
@@ -91,7 +91,7 @@ public class PreparedRequests {
     public static boolean isPaid(long id) {
         IS_PAID.putInBody("id", id);
         Response response = IS_PAID.request();
-        return TypeChanger.toBool(response.result);
+        return TypeChanger.toBool(response.result());
     }
 
     public static String getPaidAt(long id) {

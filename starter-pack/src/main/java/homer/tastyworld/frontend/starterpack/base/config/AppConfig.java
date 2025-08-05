@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.starterpack.base.config;
 
 import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.init.CantInitAppConfigException;
+import homer.tastyworld.frontend.starterpack.base.utils.misc.FileDirectories;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
 import javafx.application.Platform;
 import java.io.File;
@@ -19,7 +20,7 @@ public class AppConfig {
     private static boolean appIsCacheAvailable;
 
     static {
-        APP_DATA_DIR.mkdirs();
+        FileDirectories.create(APP_DATA_DIR);
         properties = new PropertiesProcessor(APP_DATA_DIR.getAbsolutePath() + File.separator + "twapp.properties");
     }
 

@@ -11,7 +11,7 @@ public class AccessForbiddenOnRequestException extends ResponseException {
 
     @Override
     protected void action() {
-        AlertWindow.showError("AccessForbidden", response.error, true);
+        AlertWindow.showError("AccessForbidden", response.error(), true);
     }
 
 }

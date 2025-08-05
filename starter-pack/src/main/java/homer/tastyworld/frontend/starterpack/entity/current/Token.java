@@ -20,7 +20,7 @@ public class Token {
                 response = request.request();
             } catch (ResponseException ex) {
                 AppConfig.setToken(null);
-                AlertWindow.showError("InvalidToken", ex.response.error, true);
+                AlertWindow.showError("InvalidToken", ex.response.error(), true);
             }
         } while (response == null);
         return response.getResultAsJSON();

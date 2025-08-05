@@ -2,6 +2,7 @@ package homer.tastyworld.frontend.starterpack.entity;
 
 import homer.tastyworld.frontend.starterpack.api.PhotoRequest;
 import homer.tastyworld.frontend.starterpack.api.Request;
+import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.photo.PhotoCacheManager;
 import homer.tastyworld.frontend.starterpack.entity.misc.ProductPieceType;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheManager;
 import homer.tastyworld.frontend.starterpack.base.utils.managers.cache.CacheProcessor;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class Product {
 
     private static final Request ENTITY_REQUEST = new Request("/product/read", Method.GET);
+    private static final Request PHOTO_INFO_REQUEST = new Request("/product/get_photo_info", Method.GET);
     private static final PhotoRequest PHOTO_REQUEST = new PhotoRequest("/product/get_photo");
     public static final CacheProcessor<Long, Product> CACHE = CacheManager.register(Product::readFromBackend);
 
@@ -34,8 +36,12 @@ public class Product {
     private final long[] additiveIDs;
 
     public InputStream getPhoto() {
+        PHOTO_INFO_REQUEST.putInBody("id", id);
+        Map<String, Object> photoInfo = PHOTO_INFO_REQUEST.request().getResultAsJSON();
         PHOTO_REQUEST.putInBody("id", id);
-        return PHOTO_REQUEST.read();
+        return PhotoCacheManager.get(
+                (String) photoInfo.get("sha256_hash"), (String) photoInfo.get("abstract_path"), PHOTO_REQUEST
+        );
     }
 
     public static Product readFromBackend(long id) {

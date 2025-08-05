@@ -11,7 +11,7 @@ public class UnauthorizedRequestException extends ResponseException {
 
     @Override
     protected void action() {
-        AlertWindow.showError("Unauthorized", response.error, true);
+        AlertWindow.showError("Unauthorized", response.error(), true);
     }
 
 }

@@ -17,7 +17,7 @@ public abstract class NameController {
     public static boolean isFree(String name) {
         CHECK_REQUEST.putInBody("name", name);
         Response response = CHECK_REQUEST.request();
-        return !TypeChanger.toBool(response.result);
+        return !TypeChanger.toBool(response.result());
     }
 
     private static String generateFreeRandomName() {

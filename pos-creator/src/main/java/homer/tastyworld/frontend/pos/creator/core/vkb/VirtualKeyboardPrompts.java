@@ -1,6 +1,7 @@
 package homer.tastyworld.frontend.pos.creator.core.vkb;
 
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
+import homer.tastyworld.frontend.starterpack.base.utils.misc.FileDirectories;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -23,7 +24,7 @@ public class VirtualKeyboardPrompts {
     private static final Map<String, PromptsProcessor> processors = new ConcurrentHashMap<>();
 
     static {
-        USED_PROMPTS_DIR.mkdirs();
+        FileDirectories.create(USED_PROMPTS_DIR);
     }
 
     private static PromptsProcessor getProcessor(TextField field) {

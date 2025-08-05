@@ -20,7 +20,7 @@ public class AppDateTime {
     static {
         Request request = new Request("/frontend_app/datetime_zone_offset", Method.GET);
         Response response = request.request();
-        BACKEND_DATETIME_ZONE_OFFSET = ZoneOffset.of((String) response.result);
+        BACKEND_DATETIME_ZONE_OFFSET = ZoneOffset.of((String) response.result());
         String localZoneOffset = AppConfig.getAppDateTimeZoneOffset();
         LOCAL_DATETIME_ZONE_OFFSET = localZoneOffset != null ? ZoneOffset.of(localZoneOffset) : OffsetDateTime.now().getOffset();;
     }

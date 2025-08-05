@@ -11,8 +11,8 @@ public class NotFoundRequestException extends ResponseException {
 
     @Override
     protected void action() {
-        String text = (response.error != null ? "Error: " + response.error + "\n" : "")
-                      + (response.note != null ? "Note: " + response.note : "");
+        String text = (response.error() != null ? "Error: " + response.error() + "\n" : "")
+                      + (response.note() != null ? "Note: " + response.note() : "");
         AlertWindow.showError("NotFound", text, true);
     }
 

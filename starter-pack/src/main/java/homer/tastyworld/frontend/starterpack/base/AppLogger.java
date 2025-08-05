@@ -125,7 +125,7 @@ public class AppLogger {
             request.putInBody("stack_trace", getErrorStackTrace(throwable));
         }
         Response response = request.request();
-        if (!response.status.equals("200 OK")) {
+        if (!response.status().equals("200 OK")) {
             errorOnlyWrite("Can't notify server about error --- " + response, null);
             notifyUserAboutError(
                     "Срочно обратитесь к разработчикам",

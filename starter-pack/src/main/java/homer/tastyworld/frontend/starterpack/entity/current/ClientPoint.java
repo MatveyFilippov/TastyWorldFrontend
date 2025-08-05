@@ -23,13 +23,13 @@ public class ClientPoint {
     public static long[] getActiveOrderIDs() {
         Request request = new Request("/client_point/my_active_orders", Method.GET);
         Response response = request.request();
-        return TypeChanger.toSortedPrimitiveLongArray(response.result);
+        return TypeChanger.toSortedPrimitiveLongArray(response.result());
     }
 
     public static long[] getMenuIDs() {
         Request request = new Request("/client_point/my_menu", Method.GET);
         Response response = request.request();
-        return TypeChanger.toSortedPrimitiveLongArray(response.result);
+        return TypeChanger.toSortedPrimitiveLongArray(response.result());
     }
 
 }
