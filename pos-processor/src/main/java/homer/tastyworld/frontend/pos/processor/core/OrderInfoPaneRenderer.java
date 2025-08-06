@@ -5,6 +5,7 @@ import homer.tastyworld.frontend.starterpack.base.AppDateTime;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
+import homer.tastyworld.frontend.starterpack.entity.misc.ProductPieceType;
 import homer.tastyworld.frontend.starterpack.order.Order;
 import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
 import homer.tastyworld.frontend.starterpack.order.core.items.OrderItemAdditive;
@@ -19,20 +20,17 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import java.net.URL;
-import java.util.Objects;
 
 public class OrderInfoPaneRenderer {
 
     private static final URL editItemImgBtnResource = POSProcessorApplication.class.getResource("images/buttons/editOrderItemImgBtn.png");
     public static Order order = null;
-    public static boolean isEditable = false;
     private static ScrollPane scroll;
     private static Label orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic;
 
     public static void render(long orderID) {
         clean();
         order = Order.get(orderID);
-        isEditable = !order.isPaid();
         orderCreatedTimeTopic.setText(order.createdAt.format(AppDateTime.DATETIME_FORMAT));
         orderDeliveryTopic.setText("Доставка: " + (order.getDeliveryInfo() == null ? "Нет" : "Да"));
         orderNameTopic.setText("Заказ " + order.name);
@@ -88,18 +86,28 @@ public class OrderInfoPaneRenderer {
         return row;
     }
 
+    private static boolean isItemEditable(OrderItem item) {
+        if (item.pieceType() == ProductPieceType.PIECES) {
+            return false;
+        }
+        return !order.isPaid();
+    }
+
     private static AnchorPane getEditImgBtn(OrderItem item) {
         AnchorPane editImgBtn = new AnchorPane();
         PaneHelper.setImageBackgroundCentre(editImgBtn, editItemImgBtnResource);
 
-        editImgBtn.setOpacity(isEditable ? 1 : 0.5);
-        if (isEditable) {
-            editImgBtn.setOnMouseClicked(event -> EditItemQtyPane.open(item.id(), item.pieceQTY(), item.productName()));
-        } else {
-            editImgBtn.setOnMouseClicked(event -> AlertWindow.showInfo(
-                    "Позицию нельзя отредактировать", "Заказ уже оплачен, изменить позицию невозможно", true
-            ));
-        }
+        editImgBtn.setOpacity(isItemEditable(item) ? 1 : 0.5);
+        editImgBtn.setOnMouseClicked(event -> {
+            if (isItemEditable(item)) {
+                EditItemQtyPane.open(item.id(), item.pieceQTY(), item.productName());
+            } else {
+                editImgBtn.setOpacity(0.5);
+                AlertWindow.showInfo(
+                        "Позицию нельзя отредактировать", "Продукт или заказ не поддерживает изменение количества", true
+                );
+            }
+        });
 
         return editImgBtn;
     }
@@ -129,7 +137,6 @@ public class OrderInfoPaneRenderer {
 
     public static void clean() {
         order = null;
-        isEditable = false;
         orderDeliveryTopic.setText("");
         orderCreatedTimeTopic.setText("");
         orderNameTopic.setText("");
