@@ -1,7 +1,8 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.printer;
 
-import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterPageFactory;
-import homer.tastyworld.frontend.starterpack.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderUtils;
+import homer.tastyworld.frontend.starterpack.utils.managers.external.printer.PrinterPageFactory;
 import java.io.IOException;
 
 public class OrderNamePrinterPageFactory extends PrinterPageFactory {
@@ -13,7 +14,7 @@ public class OrderNamePrinterPageFactory extends PrinterPageFactory {
     }
 
     public static OrderNamePrinterPageFactory getFor(long orderID) {
-        return new OrderNamePrinterPageFactory(Order.get(orderID));
+        return new OrderNamePrinterPageFactory(OrderUtils.getOrCreateInstance(orderID));
     }
 
     @Override
@@ -23,7 +24,7 @@ public class OrderNamePrinterPageFactory extends PrinterPageFactory {
         addLineCenter("Ваш заказ:");
         addEmptyLines(2);
         setFontStyle(new byte[] {0x1D, 0x21, 0x33});  // 8x high + 2x width
-        addLineCenter(toPrint.name);
+        addLineCenter(toPrint.getName());
         setFontStyle(new byte[] {0x1B, 0x21, 0x20});  // 2x high + bold
         addEmptyLines(2);
         addLineCenter("Готовится с любовью!");

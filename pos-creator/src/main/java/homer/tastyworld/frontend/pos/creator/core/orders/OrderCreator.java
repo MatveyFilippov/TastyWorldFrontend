@@ -1,16 +1,16 @@
 package homer.tastyworld.frontend.pos.creator.core.orders;
 
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.names.NameController;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.names.NumericalNameController;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
-import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
-import homer.tastyworld.frontend.starterpack.order.Order;
-import homer.tastyworld.frontend.starterpack.order.core.names.NameController;
-import homer.tastyworld.frontend.starterpack.order.core.names.NumericalNameController;
-import java.util.Objects;
+import homer.tastyworld.frontend.starterpack.base.exceptions.api.engine.UnexpectedResponseStatusCodeException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.api.sra.NotFoundStatusCodeException;
 
 public class OrderCreator {
 
     private static final AppLogger logger = AppLogger.getFor(OrderCreator.class);
-    private static final NameController NAME_CONTROLLER = new NumericalNameController(1, 99);
+    private static final NameController nameController = new NumericalNameController(1, 99);
     private static Order creating = null;
 
     public static void start(boolean continueIfExists) {
@@ -21,15 +21,15 @@ public class OrderCreator {
                 cancel();
             }
         }
-        creating = Order.create(NAME_CONTROLLER, null);
+        creating = Order.draft(nameController, null, null);
     }
 
     public static void cancel() {
         if (creating != null) {
             try {
-                creating.delete(NAME_CONTROLLER);
-            } catch (BadRequestException ex) {
-                if (!Objects.equals(ex.response.error(), "ExistenceException: The Order with id '%s' probably doesn't exist".formatted(creating.id))) {
+                creating.delete(nameController);
+            } catch (UnexpectedResponseStatusCodeException ex) {
+                if (!(ex instanceof NotFoundStatusCodeException)) {
                     logger.error("Something is wrong when canceling the order creation", ex);
                 }
             }
@@ -42,6 +42,9 @@ public class OrderCreator {
     }
 
     public static Order get() {
+        if (creating == null) {
+            throw new NullPointerException("The order being created does not exist");
+        }
         return creating;
     }
 

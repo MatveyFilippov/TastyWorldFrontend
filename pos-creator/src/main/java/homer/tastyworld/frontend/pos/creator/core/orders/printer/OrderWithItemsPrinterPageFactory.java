@@ -1,17 +1,21 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.printer;
 
-import homer.tastyworld.frontend.starterpack.base.AppDateTime;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterPageFactory;
-import homer.tastyworld.frontend.starterpack.entity.current.ClientPoint;
-import homer.tastyworld.frontend.starterpack.entity.misc.ProductPieceType;
-import homer.tastyworld.frontend.starterpack.order.Order;
-import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
-import homer.tastyworld.frontend.starterpack.order.core.items.OrderItemAdditive;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.current.ClientPoint;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.misc.MenuQuantitativeMeasure;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItem;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItemModifier;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderUtils;
+import homer.tastyworld.frontend.starterpack.utils.managers.external.printer.PrinterPageFactory;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 
 public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
 
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DecimalFormat priceFormatter = new DecimalFormat("#0.00 р");
     private final Order toPrint;
 
     public OrderWithItemsPrinterPageFactory(Order toPrint) {
@@ -19,36 +23,35 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
     }
 
     public static OrderWithItemsPrinterPageFactory getFor(long orderID) {
-        return new OrderWithItemsPrinterPageFactory(Order.get(orderID));
+        return new OrderWithItemsPrinterPageFactory(OrderUtils.getOrCreateInstance(orderID));
     }
 
-    private void setItemAdditive(OrderItemAdditive additive) throws IOException {
-        if (additive.pieceQTY() > additive.productAdditiveDefaultPieceQTY()) {
+    private void setItemModifier(OrderItemModifier modifier) throws IOException {
+        if (modifier.quantity() != modifier.qtyDefault()) {
             addFullLine(
-                    " * Добавка %s %s %s".formatted(additive.productAdditiveName(), additive.pieceQTY(), additive.pieceType().shortName),
+                    " * %s %s %s".formatted(modifier.name(), modifier.quantity(), modifier.qtyMeasure().shortName),
                     '.',
-                    additive.pricePerPiece().multiply(BigDecimal.valueOf(additive.pieceQTY() - additive.productAdditiveDefaultPieceQTY())) + " р"
+                    priceFormatter.format(modifier.unitPrice().multiply(BigDecimal.valueOf(Math.max(modifier.quantity() - modifier.qtyDefault(), 0))))
             );
         }
     }
 
     private void setPieceItem(OrderItem item) throws IOException {
-        OrderItemAdditive[] notDefaultAdditive = item.getNotDefaultAdditives();
-        if (notDefaultAdditive.length == 0) {
+        if (item.notDefaultModifiers().length == 0) {
             addFullLine(
-                    "%s %s %s".formatted(item.productName(), item.pieceQTY(), item.pieceType().shortName),
+                    "%s %s %s".formatted(item.name(), item.quantity(), item.qtyMeasure().shortName),
                     '.',
-                    item.pricePerPiece().multiply(BigDecimal.valueOf(item.pieceQTY())) + " р"
+                    priceFormatter.format(item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
             );
         } else {
-            for (int i = 0; i < item.pieceQTY(); i++) {
+            for (int i = 0; i < item.quantity(); i++) {
                 addFullLine(
-                        "%s 1 %s".formatted(item.productName(), item.pieceType().shortName),
+                        "%s 1 %s".formatted(item.name(), item.qtyMeasure().shortName),
                         '.',
-                        item.pricePerPiece() + " р"
+                        priceFormatter.format(item.unitPrice())
                 );
-                for (OrderItemAdditive additive : notDefaultAdditive) {
-                    setItemAdditive(additive);
+                for (OrderItemModifier modifier : item.notDefaultModifiers()) {
+                    setItemModifier(modifier);
                 }
             }
         }
@@ -56,18 +59,18 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
 
     private void setWeightItem(OrderItem item) throws IOException {
         addFullLine(
-                "%s %s %s".formatted(item.productName(), item.pieceQTY(), item.pieceType().shortName),
+                "%s %s %s".formatted(item.name(), item.quantity(), item.qtyMeasure().shortName),
                 '.',
-                item.pricePerPiece().multiply(BigDecimal.valueOf(item.pieceQTY())) + " р"
+                priceFormatter.format(item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
         );
-        for (OrderItemAdditive additive : item.getNotDefaultAdditives()) {
-            setItemAdditive(additive);
+        for (OrderItemModifier modifier : item.notDefaultModifiers()) {
+            setItemModifier(modifier);
         }
     }
 
     private void setItems() throws IOException {
         for (OrderItem item : toPrint.getItems()) {
-            if (item.pieceType() == ProductPieceType.PIECES) {
+            if (item.qtyMeasure() == MenuQuantitativeMeasure.PIECES) {
                 setPieceItem(item);
             } else {
                 setWeightItem(item);
@@ -78,17 +81,17 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
     @Override
     protected void setContent() throws IOException {
         setFontStyle(new byte[] {0x1B, 0x21, 0x38});  // 4x high + 2x width
-        addLineCenter(toPrint.name);
+        addLineCenter(toPrint.getName());
         dropFontStyle();
         addEmptyLines(2);
         addLineCenter("ТОВАРНЫЙ ЧЕК");
         addLineCenter(ClientPoint.name);
         addDivider('~');
-        addLineCenter(toPrint.getPaidAt().format(AppDateTime.DATETIME_FORMAT));
+        addLineCenter(toPrint.getPaidAt().format(dateTimeFormatter));
         addDivider('=');
         setItems();
         addDivider('=');
-        addLineRight("ИТОГО: %s р".formatted(toPrint.getTotalPrice().toString()));
+        addLineRight("ИТОГО: " + priceFormatter.format(toPrint.getTotalAmount()));
         addDivider('~');
         addLineCenter("СПАСИБО ЗА ВИЗИТ!");
         addEmptyLines(4);

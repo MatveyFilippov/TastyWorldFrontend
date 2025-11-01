@@ -1,9 +1,11 @@
 package homer.tastyworld.frontend.pos.creator.core.orders.table;
 
 import homer.tastyworld.frontend.pos.creator.core.orders.table.listeners.OrderPaidMarkUpdateListener;
-import homer.tastyworld.frontend.pos.creator.panes.dynamic.DynamicParentPane;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
+import homer.tastyworld.frontend.pos.creator.panes.ParentPane;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderUtils;
+import homer.tastyworld.frontend.starterpack.utils.managers.table.TableNodeFactory;
+import homer.tastyworld.frontend.starterpack.utils.ui.helpers.AdaptiveTextHelper;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -12,22 +14,19 @@ import javafx.scene.layout.Region;
 
 public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
-    private final DynamicParentPane LOOK_ORDER_PANE;
+    private final ParentPane<Order> lookOrderPane;
 
-    public POSCreatorTableNodeFactory(DynamicParentPane lookOrderPane) {
-        this.LOOK_ORDER_PANE = lookOrderPane;
+    public POSCreatorTableNodeFactory(ParentPane<Order> lookOrderPane) {
+        this.lookOrderPane = lookOrderPane;
     }
 
     private void setOnTouch(Node node, long orderID) {
-        node.setOnMouseClicked(event -> {
-            LOOK_ORDER_PANE.fill(orderID);
-            LOOK_ORDER_PANE.open();
-        });
+        node.setOnMouseClicked(e -> lookOrderPane.open(OrderUtils.getOrCreateInstance(orderID)));
     }
 
     private AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(pane, name, 2.5, null);
+        AdaptiveTextHelper.setTextCentre(pane, name, 0.4, null);
         pane.setOpacity(1.0);
         pane.setMinSize(0, 0);
         pane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);

@@ -2,9 +2,8 @@ package homer.tastyworld.frontend.pos.creator;
 
 import homer.tastyworld.frontend.pos.creator.core.orders.OrderCreator;
 import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
-import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.api.engine.UnexpectedResponseStatusCodeException;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class POSCreatorApplication extends TastyWorldApplication {
     public void stop() {
         try {
             OrderCreator.cancel();
-        } catch (BadRequestException ignored) {}
+        } catch (UnexpectedResponseStatusCodeException ignored) {}
     }
 
 }

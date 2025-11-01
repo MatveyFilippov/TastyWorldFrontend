@@ -4,33 +4,34 @@ import javafx.scene.layout.AnchorPane;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
-public class ParentPane {
+public abstract class ParentPane<D> {
 
     protected static AnchorPane base;
-    protected AnchorPane current;
+    protected final AnchorPane current;
+
+    public abstract void initialize();
 
     public static void setBase(AnchorPane base) {
         ParentPane.base = base;
     }
 
-    public void open() {
+    protected abstract void beforeOpen(D data);
+
+    public final void open(D data) {
+        beforeOpen(data);
         current.setVisible(true);
     }
 
-    public void openAndCloseOther() {
-        base.getChildren().forEach(node -> {
-            if (node instanceof AnchorPane && node.getId().endsWith("Parent")) {
-                node.setVisible(false);
-            }
-        });
-        open();
+    protected abstract void beforeClose();
+
+    public final void close() {
+        beforeClose();
+        current.setVisible(false);
     }
 
-    public void openAndCloseFrom(AnchorPane from) {
-        if (from != null) {
-            from.setVisible(false);
-        }
-        open();
+    public final void openAndCloseFrom(ParentPane<?> from, D data) {
+        from.close();
+        open(data);
     }
 
 }
