@@ -1,19 +1,19 @@
 package homer.tastyworld.frontend.statusdisplay.core;
 
-import homer.tastyworld.frontend.starterpack.entity.misc.OrderStatus;
-import java.util.Set;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.misc.OrderStatus;
+import java.util.EnumSet;
 
 public enum TableForOrder {
 
-    COOKING (Set.of(OrderStatus.CREATED, OrderStatus.PROCESSING)),
-    READY (Set.of(OrderStatus.PROCESSED)),
-    NOT_IN_TABLE (Set.of(OrderStatus.CREATING, OrderStatus.PROCESSED));
+    COOKING (EnumSet.of(OrderStatus.FORMED, OrderStatus.PREPARING)),
+    READY (EnumSet.of(OrderStatus.READY)),
+    NOT_IN_TABLE (EnumSet.of(OrderStatus.DRAFT, OrderStatus.COMPLETED));
 
-    public final Set<OrderStatus> statuses;
+    private final EnumSet<OrderStatus> statuses;
 
-    TableForOrder(Set<OrderStatus> statuses) { this.statuses = statuses; }
+    TableForOrder(EnumSet<OrderStatus> statuses) { this.statuses = statuses; }
 
-    public static TableForOrder get(OrderStatus status) {
+    public static TableForOrder getFor(OrderStatus status) {
         for (TableForOrder table : TableForOrder.values()) {
             if (table.statuses.contains(status)) {
                 return table;

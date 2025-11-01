@@ -1,8 +1,8 @@
 package homer.tastyworld.frontend.statusdisplay;
 
 import homer.tastyworld.frontend.starterpack.TastyWorldApplication;
-import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
-import homer.tastyworld.frontend.starterpack.entity.current.Token;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.current.ClientPoint;
+import homer.tastyworld.frontend.starterpack.utils.misc.TypeChanger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -14,7 +14,7 @@ public class StatusDisplayApplication extends TastyWorldApplication {
 
     @Override
     protected Scene getScene() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(StatusDisplayApplication.class.getResource("tastyworld-status-display.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(StatusDisplayApplication.class.getResource("tastyworld-statusdisplay.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         scene.setCursor(Cursor.NONE);
         return scene;
@@ -22,13 +22,10 @@ public class StatusDisplayApplication extends TastyWorldApplication {
 
     @Override
     protected String getFullScreenExitHint() {
-        long subscriptionAvailableDays = Token.getTokenSubscriptionAvailableDays();
-        if (subscriptionAvailableDays < 0) {
-            return "Подписка закончилась. Оплатите для возобновления работы...";
-        } else if (subscriptionAvailableDays <= 7) {
-            return "До окончания подписки осталось " + TypeChanger.toDaysFormat(subscriptionAvailableDays);
-        }
-        return "";
+        long subscriptionAvailableDays = ClientPoint.getSubscriptionDays();
+        return subscriptionAvailableDays <= 7
+               ? "До окончания подписки осталось " + TypeChanger.toDaysFormat(subscriptionAvailableDays)
+               : "";
     }
 
 }

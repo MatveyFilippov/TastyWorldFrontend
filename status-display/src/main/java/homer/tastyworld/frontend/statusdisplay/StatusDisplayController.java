@@ -1,10 +1,9 @@
 package homer.tastyworld.frontend.statusdisplay;
 
-import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableManager;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.table.TableNodeFactory;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.table.cursors.DefaultTableCursor;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.AdaptiveTextHelper;
-import homer.tastyworld.frontend.starterpack.entity.current.Token;
+import homer.tastyworld.frontend.starterpack.utils.managers.table.TableManager;
+import homer.tastyworld.frontend.starterpack.utils.managers.table.TableNodeFactory;
+import homer.tastyworld.frontend.starterpack.utils.managers.table.cursors.DefaultTableCursor;
+import homer.tastyworld.frontend.starterpack.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.statusdisplay.core.OrderUpdatesListener;
 import homer.tastyworld.frontend.statusdisplay.core.StatusDisplayTableNodeFactory;
 import javafx.beans.binding.StringExpression;
@@ -23,19 +22,19 @@ public class StatusDisplayController {
 
     @FXML
     private void initialize() {
-        StringExpression topicsFontSize = AdaptiveTextHelper.getFontSize(cookingTopic, 10);
+        StringExpression topicsFontSize = AdaptiveTextHelper.getFontSize(cookingTopic, 0.1);
         Color topicsColor = Color.web("#999999");
+
         AdaptiveTextHelper.setTextLeft(cookingTopic, "Заказ готовится", topicsFontSize, topicsColor);
         AdaptiveTextHelper.setTextLeft(readyTopic, "Готов к выдаче", topicsFontSize, topicsColor);
         cookingOrders.setAlignment(Pos.CENTER);
         readyOrders.setAlignment(Pos.CENTER);
-        if (Token.getTokenSubscriptionAvailableDays() >= 0) {
-            TableNodeFactory tableNodeFactory = new StatusDisplayTableNodeFactory();
-            OrderUpdatesListener.init(
-                    new TableManager(cookingOrders, new DefaultTableCursor(5, 3), tableNodeFactory),
-                    new TableManager(readyOrders, new DefaultTableCursor(5, 2), tableNodeFactory)
-            );
-        }
+
+        TableNodeFactory tableNodeFactory = new StatusDisplayTableNodeFactory();
+        OrderUpdatesListener.init(
+                new TableManager(cookingOrders, new DefaultTableCursor(5, 3), tableNodeFactory),
+                new TableManager(readyOrders, new DefaultTableCursor(5, 2), tableNodeFactory)
+        );
     }
 
 }
