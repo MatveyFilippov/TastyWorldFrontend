@@ -1,12 +1,10 @@
 package homer.tastyworld.frontend.starterpack.base;
 
 import homer.tastyworld.frontend.starterpack.base.exceptions.ControlledException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.DisplayedException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.SelfLoggedException;
+import homer.tastyworld.frontend.starterpack.base.exceptions.WithSelfUserNotificationException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.UnexpectedException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import homer.tastyworld.frontend.starterpack.utils.ui.AlertWindows;
+import javafx.application.Platform;
 
 public class ErrorHandler {
 
@@ -17,21 +15,32 @@ public class ErrorHandler {
     }
 
     public static void appErrorHandler(Thread thread, Throwable throwable) {
-        for (Throwable temp = throwable; temp != null; temp = temp.getCause()) {
-            if (temp instanceof SelfLoggedException) {
-                return;
-            } else if (temp instanceof DisplayedException) {
-                ((DisplayedException) temp).performAction();
-                return;
-            } else if (temp instanceof UnexpectedException) {
-                logger.error("An unexpected error (should never happen) occurred", throwable);
-                return;
-            } else if (temp instanceof ControlledException) {
-                logger.error("An unexpected error (should be caught by developer) occurred", throwable);
-                return;
+        String message = "An unhandled error occurred";
+        boolean isUserNotificationRequired = true;
+
+        if (throwable instanceof WithSelfUserNotificationException withSelfUserNotificationException) {
+            if (Platform.isFxApplicationThread()) {
+                withSelfUserNotificationException.notifyUser();
+            } else {
+                Platform.runLater(withSelfUserNotificationException::notifyUser);
             }
+            isUserNotificationRequired = false;
         }
-        logger.error("An unhandled error occurred", throwable);
+
+        if (throwable instanceof UnexpectedException) {
+            message = "An unexpected error (should never happen) occurred";
+        } else if (throwable instanceof ControlledException) {
+            message = "An unexpected error (should be caught by developer) occurred";
+        }
+
+        logger.error(message, throwable);
+        if (isUserNotificationRequired) {
+            AlertWindows.showError(
+                    "Произошла ошибка",
+                    message + "\n" + throwable.getLocalizedMessage(),
+                    true
+            );
+        }
     }
 
 }

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 class PropertiesProcessor {
@@ -16,23 +17,24 @@ class PropertiesProcessor {
     public PropertiesProcessor(InputStream input) {
         try {
             properties.load(input);
-        } catch (IOException ignored) {}
+        } catch (Exception ex) {
+            logger.warn("Can't load properties", ex);
+        }
         filePath = null;
     }
 
     public PropertiesProcessor(String filePath) {
         try (FileInputStream input = new FileInputStream(filePath)) {
             properties.load(input);
-        } catch (IOException ignored) {}
+        } catch (Exception ex) {
+            logger.warn("Can't load properties", ex);
+        }
         this.filePath = filePath;
     }
 
-    public String getValue(ConfigKey key, String defaultValue) {
-        return properties.getProperty(key.propertiesKey, defaultValue);
-    }
-
-    public String getValue(ConfigKey key) {
-        return getValue(key, null);
+    public Optional<String> getValue(ConfigKey key) {
+        String value = properties.getProperty(key.propertiesKey);
+        return value == null || value.isBlank() ? Optional.empty() : Optional.of(value);
     }
 
     public void setValue(ConfigKey key, String value) {
@@ -51,8 +53,8 @@ class PropertiesProcessor {
         }
         try (FileOutputStream output = new FileOutputStream(filePath)) {
             properties.store(output, "TastyWorldApplication");
-        } catch (IOException ex) {
-            logger.errorOnlyServerNotify("Can't save properties", ex);
+        } catch (Exception ex) {
+            logger.warn("Can't save properties", ex);
         }
     }
 

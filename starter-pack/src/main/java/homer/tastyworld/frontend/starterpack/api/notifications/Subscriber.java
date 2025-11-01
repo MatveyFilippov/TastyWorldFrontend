@@ -1,26 +1,29 @@
 package homer.tastyworld.frontend.starterpack.api.notifications;
 
+import homer.tastyworld.frontend.starterpack.api.sra.entity.current.ClientPoint;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
+import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
+import homer.tastyworld.frontend.starterpack.utils.misc.SHA256;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import java.time.Duration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.EnumSet;
+import java.util.function.Consumer;
 
 public class Subscriber {
 
-    @FunctionalInterface
-    public interface NotificationProcessor { void process(String message); }
-
     private static final AppLogger logger = AppLogger.getFor(Subscriber.class);
     private static final SubscribeClient client = new SubscribeClient();
-    private static final Set<String> queues = new HashSet<>();
+    private static final EnumSet<Theme> themes = EnumSet.noneOf(Theme.class);
     private static boolean isAliveChecking = false;
 
-    public static void subscribe(Theme theme, NotificationProcessor processor) {
-        String queue = theme.getQueueName();
-        client.subscribe(queue, message -> Platform.runLater(() -> processor.process(message)));
-        queues.add(queue);
+    private static String getQueueFromTheme(Theme theme) {
+        return "ClientPoint_%s.%s.%s".formatted(ClientPoint.id, theme.name(), SHA256.hash(AppConfig.getAuthorizationTokenSRA()));
+    }
+
+    public static void subscribe(Theme theme, Consumer<String> onNotification) {
+        client.subscribe(getQueueFromTheme(theme), message -> Platform.runLater(() -> onNotification.accept(message)));
+        themes.add(theme);
         startAliveChecking();
     }
 
@@ -32,14 +35,14 @@ public class Subscriber {
             @Override
             protected Void call() {
                 while (true) {
-                    if (queues.stream().anyMatch(queue -> !client.isAlive(queue))) {
-                        logger.error("Connection for some queue is failed while running -> try to reconnect");
+                    if (themes.stream().anyMatch(theme -> !client.isAlive(getQueueFromTheme(theme)))) {
+                        logger.warn("Connection for some queue is failed while running -> try to reconnect");
                         client.reconnect();
                     }
                     try {
                         Thread.sleep(Duration.ofMinutes(5));
                     } catch (InterruptedException ex) {
-                        logger.errorOnlyServerNotify("Thread for checking subscriptions alive is interrupted", ex);
+                        logger.error("Thread for checking subscriptions alive is interrupted", ex);
                         isAliveChecking = false;
                         return null;
                     }

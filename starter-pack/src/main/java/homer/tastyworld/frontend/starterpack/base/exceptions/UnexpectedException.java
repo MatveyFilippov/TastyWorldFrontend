@@ -6,10 +6,6 @@ public abstract class UnexpectedException extends RuntimeException {
         super(message);
     }
 
-    protected UnexpectedException(Throwable throwable) {
-        super(throwable);
-    }
-
     protected UnexpectedException(String message, Throwable cause) {
         super(message, cause);
     }

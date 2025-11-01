@@ -1,76 +1,71 @@
 package homer.tastyworld.frontend.starterpack.base.config;
 
-import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.init.CantInitAppConfigException;
-import homer.tastyworld.frontend.starterpack.base.utils.misc.FileDirectories;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.DialogWindow;
+import homer.tastyworld.frontend.starterpack.base.exceptions.starterpackonly.initialization.CantInitAppConfigException;
+import homer.tastyworld.frontend.starterpack.utils.misc.FileDirectories;
+import homer.tastyworld.frontend.starterpack.utils.ui.DialogWindows;
 import javafx.application.Platform;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
 
 public class AppConfig {
 
-    public static final String TW_SRA_URL = "http://tastyworld-pos.ru/api";  // TastyWorld Service-REST-API
+    public static final String TW_SRA_URL = "http://tastyworld-pos.ru:1212/api/v1";  // TastyWorld Service-REST-API
     public static final String TW_MN_HOST = "tastyworld-pos.ru";  // TastyWorld Microservice-Notifier
     public static final int TW_MN_PORT = 5672;  // TastyWorld Microservice-Notifier
-    public static final String TW_MN_VHOST = "main";  // TastyWorld Microservice-Notifier
+    public static final String TW_MN_VHOST = "playground";  // TastyWorld Microservice-Notifier
+    public static final String EVOTOR_MC_API_URL = "https://mobcashier.evotor.ru/api/v1";  // Evotor Mobile-Cashier
     public static final File APP_DATA_DIR = new File(System.getProperty("user.home"), ".TastyWorld");
-    private static final PropertiesProcessor properties;
-    private static String token, appIdentifierName, appVersion, appTitle;
-    private static boolean appIsCacheAvailable;
+    private static String appIdentifierName, appVersion;
+    private static PropertiesProcessor internalProperties;
+    private static final PropertiesProcessor externalProperties;
 
     static {
-        FileDirectories.create(APP_DATA_DIR);
-        properties = new PropertiesProcessor(APP_DATA_DIR.getAbsolutePath() + File.separator + "twapp.properties");
+        FileDirectories.createDir(APP_DATA_DIR);
+        externalProperties = new PropertiesProcessor(APP_DATA_DIR.getAbsolutePath() + File.separator + "twapp.properties");
     }
 
     public static void init(Class<?> appClass) {
-        InputStream inputStream = appClass.getClassLoader().getResourceAsStream("twapp.properties");
-        if (inputStream == null) {
-            throw new CantInitAppConfigException("Can't read app properties from resources");
+        InputStream internalPropertiesStream = appClass.getClassLoader().getResourceAsStream("twapp.properties");
+        if (internalPropertiesStream == null) {
+            throw new CantInitAppConfigException("Can't read internal app properties from resources");
         }
-        PropertiesProcessor appProperties = new PropertiesProcessor(inputStream);
-        try {
-            inputStream.close();
-        } catch (IOException ignored) {}
-        appIdentifierName = appProperties.getValue(ConfigKey.APP_IDENTIFIER_NAME);
-        appVersion = appProperties.getValue(ConfigKey.APP_VERSION);
-        if (appIdentifierName == null || appIdentifierName.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find required app resources property '" + ConfigKey.APP_IDENTIFIER_NAME.propertiesKey + "'");
-        }
-        if (appVersion == null || appVersion.replace(" ", "").isEmpty()) {
-            throw new CantInitAppConfigException("Can't find required app resources property '" + ConfigKey.APP_VERSION.propertiesKey + "'");
-        }
-        appTitle = appProperties.getValue(ConfigKey.APP_TITLE, "TastyWorld");
-        appIsCacheAvailable = Boolean.parseBoolean(appProperties.getValue(ConfigKey.APP_CACHE_AVAILABLE, Boolean.TRUE.toString()));
+        internalProperties = new PropertiesProcessor(internalPropertiesStream);
+
+        appIdentifierName = internalProperties.getValue(ConfigKey.APP_IDENTIFIER_NAME).orElseThrow(
+                () -> new CantInitAppConfigException("Can't find required internal app property '" + ConfigKey.APP_IDENTIFIER_NAME.propertiesKey + "'")
+        );
+        appVersion = internalProperties.getValue(ConfigKey.APP_VERSION).orElseThrow(
+                () -> new CantInitAppConfigException("Can't find required internal app property '" + ConfigKey.APP_VERSION.propertiesKey + "'")
+        );
     }
 
-    public static void setToken(String newToken) {
-        if (newToken == null) {
-            properties.deleteValue(ConfigKey.API_TOKEN);
+    public static void setAuthorizationToken(String newAuthorizationToken) {
+        if (newAuthorizationToken == null) {
+            externalProperties.deleteValue(ConfigKey.SRA_AUTHORIZATION_TOKEN);
         } else {
-            properties.setValue(ConfigKey.API_TOKEN, newToken);
+            externalProperties.setValue(ConfigKey.SRA_AUTHORIZATION_TOKEN, newAuthorizationToken);
         }
-        token = newToken;
     }
 
-    public static String getToken() {
-        if (token == null) {
-            token = properties.getValue(ConfigKey.API_TOKEN);
-            if (token == null) {
-                String tempToken = DialogWindow.getOrNull(
-                        "TastyWorld API token",
-                        "Прежде чем пользовать программой введите токен доступа",
-                        "Токен:"
-                );
-                if (tempToken == null) {
-                    Platform.exit();
-                    System.exit(0);
-                }
-                setToken(tempToken);
+    public static String getAuthorizationTokenSRA() {
+        return externalProperties.getValue(ConfigKey.SRA_AUTHORIZATION_TOKEN).orElseGet(() -> {
+            Optional<String> probablyAuthorizationToken = DialogWindows.get(
+                    "TastyWorld Authorization Token",
+                    "Прежде чем пользовать программой введите токен авторизации",
+                    "Токен:"
+            );
+            if (probablyAuthorizationToken.isEmpty()) {
+                Platform.exit();
+                System.exit(0);
             }
-        }
-        return token;
+            String newAuthorizationToken = probablyAuthorizationToken.get();
+            setAuthorizationToken(newAuthorizationToken);
+            return newAuthorizationToken;
+        });
     }
 
     public static String getAppIdentifierName() {
@@ -82,27 +77,49 @@ public class AppConfig {
     }
 
     public static String getAppTitle() {
-        return appTitle;
+        return internalProperties.getValue(ConfigKey.APP_TITLE).orElse("TastyWorld");
     }
 
-    public static boolean isCacheAvailable() {
-        return appIsCacheAvailable;
+    public static boolean isAppCacheAvailable() {
+        return externalProperties.getValue(ConfigKey.APP_CACHE_AVAILABLE)
+                                 .map(Boolean::parseBoolean)
+                                 .orElse(true);
     }
 
-    public static String getAppDateTimeZoneOffset() {
-        return properties.getValue(ConfigKey.APP_DATETIME_ZONE_OFFSET);
+    public static ZoneOffset getAppTimeZoneOffset() {
+        return externalProperties.getValue(ConfigKey.APP_TIMEZONE_OFFSET)
+                                 .map(ZoneOffset::of)
+                                 .orElse(OffsetDateTime.now().getOffset());
     }
 
-    public static Boolean isSoundsUnavailable() {
-        return Boolean.parseBoolean(properties.getValue(ConfigKey.APP_SOUNDS_UNAVAILABLE));
+    public static boolean isSoundUnavailable() {
+        return externalProperties.getValue(ConfigKey.SOUND_UNAVAILABLE)
+                                 .map(Boolean::parseBoolean)
+                                 .orElse(false);
     }
 
+    @Nullable
     public static String getPrinterName() {
-        return properties.getValue(ConfigKey.PRINTER_NAME);
+        return externalProperties.getValue(ConfigKey.PRINTER_NAME).orElse(null);
     }
 
+    @Nullable
     public static String getScaleComPort() {
-        return properties.getValue(ConfigKey.SCALE_COM_PORT);
+        return externalProperties.getValue(ConfigKey.SCALE_COM_PORT).orElse(null);
+    }
+
+    @Nullable
+    public static String getEvotorAccountPhone() {
+        return externalProperties.getValue(ConfigKey.EVOTOR_ACCOUNT_PHONE).orElse(null);
+    }
+
+    @Nullable
+    public static String getEvotorMobcashierIdentifierSecret() {
+        return externalProperties.getValue(ConfigKey.EVOTOR_MOBCASHIER_IDENTIFIER_SECRET).orElse(null);
+    }
+
+    public static String getEvotorMobcashierFiscalizationEmail() {
+        return externalProperties.getValue(ConfigKey.EVOTOR_MOBCASHIER_FISCALIZATION_EMAIL).orElse("mr.tastyworld@mail.ru");
     }
 
 }
