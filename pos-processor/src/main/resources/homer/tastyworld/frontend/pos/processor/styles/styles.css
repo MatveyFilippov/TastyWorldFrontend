@@ -1,0 +1,99 @@
+.img-btn {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.img-btn:pressed {
+    -fx-effect: dropshadow(gaussian, rgba(255,213,79,0.4), 15, 0, 0, 6);
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+.img-btn:disabled {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+    -fx-cursor: default;
+    -fx-opacity: 0.4;
+}
+
+.img-btn:disabled:pressed {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}
+
+
+.empty-clickable-order-hint-in-queue {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+
+.clickable-order-in-queue {
+    -fx-background-color: #ebd5d5;
+    -fx-background-radius: 12;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.clickable-order-in-queue:pressed {
+    -fx-background-color: #fffde7;
+    -fx-border-color: #ffd54f;
+    -fx-border-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(255,213,79,0.6), 15, 0, 0, 6);
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+.clickable-order-in-queue.preparing {
+    -fx-background-color: #ffffff;
+}
+
+.clickable-order-in-queue.preparing:pressed {
+    -fx-background-color: #fffde7;
+}
+
+.clickable-order-in-queue.selected {
+    -fx-border-color: #ffd54f;
+    -fx-border-width: 4;
+    -fx-effect: dropshadow(gaussian, rgba(255,213,79,0.4), 30, 0, 0, 6);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+
+.order-position-item {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #f0f0f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 6, 0, 0, 2);
+}
+
+
+.numpad-button {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 12;
+    -fx-border-color: #dedede;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.numpad-button:pressed {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}

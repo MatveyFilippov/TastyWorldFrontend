@@ -1,49 +1,56 @@
 package homer.tastyworld.frontend.pos.processor.core.queue;
 
-import homer.tastyworld.frontend.pos.processor.core.OrderInfoPaneRenderer;
 import homer.tastyworld.frontend.starterpack.api.notifications.Subscriber;
 import homer.tastyworld.frontend.starterpack.api.notifications.Theme;
-import homer.tastyworld.frontend.starterpack.base.exceptions.response.BadRequestException;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.sound.SoundManager;
-import homer.tastyworld.frontend.starterpack.entity.current.ClientPoint;
-import homer.tastyworld.frontend.starterpack.entity.misc.OrderStatus;
-import homer.tastyworld.frontend.starterpack.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.misc.OrderStatus;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderUtils;
+import homer.tastyworld.frontend.starterpack.base.exceptions.api.sra.NotFoundStatusCodeException;
+import homer.tastyworld.frontend.starterpack.utils.managers.external.sound.SoundManager;
 import java.util.Arrays;
 
 class OrderUpdatesListener {
 
     public static void init() {
-        Arrays.stream(ClientPoint.getActiveOrderIDs()).forEach(OrderUpdatesListener::process);
-        Subscriber.subscribe(Theme.ORDER_STATUS_CHANGED, orderID -> process(Long.parseLong(orderID)));
+        Arrays.stream(OrderUtils.getAllNotCompletedOrders()).forEach(o -> process(o.getOrderID(), o.getStatus(), o.getName(), false));
+        Subscriber.subscribe(Theme.ORDER_STATUS_UPGRADED, orderID -> process(Long.parseLong(orderID), true));
     }
 
-    public static void process(long orderID) {
-        OrderStatus status = OrderStatus.CLOSED;
-        String name = "UNKNOWN";
-        try {
-            Order order = Order.get(orderID);
-            status = order.getStatus();
-            name = order.name;
-        } catch (BadRequestException ignored) {}
+    private static void process(long orderID, OrderStatus status, String name, boolean playAlert) {
         switch (status) {
-            case CREATED -> handleCreated(orderID);
-            case PROCESSING -> handleProcessing(orderID, name);
+            case FORMED -> handleFormed(orderID, name, playAlert);
+            case PREPARING -> handlePreparing(orderID, name);
             default -> handleOthers(orderID);
         }
     }
 
-    private static void handleCreated(long orderID) {
-        Order.get(orderID).setStatus(OrderStatus.PROCESSING);
+    public static void process(long orderID, boolean playAlert) {
+        OrderStatus status = OrderStatus.COMPLETED;
+        String name = "UNKNOWN";
+
+        try {
+            Order order = OrderUtils.getOrCreateInstance(orderID);
+            status = order.getStatus();
+            name = order.getName();
+        } catch (NotFoundStatusCodeException ignored) {}
+
+        process(orderID, status, name, playAlert);
     }
 
-    private static void handleProcessing(long orderID, String name) {
+    private static void handleFormed(long orderID, String name, boolean playAlert) {
         OrdersScrollQueue.putIfNotExists(orderID, name);
-        SoundManager.playAlert();
+        if (playAlert) {
+            SoundManager.playAlert();
+        }
+    }
+
+    private static void handlePreparing(long orderID, String name) {
+        OrdersScrollQueue.putIfNotExists(orderID, name);
+        OrdersScrollQueue.setPreparing(orderID);
     }
 
     private static void handleOthers(long orderID) {
         OrdersScrollQueue.removeIfExists(orderID);
-        OrderInfoPaneRenderer.cleanIfFilled(orderID);
     }
 
 }

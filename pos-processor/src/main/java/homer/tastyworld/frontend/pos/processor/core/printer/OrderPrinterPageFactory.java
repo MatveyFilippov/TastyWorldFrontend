@@ -1,14 +1,16 @@
 package homer.tastyworld.frontend.pos.processor.core.printer;
 
-import homer.tastyworld.frontend.starterpack.base.AppDateTime;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterPageFactory;
-import homer.tastyworld.frontend.starterpack.order.Order;
-import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
-import homer.tastyworld.frontend.starterpack.order.core.items.OrderItemAdditive;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItem;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItemModifier;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderUtils;
+import homer.tastyworld.frontend.starterpack.utils.managers.external.printer.PrinterPageFactory;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 public class OrderPrinterPageFactory extends PrinterPageFactory {
 
+    private static final DateTimeFormatter toPrintDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final Order toPrint;
 
     public OrderPrinterPageFactory(Order toPrint) {
@@ -16,7 +18,7 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     }
 
     public static OrderPrinterPageFactory getFor(long orderID) {
-        return new OrderPrinterPageFactory(Order.get(orderID));
+        return new OrderPrinterPageFactory(OrderUtils.getOrCreateInstance(orderID));
     }
 
     private void setItems(OrderItem[] items) throws IOException {
@@ -33,20 +35,20 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     }
 
     private void addItemLine(OrderItem item) throws IOException {
-        addLineLeft(item.productName());
-        addLineLeft("Кол-во: " + item.pieceQTY() + " " + item.pieceType().shortName);
-        addNotDefaultAdditiveLines(item.getNotDefaultAdditives());
+        addLineLeft(item.name());
+        addLineLeft("Кол-во: " + item.quantity() + " " + item.qtyMeasure().shortName);
+        addNotDefaultModifiersLines(item.notDefaultModifiers());
     }
 
-    private void addNotDefaultAdditiveLines(OrderItemAdditive[] additives) throws IOException {
-        if (additives.length == 0) {
+    private void addNotDefaultModifiersLines(OrderItemModifier[] modifiers) throws IOException {
+        if (modifiers.length == 0) {
             return;
         }
-        addLineLeft("Добавки:");
+        addLineLeft("Изменено:");
         dropFontStyle();
-        for (OrderItemAdditive additive : additives) {
+        for (OrderItemModifier modifier : modifiers) {
             addLineLeft(
-                    " - " + additive.productAdditiveName() + " " + additive.pieceQTY() + " " + additive.pieceType().shortName
+                    " - " + modifier.name() + " " + modifier.quantity() + " " + modifier.qtyMeasure().shortName
             );
         }
         setFontStyle(new byte[] {0x1B, 0x21, 0x20}, 24);  // 2x high + bold
@@ -55,10 +57,10 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
     @Override
     protected void setContent() throws IOException {
         setFontStyle(new byte[] {0x1D, 0x21, 0x11});  // 4x high + 2x width
-        addLineCenter(toPrint.name);
+        addLineCenter(toPrint.getName());
         addEmptyLines(1);
         dropFontStyle();
-        addLineCenter(toPrint.createdAt.format(AppDateTime.DATETIME_FORMAT));
+        addLineCenter(toPrint.getDraftAt().format(toPrintDateTimeFormatter));
         setFontStyle(new byte[] {0x1B, 0x21, 0x20}, 24);  // 2x high + bold
         addDivider('=');
         setItems(toPrint.getItems());

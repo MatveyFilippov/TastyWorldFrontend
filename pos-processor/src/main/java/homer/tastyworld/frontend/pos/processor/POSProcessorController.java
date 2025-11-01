@@ -1,142 +1,150 @@
 package homer.tastyworld.frontend.pos.processor;
 
+import homer.tastyworld.frontend.pos.processor.core.EditItemQuantityPane;
 import homer.tastyworld.frontend.pos.processor.core.printer.OrderPrinterPageFactory;
 import homer.tastyworld.frontend.pos.processor.core.OrderInfoPaneRenderer;
-import homer.tastyworld.frontend.pos.processor.core.EditItemQtyPane;
 import homer.tastyworld.frontend.pos.processor.core.queue.OrdersScrollQueue;
-import homer.tastyworld.frontend.starterpack.base.exceptions.SubscriptionDaysAreOverError;
-import homer.tastyworld.frontend.starterpack.base.utils.managers.printer.PrinterManager;
-import homer.tastyworld.frontend.starterpack.base.utils.misc.TypeChanger;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.AlertWindow;
-import homer.tastyworld.frontend.starterpack.base.utils.ui.helpers.PaneHelper;
-import homer.tastyworld.frontend.starterpack.entity.Product;
-import homer.tastyworld.frontend.starterpack.entity.current.Token;
-import homer.tastyworld.frontend.starterpack.entity.misc.OrderStatus;
-import homer.tastyworld.frontend.starterpack.order.Order;
-import homer.tastyworld.frontend.starterpack.order.core.items.OrderItem;
-import homer.tastyworld.frontend.starterpack.order.core.items.OrderItemFetcher;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.current.ClientPoint;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.misc.OrderStatus;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
+import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItem;
+import homer.tastyworld.frontend.starterpack.utils.managers.external.printer.PrinterManager;
+import homer.tastyworld.frontend.starterpack.utils.misc.TypeChanger;
+import homer.tastyworld.frontend.starterpack.utils.ui.AlertWindows;
+import homer.tastyworld.frontend.starterpack.utils.ui.DialogWindows;
+import homer.tastyworld.frontend.starterpack.utils.ui.helpers.PaneHelper;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import java.util.Optional;
 
 public class POSProcessorController {
 
     @FXML
     private ScrollPane scrollItems, scrollOrders;
     @FXML
-    private AnchorPane startOrderImgBtn, doneOrderImgBtn;
+    private AnchorPane setOrderPreparingImgBtn, setOrderReadyImgBtn;
     @FXML
-    private AnchorPane orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic;
+    private AnchorPane orderDraftedTimeTopic, orderDeliveryTopic, orderNameTopic;
 
     @FXML
-    private AnchorPane editItemQtyPaneParent;
+    private AnchorPane editItemQuantityPaneParent;
     @FXML
-    private AnchorPane editItemQtyPaneCloseImgBtn, editItemQtyPaneCommitImgBtn;
+    private AnchorPane editItemQuantityPaneCloseImgBtn, editItemQuantityPaneSubmitImgBtn;
     @FXML
-    private AnchorPane editItemQtyPaneNameTopic, editItemQtyPaneTotalTopic;
+    private AnchorPane editItemQuantityPaneNameTopic, editItemQuantityPaneTotalTopic;
     @FXML
-    private GridPane editItemQtyPaneNumbersKeyboard;
+    private GridPane editItemQuantityPaneNumbersKeyboardGrid;
 
     @FXML
     private void initialize() {
-        checkDaysLeft();
+        checkSubscriptionDays();
         initImgBtnsInMainPane();
-        initImgBtnsInEditItemQtyPane();
-        OrderInfoPaneRenderer.init(scrollItems, orderCreatedTimeTopic, orderDeliveryTopic, orderNameTopic);
+        initImgBtnsInEditItemQuantityPane();
+        OrderInfoPaneRenderer.init(scrollItems, orderDraftedTimeTopic, orderDeliveryTopic, orderNameTopic);
         OrdersScrollQueue.init(scrollOrders);
-        EditItemQtyPane.init(editItemQtyPaneParent, editItemQtyPaneNameTopic, editItemQtyPaneTotalTopic, editItemQtyPaneNumbersKeyboard);
+        EditItemQuantityPane.init(
+                editItemQuantityPaneParent,
+                editItemQuantityPaneNameTopic,
+                editItemQuantityPaneTotalTopic,
+                editItemQuantityPaneNumbersKeyboardGrid
+        );
     }
 
-    private void checkDaysLeft() {
-        long subscriptionAvailableDays = Token.getTokenSubscriptionAvailableDays();
-        if (subscriptionAvailableDays < 0) {
-            throw new SubscriptionDaysAreOverError();
-        }
+    private void checkSubscriptionDays() {
+        long subscriptionAvailableDays = ClientPoint.getSubscriptionDays();
         if (subscriptionAvailableDays <= 7) {
-            String text = String.format(
-                    "Если не оплатить подписку, то через %s программа перестанет работать",
-                    TypeChanger.toDaysFormat(subscriptionAvailableDays)
+            AlertWindows.showInfo(
+                    "Близится окончание подписки",
+                    "Если не оплатить подписку, то через %s программа перестанет работать".formatted(TypeChanger.toDaysFormat(subscriptionAvailableDays)),
+                    true
             );
-            AlertWindow.showInfo("Близится окончание подписки", text, true);
         }
     }
 
     private void initImgBtnsInMainPane() {
         PaneHelper.setImageBackgroundCentre(
-                startOrderImgBtn,
-                POSProcessorApplication.class.getResourceAsStream(
-                        PrinterManager.isPrinterAvailable()
-                        ? "images/buttons/startAndPrintOrderImgBtn.png"
-                        : "images/buttons/startOrderImgBtn.png"
-                )
+                setOrderPreparingImgBtn,
+                POSProcessorApplication.class.getResourceAsStream("images/buttons/SetOrderPreparing.png")
         );
         PaneHelper.setImageBackgroundCentre(
-                doneOrderImgBtn,
-                POSProcessorApplication.class.getResourceAsStream("images/buttons/doneOrderImgBtn.png")
+                setOrderReadyImgBtn,
+                POSProcessorApplication.class.getResourceAsStream("images/buttons/SetOrderReady.png")
         );
     }
 
-    private void initImgBtnsInEditItemQtyPane() {
+    private void initImgBtnsInEditItemQuantityPane() {
         PaneHelper.setImageBackgroundCentre(
-                editItemQtyPaneCloseImgBtn,
-                POSProcessorApplication.class.getResourceAsStream("images/buttons/EditItemQtyPane/editItemQtyPaneCloseImgBtn.png")
+                editItemQuantityPaneCloseImgBtn,
+                POSProcessorApplication.class.getResourceAsStream("images/buttons/EditItemQuantityPane/Close.png")
         );
         PaneHelper.setImageBackgroundCentre(
-                editItemQtyPaneCommitImgBtn,
-                POSProcessorApplication.class.getResourceAsStream("images/buttons/EditItemQtyPane/editItemQtyPaneCommitImgBtn.png")
+                editItemQuantityPaneSubmitImgBtn,
+                POSProcessorApplication.class.getResourceAsStream("images/buttons/EditItemQuantityPane/Submit.png")
         );
     }
 
     @FXML
-    void startOrderImgBtnPressed() {
-        if (OrderInfoPaneRenderer.order == null) {
-            AlertWindow.showInfo(
-                    "Заказ не выбран",
-                    PrinterManager.isPrinterAvailable()
-                    ? "Печатать нечего, для начала откройте заказ"
-                    : "Начать выполнение невозможно, для начала откройте заказ",
-                    true
-            );
+    void setOrderPreparingImgBtnPressed() {
+        Optional<Order> optionalOrder = OrderInfoPaneRenderer.getRenderedOrder();
+        if (optionalOrder.isEmpty()) {
+            AlertWindows.showInfo("Заказ не выбран", "Начать выполнение невозможно, для начала откройте заказ", true);
             return;
         }
-        PrinterManager.print(new OrderPrinterPageFactory(OrderInfoPaneRenderer.order));
-        OrdersScrollQueue.setChecked(OrderInfoPaneRenderer.order.id);
+        Order order = optionalOrder.get();
+        PrinterManager.print(new OrderPrinterPageFactory(order));
+        order.upgradeStatus(OrderStatus.PREPARING);
     }
 
     @FXML
-    void doneOrderImgBtnPressed() {
-        if (OrderInfoPaneRenderer.order == null) {
-            AlertWindow.showInfo("Заказ не выбран", "Завершать нечего, для начала откройте заказ", true);
+    void setOrderReadyImgBtnPressed() {
+        Optional<Order> optionalOrder = OrderInfoPaneRenderer.getRenderedOrder();
+        if (optionalOrder.isEmpty()) {
+            AlertWindows.showInfo("Заказ не выбран", "Завершать нечего, для начала откройте заказ", true);
             return;
         }
-        OrderInfoPaneRenderer.order.setStatus(OrderStatus.PROCESSED);
+        Order order = optionalOrder.get();
+        boolean isConfirmed = DialogWindows.askBool(
+                "Да, готов",
+                "Нет",
+                "Подтверждение готовности заказа",
+                "Вы уверены, что заказ %s готов к выдаче?".formatted(order.getName()),
+                "Это действие изменит статус заказа, отменить его нельзя"
+        );
+        if (isConfirmed) {
+            order.upgradeStatus(OrderStatus.READY);
+        }
     }
 
     @FXML
-    void closeEditItemQtyPane() {
-        EditItemQtyPane.close();
+    void editItemQuantityPaneCloseImgBtnPressed() {
+        EditItemQuantityPane.close();
     }
 
     @FXML
-    void editItemQtyPaneCommitImgBtnPressed() {
-        Order order = OrderInfoPaneRenderer.order;
-        if (order != null && EditItemQtyPane.getItemID() != null && EditItemQtyPane.isEdit()) {
-            OrderItem item = OrderItemFetcher.getItem(EditItemQtyPane.getItemID());
-            Product product = Product.get(item.productID());
-            int newQTY = EditItemQtyPane.getQTY();
-            if (newQTY < product.getMinPieceQTY() || newQTY > product.getMaxPieceQTY()) {
-                AlertWindow.showInfo(
-                        "Недопустимое количество",
-                        "Продукт должен быть в рамках [%s-%s] %s".formatted(product.getMinPieceQTY(), product.getMaxPieceQTY(), product.getPieceType().shortName),
-                        true
-                );
-                return;
+    void editItemQuantityPaneSubmitImgBtnPressed() {
+        Optional<Order> optionalOrder = OrderInfoPaneRenderer.getRenderedOrder();
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+
+            OrderItem item = EditItemQuantityPane.getItem();
+            int newQuantity = EditItemQuantityPane.getQuantity();
+            if (newQuantity != item.quantity()) {
+                if (newQuantity < item.qtyMin() || newQuantity > item.qtyMax()) {
+                    AlertWindows.showInfo(
+                            "Недопустимое количество",
+                            "Продукт должен быть в рамках [%s-%s] %s".formatted(item.qtyMin(), item.qtyMax(), item.qtyMeasure().shortName),
+                            true
+                    );
+                    return;
+                }
+
+                item = order.setItemQuantity(item, newQuantity);
+                OrderInfoPaneRenderer.rerender();
             }
-            order.editItem(item.id(), newQTY);
-            OrderInfoPaneRenderer.rerender();
         }
-        closeEditItemQtyPane();
+        EditItemQuantityPane.close();
     }
 
 }
