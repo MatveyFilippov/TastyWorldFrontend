@@ -73,7 +73,7 @@ public final class ImageResponseContentCacheProcessor implements CacheManager.Ma
     }
 
     public InputStream get(String abstractPath, String expectedHashSHA256, String imageEndpoint) {
-        return getContentIfCached(abstractPath, expectedHashSHA256).orElse(cacheByRequest(imageEndpoint));
+        return getContentIfCached(abstractPath, expectedHashSHA256).orElseGet(() -> cacheByRequest(imageEndpoint));
     }
 
     public InputStream get(String infoEndpoint, String imageEndpoint) {

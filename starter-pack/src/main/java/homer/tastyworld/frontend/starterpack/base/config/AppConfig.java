@@ -89,7 +89,7 @@ public class AppConfig {
     public static ZoneOffset getAppTimeZoneOffset() {
         return externalProperties.getValue(ConfigKey.APP_TIMEZONE_OFFSET)
                                  .map(ZoneOffset::of)
-                                 .orElse(OffsetDateTime.now().getOffset());
+                                 .orElseGet(() -> OffsetDateTime.now().getOffset());
     }
 
     public static boolean isSoundUnavailable() {
