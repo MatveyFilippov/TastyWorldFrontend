@@ -14,6 +14,8 @@ import homer.tastyworld.frontend.starterpack.base.exceptions.controlled.External
 import homer.tastyworld.frontend.starterpack.utils.ui.AlertWindows;
 import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class EvotorMobcashier {
@@ -58,7 +60,53 @@ public class EvotorMobcashier {
         }
     }
 
-    private static void addOrderItemToOrderCreator(OrderItem item, OrderCreator creator) {
+    private static void addOrderItemModifierToOrderCreator(OrderItemModifier modifier, String tax, OrderCreator creator) {
+        if (modifier.quantity() > modifier.qtyDefault() && modifier.unitPrice().compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal modifierOverQTY = BigDecimal.valueOf(modifier.quantity() - modifier.qtyDefault());
+            creator.addPosition(
+                    " + " + modifier.name(),
+                    modifier.unitPrice(),
+                    getMeasureName(modifier.qtyMeasure()),
+                    modifierOverQTY,
+                    tax,
+                    ProductType.NORMAL.name(),
+                    null
+            );
+        }
+    }
+
+    private static void addPieceOrderItemToOrderCreator(OrderItem item, OrderCreator creator) {
+        OrderItemModifier[] notDefaultModifiers = item.notDefaultModifiers();
+        String measureName = getMeasureName(item.qtyMeasure());
+        if (notDefaultModifiers.length == 0) {
+            creator.addPosition(
+                    item.name(),
+                    item.unitPrice(),
+                    measureName,
+                    BigDecimal.valueOf(item.quantity()),
+                    item.tax().name(),
+                    item.type().name(),
+                    item.mark()
+            );
+        } else {
+            for (int i = 0; i < item.quantity(); i++) {
+                creator.addPosition(
+                        item.name(),
+                        item.unitPrice(),
+                        measureName,
+                        BigDecimal.ONE,
+                        item.tax().name(),
+                        item.type().name(),
+                        item.mark()
+                );
+                for (OrderItemModifier modifier : notDefaultModifiers) {
+                    addOrderItemModifierToOrderCreator(modifier, item.tax().name(), creator);
+                }
+            }
+        }
+    }
+
+    private static void addWeightOrderItemToOrderCreator(OrderItem item, OrderCreator creator) {
         creator.addPosition(
                 item.name(),
                 item.unitPrice(),
@@ -69,19 +117,30 @@ public class EvotorMobcashier {
                 item.mark()
         );
         for (OrderItemModifier modifier : item.notDefaultModifiers()) {
-            if (modifier.quantity() > modifier.qtyDefault() && modifier.unitPrice().compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal modifierOverQTY = BigDecimal.valueOf(modifier.quantity() - modifier.qtyDefault());
-                creator.addPosition(
-                        " + " + modifier.name(),
-                        modifier.unitPrice(),
-                        getMeasureName(modifier.qtyMeasure()),
-                        modifierOverQTY,
-                        item.tax().name(),
-                        ProductType.NORMAL.name(),
-                        null
-                );
-            }
+            addOrderItemModifierToOrderCreator(modifier, item.tax().name(), creator);
         }
+    }
+
+    private static void addOrderItemToOrderCreator(OrderItem item, OrderCreator creator) {
+        if (item.qtyMeasure() == MenuQuantitativeMeasure.PIECES) {
+            addPieceOrderItemToOrderCreator(item, creator);
+        } else {
+            addWeightOrderItemToOrderCreator(item, creator);
+        }
+    }
+
+    private static BigDecimal getOrderDiscount(Order order) {
+        BigDecimal discount = order.getDiscount();
+        if (discount.compareTo(BigDecimal.ZERO) == 0) {
+            return null;
+        }
+        BigDecimal total = Arrays.stream(order.getItems())
+                                 .map(OrderItem::totalPrice)
+                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (discount.compareTo(BigDecimal.ONE) == 0) {
+            return total.subtract(BigDecimal.ONE);
+        }
+        return total.multiply(discount).setScale(2, RoundingMode.HALF_DOWN);
     }
 
     public static void sendToCashRegister(Order order) throws ExternalModuleUnavailableException {
@@ -89,11 +148,7 @@ public class EvotorMobcashier {
         for (OrderItem item : order.getItems()) {
             addOrderItemToOrderCreator(item, creator);
         }
-        BigDecimal discount = order.getDiscount();
-        if (discount.compareTo(BigDecimal.ZERO) == 0) {
-            discount = null;
-        }
-        creator.post(order.getOrderID(), order.getName(), discount, order.getDeliveryInfo());
+        creator.post(order.getOrderID(), order.getName(), getOrderDiscount(order), order.getDeliveryInfo());
     }
 
 }

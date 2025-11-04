@@ -24,8 +24,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.function.Function;
 
 @SuperBuilder
@@ -40,13 +40,16 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
     private final ScrollPane itemsScroll;
 
     private Label nameLabel;
-    private final DecimalFormat priceFormatter = new DecimalFormat("#0.00 р");
     private final URL deleteItemImgBtnResource = POSCreatorApplication.class.getResource("images/buttons/LookCreatingOrderPane/DeleteItem.png");
 
     private Order order;
     private final BigDecimal BIG_DECIMAL_ONE_HUNDRED = BigDecimal.valueOf(100);
     private final ObjectProperty<BigDecimal> itemsTotalPrice = new SimpleObjectProperty<>(BigDecimal.ZERO);
     private final ObjectProperty<BigDecimal> reverseDiscount = new SimpleObjectProperty<>(BigDecimal.ONE);
+
+    public BigDecimal getOrderDiscount() {
+        return BigDecimal.ONE.subtract(reverseDiscount.get());
+    }
 
     public void setItemsScrollContent() {
         VBox rows = new VBox(5);
@@ -79,7 +82,7 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
         AdaptiveTextHelper.setTextCentre(quantity, item.quantity() + " " + item.qtyMeasure().shortName, 0.25, null);
         VBox modifiers = getModifiers(item.notDefaultModifiers());
         AnchorPane price = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(price, priceFormatter.format(item.totalPrice()), 0.2, null);
+        AdaptiveTextHelper.setTextCentre(price, item.totalPrice() + " р", 0.2, null);
         AnchorPane space2 = new AnchorPane();
 
         row.getChildren().addAll(space1, deleteImgBtn, name, quantity, modifiers, price, space2);
@@ -131,8 +134,8 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
             AnchorPane modifierLine = new AnchorPane();
             AdaptiveTextHelper.setTextCentre(
                     modifierLine,
-                    "%s (%s) %s %s".formatted(
-                            modifier.name(), priceFormatter.format(modifier.unitPrice()), modifier.quantity(), modifier.qtyMeasure().shortName
+                    "%s (%s р) %s %s".formatted(
+                            modifier.name(), modifier.unitPrice(), modifier.quantity(), modifier.qtyMeasure().shortName
                     ),
                     0.05,
                     null
@@ -156,14 +159,14 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
     private void initTotalAmountListeners() {
         Label totalAmountLabel = AdaptiveTextHelper.setTextCentre(totalAmountTopic, "Стоимость: 0 р", 0.1, null);
         Function<Void, BigDecimal> calculateTotalAmount = (ignored) -> {
-            BigDecimal totalAmount = itemsTotalPrice.get().multiply(reverseDiscount.get());
+            BigDecimal totalAmount = itemsTotalPrice.get().multiply(reverseDiscount.get()).setScale(2, RoundingMode.HALF_UP);
             return totalAmount.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : totalAmount;
         };
         itemsTotalPrice.addListener(
-                (observable, oldValue, newValue) -> totalAmountLabel.setText("Стоимость: " + priceFormatter.format(calculateTotalAmount.apply(null)))
+                (observable, oldValue, newValue) -> totalAmountLabel.setText("Стоимость: " + calculateTotalAmount.apply(null) + " р")
         );
         reverseDiscount.addListener(
-                (observable, oldValue, newValue) -> totalAmountLabel.setText("Стоимость: " + priceFormatter.format(calculateTotalAmount.apply(null)))
+                (observable, oldValue, newValue) -> totalAmountLabel.setText("Стоимость: " + calculateTotalAmount.apply(null) + " р")
         );
     }
 
@@ -172,7 +175,7 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
         discountSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             int discount = newValue.intValue();
             discountLabel.setText("Скидка " + discount + "%");
-            reverseDiscount.set(BigDecimal.ONE.subtract(BigDecimal.valueOf(discount).divide(BIG_DECIMAL_ONE_HUNDRED)));
+            reverseDiscount.set(BigDecimal.ONE.subtract(BigDecimal.valueOf(discount).divide(BIG_DECIMAL_ONE_HUNDRED, 2, RoundingMode.HALF_UP)));
         });
     }
 

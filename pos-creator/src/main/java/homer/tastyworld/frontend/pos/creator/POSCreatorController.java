@@ -379,27 +379,27 @@ public class POSCreatorController {
         if (deliveryInfo != null && !deliveryInfo.isBlank()) {
             VirtualKeyboardPrompts.appendVar(lookCreatingOrderPaneDeliveryField);
         }
-
-        BigDecimal discount = BigDecimal.valueOf(lookCreatingOrderPaneDiscountSlider.getValue()).divide(BigDecimal.valueOf(100));
-        order.setDiscount(discount);
+        order.setDiscount(lookCreatingOrderPane.getOrderDiscount());
 
         order.upgradeStatus(OrderStatus.FORMED);
         OrderCreator.finish();
 
-        boolean isPaid;
-        try {
-            EvotorMobcashier.sendToCashRegister(order);
-            isPaid = DialogWindows.askBool(
-                    "Оплачено", "Повторю позже", "Оплата заказа",
-                    "Отправил заказ на кассу, проверьте и оплатите",
-                    "Кухня получила все позиции, заказ уже готовится"
-            );
-        } catch (ExternalModuleUnavailableException ignored) {
-            isPaid = DialogWindows.askBool(
-                    "Оплачено", "Вернуться позже", "Оплата заказа",
-                    "Произошла ошибка с кассой, но можно отметить вручную, что оплата прошла или вернуться к этому позже",
-                    "Кухня получила все позиции, заказ уже готовится"
-            );
+        boolean isPaid = false;
+        if (isSendPaymentSelected) {
+            try {
+                EvotorMobcashier.sendToCashRegister(order);
+                isPaid = DialogWindows.askBool(
+                        "Оплачено", "Повторю позже", "Оплата заказа",
+                        "Отправил заказ на кассу, проверьте и оплатите",
+                        "Кухня получила все позиции, заказ уже готовится"
+                );
+            } catch (ExternalModuleUnavailableException ignored) {
+                isPaid = DialogWindows.askBool(
+                        "Оплачено", "Вернуться позже", "Оплата заказа",
+                        "Произошла ошибка с кассой, но можно отметить вручную, что оплата прошла или вернуться к этому позже",
+                        "Кухня получила все позиции, заказ уже готовится"
+                );
+            }
         }
         if (isPaid) {
             order.setPaid();
