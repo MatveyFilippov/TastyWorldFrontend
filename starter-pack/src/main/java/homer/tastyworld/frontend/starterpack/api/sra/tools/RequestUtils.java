@@ -81,7 +81,7 @@ public class RequestUtils {
             String json = EntityUtils.toString(response.getEntity());
             return TypeChanger.toRecord(json, entityType);
         } catch (Exception ex) {
-            throw new CantProcessResponseException(response, ex);
+            throw new CantProcessResponseException(ex);
         }
     }
 
@@ -91,7 +91,7 @@ public class RequestUtils {
             String json = EntityUtils.toString(response.getEntity());
             return TypeChanger.toRecordList(json, elementType);
         } catch (Exception ex) {
-            throw new CantProcessResponseException(response, ex);
+            throw new CantProcessResponseException(ex);
         }
     }
 

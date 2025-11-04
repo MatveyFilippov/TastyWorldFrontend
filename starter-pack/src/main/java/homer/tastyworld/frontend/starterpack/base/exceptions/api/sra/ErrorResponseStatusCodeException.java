@@ -8,19 +8,15 @@ public class ErrorResponseStatusCodeException extends UnexpectedResponseStatusCo
 
     public final ErrorResponseBody errorResponseBody;
 
-    public ErrorResponseStatusCodeException(String message, ClassicHttpResponse response, int expectedStatusCode, ErrorResponseBody errorResponseBody) {
-        super(message, response, expectedStatusCode);
-        this.errorResponseBody = errorResponseBody;
-    }
-
     public ErrorResponseStatusCodeException(ClassicHttpResponse response, int expectedStatusCode, ErrorResponseBody errorResponseBody) {
-        this(
-                "Faced with unexpected error response status code (Code: %s; Body: %s)".formatted(
-                        response.getCode(), errorResponseBody
+        super(
+                "Faced with unexpected response status code (Expected: %s; Actual: %s; Body: %s)".formatted(
+                        expectedStatusCode, response.getCode(), errorResponseBody
                 ),
-                response,
-                expectedStatusCode, errorResponseBody
+                response.getCode(),
+                expectedStatusCode
         );
+        this.errorResponseBody = errorResponseBody;
     }
 
 }

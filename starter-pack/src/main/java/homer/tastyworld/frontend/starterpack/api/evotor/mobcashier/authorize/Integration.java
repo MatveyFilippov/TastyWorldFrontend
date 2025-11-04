@@ -6,7 +6,6 @@ import homer.tastyworld.frontend.starterpack.base.AppDateTime;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.base.exceptions.api.engine.CantProcessResponseException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.api.engine.UnexpectedResponseStatusCodeException;
-import homer.tastyworld.frontend.starterpack.base.exceptions.api.evotor.mobcashier.ErrorResponseStatusCodeWhileCreatingIntegrationException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.api.evotor.mobcashier.NoDataToCreateIntegrationException;
 import homer.tastyworld.frontend.starterpack.base.exceptions.api.evotor.mobcashier.UserNotExistsWhileCreatingIntegrationException;
 import homer.tastyworld.frontend.starterpack.utils.misc.TypeChanger;
@@ -34,7 +33,9 @@ public class Integration {
             Boolean user_exist,
             String user_id,
             String token,
-            String android_id
+            String android_id,
+            String refresh_token,
+            Long expires_in
     ) {}
 
     private record ErrorDetailElementObjectInCreateIntegrationResponseBody(
@@ -59,7 +60,7 @@ public class Integration {
             String[] parts = token.split("\\.");
             String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
             Map<String, Object> payload = TypeChanger.toMap(payloadJson);
-            long iat = (long) payload.get("iat");
+            long iat = Long.parseLong(String.valueOf(payload.get("iat")));
 
             IssuedAt.issuedAt = AppDateTime.toLocal(iat);
             IssuedAt.token = token;
@@ -102,10 +103,7 @@ public class Integration {
                         String json = EntityUtils.toString(response.getEntity());
                         responseBody = TypeChanger.toRecord(json, CreateIntegrationResponseBody.class);
                     } catch (Exception ex) {
-                        throw new CantProcessResponseException(response, ex);
-                    }
-                    if (responseBody.error() != 0) {
-                        throw new ErrorResponseStatusCodeWhileCreatingIntegrationException(response, responseBody);
+                        throw new CantProcessResponseException(ex);
                     }
 
                     return responseBody.data();
@@ -120,6 +118,7 @@ public class Integration {
         }
         token = dataObjectInCreateIntegrationResponseBody.token();
         androidID = dataObjectInCreateIntegrationResponseBody.android_id();
+        IssuedAt.set(token);
     }
 
     private static void resetIfOutdatedTokenAndAndroidID() {

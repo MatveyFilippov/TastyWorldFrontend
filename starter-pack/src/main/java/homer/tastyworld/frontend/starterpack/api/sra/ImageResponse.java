@@ -40,7 +40,7 @@ public class ImageResponse {
             String hashSHA256 = response.getHeader("Image-SHA256-Hash").getValue();
             return new ImageResponse(imageBytes, hashSHA256, abstractPath);
         } catch (Exception ex) {
-            throw new CantProcessResponseException(response, ex);
+            throw new CantProcessResponseException(ex);
         }
     }
 

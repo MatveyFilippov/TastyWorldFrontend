@@ -3,26 +3,34 @@ package homer.tastyworld.frontend.starterpack.base.exceptions.api.engine;
 import homer.tastyworld.frontend.starterpack.base.exceptions.WithSelfUserNotificationException;
 import homer.tastyworld.frontend.starterpack.utils.ui.AlertWindows;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 public class UnexpectedResponseStatusCodeException extends RuntimeException implements WithSelfUserNotificationException {
 
-    public final ClassicHttpResponse response;
     public final int actualStatusCode;
     public final int expectedStatusCode;
 
-    public UnexpectedResponseStatusCodeException(String message, ClassicHttpResponse response, int expectedStatusCode) {
+    private static String getBody(HttpEntity entity) {
+        try {
+            return entity == null ? null : EntityUtils.toString(entity);
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    protected UnexpectedResponseStatusCodeException(String message, int actualStatusCode, int expectedStatusCode) {
         super(message);
-        this.response = response;
-        this.actualStatusCode = response.getCode();
+        this.actualStatusCode = actualStatusCode;
         this.expectedStatusCode = expectedStatusCode;
     }
 
     public UnexpectedResponseStatusCodeException(ClassicHttpResponse response, int expectedStatusCode) {
         this(
-                "Faced with unexpected response status code (Expected: %s; Actual: %s)".formatted(
-                        expectedStatusCode, response.getCode()
+                "Faced with unexpected response status code (Expected: %s; Actual: %s; Body: %s)".formatted(
+                        expectedStatusCode, response.getCode(), getBody(response.getEntity())
                 ),
-                response,
+                response.getCode(),
                 expectedStatusCode
         );
     }

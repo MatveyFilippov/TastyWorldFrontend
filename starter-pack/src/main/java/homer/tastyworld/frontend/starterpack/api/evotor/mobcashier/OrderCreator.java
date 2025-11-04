@@ -111,7 +111,7 @@ public class OrderCreator {
         this.authorizationToken = authorizationToken;
     }
 
-    public void addPosition(String name, BigDecimal price, String measureName, BigDecimal quantity, String commodityID, String tax, String type, @Nullable String mark) {
+    public void addPosition(String name, BigDecimal price, String measureName, BigDecimal quantity, String tax, String type, @Nullable String mark) {
         positions.add(
                new PositionElementObjectInCreateOrderRequestBody(
                        null,
@@ -127,7 +127,7 @@ public class OrderCreator {
                        measureName,
                        quantity,
                        tax,
-                       commodityID,
+                       null,
                        mark,
                        type,
                        null,

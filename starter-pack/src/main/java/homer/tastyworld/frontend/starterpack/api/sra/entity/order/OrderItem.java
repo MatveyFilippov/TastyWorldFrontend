@@ -32,7 +32,7 @@ public record OrderItem(
         BigDecimal itemQTY = BigDecimal.valueOf(quantity);
         BigDecimal total = unitPrice.multiply(itemQTY);
         BigDecimal modifierMultiplier = qtyMeasure == MenuQuantitativeMeasure.PIECES ? itemQTY : BigDecimal.ONE;
-        for (OrderItemModifier modifier : notDefaultModifiers()) {
+        for (OrderItemModifier modifier : modifiers) {
             if (modifier.quantity() > modifier.qtyDefault()) {
                 BigDecimal modifierOverQTY = BigDecimal.valueOf(modifier.quantity() - modifier.qtyDefault());
                 BigDecimal modifierTotal = modifier.unitPrice().multiply(modifierOverQTY).multiply(modifierMultiplier);

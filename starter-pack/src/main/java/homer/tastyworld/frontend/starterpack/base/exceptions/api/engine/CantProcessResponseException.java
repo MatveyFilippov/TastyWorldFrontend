@@ -6,11 +6,8 @@ import org.apache.hc.core5.http.ClassicHttpResponse;
 
 public class CantProcessResponseException extends RuntimeException implements WithSelfUserNotificationException {
 
-    public final ClassicHttpResponse response;
-
-    public CantProcessResponseException(ClassicHttpResponse response, Throwable throwable) {
+    public CantProcessResponseException(Throwable throwable) {
         super("Can't process API response", throwable);
-        this.response = response;
     }
 
     @Override
