@@ -1,12 +1,12 @@
 package homer.tastyworld.frontend.starterpack.utils.managers.external.scale;
 
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 public class ScaleState {
 
@@ -66,16 +66,18 @@ public class ScaleState {
         this.UNIT = unit;
     }
 
-    private static int getPacketStartIndex(byte[] buffer) {
-        for (int i = 0; i < buffer.length - 1; i++) {
-            if (buffer[i] == SOH && buffer[i + 1] == STX) {
+    private static int findPacketStart(ByteBuffer buffer) {
+        int startPos = buffer.position();
+        int bytesToCheck = buffer.remaining() - 1;
+        for (int i = 0; i < bytesToCheck; i++) {
+            if (buffer.get(startPos + i) == SOH && buffer.get(startPos + i + 1) == STX) {
                 return i;
             }
         }
         return -1;
     }
 
-    static Optional<ScaleState> createFromPacket(byte[] packet) {
+    static Optional<ScaleState> getFromPacket(byte[] packet) {
         if (packet[0] != SOH || packet[1] != STX) {  // Check only the starting bytes
             logger.error("Faced with invalid packet for ScaleState", null);
             return Optional.empty();
@@ -97,28 +99,25 @@ public class ScaleState {
         ));
     }
 
-    static boolean predicateBuffer(Predicate<ScaleState> predicate, byte[] buffer) {
-        do {
-            int startIndex = getPacketStartIndex(buffer);
-            if (startIndex == -1 || buffer.length < startIndex + 12) {  // 12 byte packet (SOH+STX + 10 bytes of data)
-                return false;
-            }
-            int lastIndex = startIndex + 12;
-
-            byte[] packet = Arrays.copyOfRange(buffer, startIndex, lastIndex);
-            Optional<ScaleState> state = createFromPacket(packet);
-
-            if (state.isPresent() && predicate.test(state.get())) {
-                return true;
-            }
-
-            buffer = Arrays.copyOfRange(buffer, lastIndex, buffer.length);
-        } while (true);
-    }
-
-    static List<ScaleState> createFromBuffer(byte[] buffer) {
+    static List<ScaleState> popFromBuffer(ByteBuffer buffer) {
         List<ScaleState> states = new ArrayList<>();
-        predicateBuffer(states::add, buffer);
+        buffer.flip();
+
+        while (true) {
+            int startIndex = findPacketStart(buffer);
+            if (startIndex == -1 || buffer.remaining() < startIndex + 12) {
+                break;
+            }
+
+            buffer.position(buffer.position() + startIndex);
+
+            byte[] packet = new byte[12];
+            buffer.get(packet);
+
+            getFromPacket(packet).ifPresent(states::add);
+        }
+
+        buffer.compact();
         return states;
     }
 

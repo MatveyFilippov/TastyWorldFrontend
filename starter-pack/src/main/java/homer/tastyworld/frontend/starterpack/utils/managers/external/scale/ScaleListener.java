@@ -3,18 +3,19 @@ package homer.tastyworld.frontend.starterpack.utils.managers.external.scale;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-import java.util.function.Predicate;
+import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 
 class ScaleListener implements SerialPortDataListener {
 
     private final SerialPort comPort;
-    private final Predicate<ScaleState> predicate;
+    private final Consumer<ScaleState> consumer;
     private volatile boolean isSleeping = true;
-    private byte[] buffer = new byte[0];
+    private final ByteBuffer buffer = ByteBuffer.allocate(4096);
 
-    public ScaleListener(SerialPort comPort, Predicate<ScaleState> predicate) {
+    public ScaleListener(SerialPort comPort, Consumer<ScaleState> consumer) {
         this.comPort = comPort;
-        this.predicate = predicate;
+        this.consumer = consumer;
     }
 
     @Override
@@ -30,14 +31,15 @@ class ScaleListener implements SerialPortDataListener {
 
         byte[] newData = new byte[comPort.bytesAvailable()];
         comPort.readBytes(newData, newData.length);
-        byte[] tempBuffer = new byte[buffer.length + newData.length];
-        System.arraycopy(buffer, 0, tempBuffer, 0, buffer.length);
-        System.arraycopy(newData, 0, tempBuffer, buffer.length, newData.length);
-        buffer = tempBuffer;
+        buffer.put(newData);
 
-        if (ScaleState.predicateBuffer(predicate, buffer)) {
-            isSleeping = true;
+        for (ScaleState state : ScaleState.popFromBuffer(buffer)) {
+            consumer.accept(state);
         }
+    }
+
+    public void goSleep() {
+        isSleeping = true;
     }
 
     public void wakeUp() {
