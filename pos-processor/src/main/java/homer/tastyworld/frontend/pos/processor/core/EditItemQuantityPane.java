@@ -11,12 +11,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import java.util.function.Consumer;
 
 public class EditItemQuantityPane {
 
     private static AnchorPane current;
     private static Label nameLabel, quantityLabel;
-    private static Thread scaleAskingThread;
+    private static Thread scaleListeningThread;
     private static OrderItem item;
     private static Integer quantity;
 
@@ -40,38 +41,48 @@ public class EditItemQuantityPane {
         quantityLabel.setText(quantity + " " + qtyMeasureShortName);
     }
 
-    private static void startAskingScale() {
-        scaleAskingThread = new Thread(() -> {
-            try (ScaleManager scaleManager = new ScaleManager()) {
+    private static void startListeningScale() {
+        Consumer<ScaleState> scaleStateConsumer = new Consumer<>() {
+
+            int actualWeight = -1;
+
+            @Override
+            public void accept(ScaleState state) {
+                if (state.STATUS == ScaleState.Status.STABLE && state.WEIGHT > 0) {
+                    int weight = switch (state.UNIT) {
+                        case KG -> (int) (state.WEIGHT * 1000);
+                        case UNKNOWN -> -1;
+                    };
+                    if (weight == actualWeight || weight < 0) {
+                        return;
+                    }
+                    Platform.runLater(() -> setQuantity(weight));
+                    actualWeight = weight;
+                }
+            }
+
+        };
+
+        scaleListeningThread = new Thread(() -> {
+            try (ScaleManager scaleManager = new ScaleManager(scaleStateConsumer)) {
+                scaleManager.proceed();
                 while (true) {
                     if (Thread.interrupted()) {
                         return;
                     }
-                    ScaleState state = scaleManager.getScaleState();
-                    if (state.STATUS == ScaleState.Status.STABLE && state.WEIGHT > 0) {
-                        int weight = 0;
-                        if (state.UNIT == ScaleState.Unit.KG) {
-                            weight = (int) (state.WEIGHT * 1000);
-                        }
-                        if (weight == 0) {
-                            continue;
-                        }
-                        final int finalWeight = weight;
-                        Platform.runLater(() -> setQuantity(finalWeight));
-                        return;
-                    }
+                    Thread.sleep(750);
                 }
             } catch (InterruptedException | ExternalModuleUnavailableException ignored) {}
         });
-        scaleAskingThread.setDaemon(true);
-        scaleAskingThread.setName("Scale asking while edit item qty");
-        scaleAskingThread.start();
+        scaleListeningThread.setDaemon(true);
+        scaleListeningThread.setName("ScaleListener (edit order item quantity)");
+        scaleListeningThread.start();
     }
 
-    private static void stopAskingScale() {
-        if (scaleAskingThread != null && scaleAskingThread.isAlive()) {
-            scaleAskingThread.interrupt();
-            scaleAskingThread = null;
+    private static void stopListeningScale() {
+        if (scaleListeningThread != null && scaleListeningThread.isAlive()) {
+            scaleListeningThread.interrupt();
+            scaleListeningThread = null;
         }
     }
 
@@ -80,11 +91,11 @@ public class EditItemQuantityPane {
         setQuantity(item.quantity());
         nameLabel.setText(item.name());
         current.setVisible(true);
-        startAskingScale();
+        startListeningScale();
     }
 
     public static void close() {
-        stopAskingScale();
+        stopListeningScale();
         item = null;
         nameLabel.setText("Продукт не выбран");
         setQuantity(null);
