@@ -84,8 +84,8 @@ class PromptsProcessor {
         return result;
     }
 
-    public void put(String input) {
-        usedPromptsSet.add(input);
+    public boolean put(String input) {
+        return usedPromptsSet.add(input);
     }
 
     public void save() {

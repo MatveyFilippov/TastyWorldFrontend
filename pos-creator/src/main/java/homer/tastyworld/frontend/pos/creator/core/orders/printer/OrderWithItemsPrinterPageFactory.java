@@ -9,13 +9,12 @@ import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderUtils;
 import homer.tastyworld.frontend.starterpack.utils.managers.external.printer.PrinterPageFactory;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 
 public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final DecimalFormat priceFormatter = new DecimalFormat("#0.00 р");
     private final Order toPrint;
 
     public OrderWithItemsPrinterPageFactory(Order toPrint) {
@@ -31,26 +30,27 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
             addFullLine(
                     " * %s %s %s".formatted(modifier.name(), modifier.quantity(), modifier.qtyMeasure().shortName),
                     '.',
-                    priceFormatter.format(modifier.unitPrice().multiply(BigDecimal.valueOf(Math.max(modifier.quantity() - modifier.qtyDefault(), 0))))
+                    modifier.unitPrice().multiply(BigDecimal.valueOf(Math.max(modifier.quantity() - modifier.qtyDefault(), 0))) + " р"
             );
         }
     }
 
     private void setPieceItem(OrderItem item) throws IOException {
-        if (item.notDefaultModifiers().length == 0) {
+        OrderItemModifier[] notDefaultModifiers = item.notDefaultModifiers();
+        if (notDefaultModifiers.length == 0) {
             addFullLine(
                     "%s %s %s".formatted(item.name(), item.quantity(), item.qtyMeasure().shortName),
                     '.',
-                    priceFormatter.format(item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
+                    item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())) + " р"
             );
         } else {
             for (int i = 0; i < item.quantity(); i++) {
                 addFullLine(
                         "%s 1 %s".formatted(item.name(), item.qtyMeasure().shortName),
                         '.',
-                        priceFormatter.format(item.unitPrice())
+                        item.unitPrice() + " р"
                 );
-                for (OrderItemModifier modifier : item.notDefaultModifiers()) {
+                for (OrderItemModifier modifier : notDefaultModifiers) {
                     setItemModifier(modifier);
                 }
             }
@@ -61,7 +61,7 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
         addFullLine(
                 "%s %s %s".formatted(item.name(), item.quantity(), item.qtyMeasure().shortName),
                 '.',
-                priceFormatter.format(item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
+                item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())) + " р"
         );
         for (OrderItemModifier modifier : item.notDefaultModifiers()) {
             setItemModifier(modifier);
@@ -91,7 +91,7 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
         addDivider('=');
         setItems();
         addDivider('=');
-        addLineRight("ИТОГО: " + priceFormatter.format(toPrint.getTotalAmount()));
+        addLineRight("ИТОГО: " + toPrint.getTotalAmount().setScale(2, RoundingMode.HALF_UP) + " р");
         addDivider('~');
         addLineCenter("СПАСИБО ЗА ВИЗИТ!");
         addEmptyLines(4);

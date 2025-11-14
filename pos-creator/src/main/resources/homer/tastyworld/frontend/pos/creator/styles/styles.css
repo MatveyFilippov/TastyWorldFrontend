@@ -1,25 +1,36 @@
-.img-btn {
+.anchor-pane-as-button {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
     -fx-cursor: hand;
 }
 
-.img-btn:pressed {
+.anchor-pane-as-button:pressed {
     -fx-effect: dropshadow(gaussian, rgba(255,213,79,0.4), 15, 0, 0, 6);
     -fx-scale-x: 0.97;
     -fx-scale-y: 0.97;
 }
 
-.img-btn:disabled {
+.anchor-pane-as-button:disabled {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
     -fx-cursor: default;
     -fx-opacity: 0.4;
 }
 
-.img-btn:disabled:pressed {
+.anchor-pane-as-button:disabled:pressed {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
     -fx-scale-x: 1.0;
     -fx-scale-y: 1.0;
 }
+
+
+.created-order-name {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
+    -fx-text-fill: black;
+}
+
+.created-order-name.unpaid {
+    -fx-text-fill: #ff4040;
+}
+
 
 .menu-icon {
     -fx-background-color: #ffffff;
@@ -63,6 +74,16 @@
 }
 
 
+.anchor-pane-as-text-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 4;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-padding: 4 8;
+}
+
+
 .numpad-button {
     -fx-background-color: #f0f0f0;
     -fx-background-radius: 12;
@@ -77,4 +98,42 @@
     -fx-border-color: transparent;
     -fx-scale-x: 0.97;
     -fx-scale-y: 0.97;
+}
+
+
+.slider {
+    -default-track-color: -fx-control-inner-background;
+    -track-color: -default-track-color;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.slider .track {
+    -fx-background-color: -fx-shadow-highlight-color,
+          linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+          -track-color;
+}
+
+.slider .thumb:pressed {
+    -fx-background-color: #ffd54f;
+}
+
+.text-field {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.text-field:focused {
+    -fx-border-color: derive(#ffd54f, 20%);
+    -fx-effect: none;
+}
+
+
+.check-box:selected .mark {
+    -fx-background-color: #ff4040;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #ffd54f;
+    -fx-effect: dropshadow(gaussian, rgba(255,213,79,0.4), 15, 0, 0, 4);
 }

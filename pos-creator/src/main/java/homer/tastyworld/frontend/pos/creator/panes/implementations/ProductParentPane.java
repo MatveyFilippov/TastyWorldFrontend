@@ -32,7 +32,6 @@ import javafx.scene.text.Font;
 import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -42,22 +41,20 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
     private final AnchorPane goBackInMenuCategoryProductsImgBtn, addProductToOrderImgBtn;
     private final AnchorPane nameTopic;
     private final AnchorPane priceTopic;
-    private final TextField totalPriceField;
+    private final AnchorPane calculatedPriceTopic;
     private final AnchorPane minusQuantityImgBtn, plusQuantityImgBtn;
-    private final AnchorPane productQuantityMeasureTopic;
-    private final TextField productQuantityFiled;
+    private final AnchorPane productQuantityTopic;
     private final GridPane numbersKeyboardGrid;
     private final AnchorPane productToppingsTopic;
     private final ScrollPane productToppingsScroll;
 
-    private Label nameLabel, quantityMeasureLabel;
-    private final DecimalFormat priceFormatter = new DecimalFormat("#0.00 р");
+    private Label nameLabel, calculatedPriceLabel, productQuantityLabel;
     private final URL plusQuantityImgBtnResource = POSCreatorApplication.class.getResource("images/buttons/ProductPane/PlusQuantity.png");
     private final URL minusQuantityImgBtnResource = POSCreatorApplication.class.getResource("images/buttons/ProductPane/MinusQuantity.png");
 
     private Product product;
     private final ObservableMap<ProductTopping, Integer> productNotDefaultProductToppingsQTY = FXCollections.observableHashMap();
-    private final IntegerProperty productQuantity = new SimpleIntegerProperty(0);
+    private final IntegerProperty productQuantity = new SimpleIntegerProperty(-1);
     private final ObjectProperty<BigDecimal> totalPrice = new SimpleObjectProperty<>(BigDecimal.ZERO);
     private MenuCategory productCategory;
 
@@ -70,18 +67,21 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
 
     public int getProductQuantity() {
         int result = productQuantity.get();
-        if (result <= 0) {
+        if (product == null || result < 0) {
             throw new NullPointerException("The quantity of product being opened does not exist");
         }
         return result;
     }
 
     public Map<ProductTopping, Integer> getProductNotDefaultProductToppingsQTY() {
+        if (product == null) {
+            throw new NullPointerException("Not default topping of product being opened does not exist");
+        }
         return Map.copyOf(productNotDefaultProductToppingsQTY);
     }
 
     public MenuCategory getProductCategory() {
-        if (productCategory == null) {
+        if (product == null || productCategory == null) {
             throw new NullPointerException("The menu category of product being opened does not exist");
         }
         return productCategory;
@@ -110,50 +110,42 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
 
         AnchorPane nameWithPrice = new AnchorPane();
         AdaptiveTextHelper.setTextCentre(
-                nameWithPrice, "%s (%s)".formatted(productTopping.getName(), priceFormatter.format(productTopping.getUnitPrice())), 0.08, null
+                nameWithPrice, "%s (%s р)".formatted(productTopping.getName(), productTopping.getUnitPrice()), 0.08, null
         );
 
-        TextField productToppingQuantityField = getProductToppingQuantityField(row, productTopping);
+        AnchorPane productToppingQuantityTopic = new AnchorPane();
+        productToppingQuantityTopic.getStyleClass().add("anchor-pane-as-text-field");
+        Label productToppingQuantityLabel = AdaptiveTextHelper.setTextCentre(
+                productToppingQuantityTopic, productTopping.getQtyDefault() + " " + productTopping.getQtyMeasure().shortName, 0.17, null
+        );
         AnchorPane minusProductToppingQuantityImgBtn = new AnchorPane();
         AnchorPane plusProductToppingQuantityImgBtn = new AnchorPane();
+        setPlusMinusProductToppingQuantityImgBtnsClickable(
+                plusProductToppingQuantityImgBtn, minusProductToppingQuantityImgBtn, productToppingQuantityLabel, productTopping
+        );
+
         AnchorPane space = new AnchorPane();
 
-        setPlusMinusProductToppingQuantityImgBtnsClickable(
-                plusProductToppingQuantityImgBtn, minusProductToppingQuantityImgBtn, productToppingQuantityField, productTopping
-        );
-
         row.getChildren().addAll(
-                nameWithPrice, minusProductToppingQuantityImgBtn, productToppingQuantityField, plusProductToppingQuantityImgBtn, space
+                nameWithPrice, minusProductToppingQuantityImgBtn, productToppingQuantityTopic, plusProductToppingQuantityImgBtn, space
         );
-        HBox.setHgrow(productToppingQuantityField, Priority.ALWAYS);
+        HBox.setHgrow(productToppingQuantityTopic, Priority.ALWAYS);
         HBox.setHgrow(minusProductToppingQuantityImgBtn, Priority.ALWAYS);
         HBox.setHgrow(nameWithPrice, Priority.ALWAYS);
         HBox.setHgrow(plusProductToppingQuantityImgBtn, Priority.ALWAYS);
         HBox.setHgrow(space, Priority.ALWAYS);
         nameWithPrice.prefWidthProperty().bind(row.widthProperty().multiply(0.50));
         minusProductToppingQuantityImgBtn.prefWidthProperty().bind(row.widthProperty().multiply(0.1));
-        productToppingQuantityField.prefWidthProperty().bind(row.widthProperty().multiply(0.25));
+        productToppingQuantityTopic.prefWidthProperty().bind(row.widthProperty().multiply(0.25));
         plusProductToppingQuantityImgBtn.prefWidthProperty().bind(row.widthProperty().multiply(0.1));
         space.prefWidthProperty().bind(row.widthProperty().multiply(0.05));
 
         return row;
     }
 
-    private TextField getProductToppingQuantityField(HBox row, ProductTopping productTopping) {
-        TextField quantity = new TextField();
-        quantity.setText(String.valueOf(productTopping.getQtyDefault()));
-        quantity.setAlignment(Pos.CENTER);
-        quantity.fontProperty().bind(Bindings.createObjectBinding(
-                () -> Font.font(Math.min(row.getWidth() / 10, row.getHeight() / 6)),
-                row.widthProperty(), row.heightProperty()
-        ));
-        quantity.setEditable(false);
-        return quantity;
-    }
-
-    private void setPlusMinusProductToppingQuantityImgBtnsClickable(AnchorPane plus, AnchorPane minus, TextField productToppingQuantityField, ProductTopping productTopping) {
-        plus.getStyleClass().add("img-btn");
-        minus.getStyleClass().add("img-btn");
+    private void setPlusMinusProductToppingQuantityImgBtnsClickable(AnchorPane plus, AnchorPane minus, Label productToppingQuantityLabel, ProductTopping productTopping) {
+        plus.getStyleClass().add("anchor-pane-as-button");
+        minus.getStyleClass().add("anchor-pane-as-button");
         PaneHelper.setImageBackgroundCentre(plus, plusQuantityImgBtnResource);
         PaneHelper.setImageBackgroundCentre(minus, minusQuantityImgBtnResource);
         plus.setOnMouseClicked(event -> {
@@ -163,7 +155,7 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
             minus.setDisable(newQTY <= productTopping.getQtyMin());
 
             productNotDefaultProductToppingsQTY.put(productTopping, newQTY);
-            productToppingQuantityField.setText(String.valueOf(newQTY));
+            productToppingQuantityLabel.setText(newQTY + " " + productTopping.getQtyMeasure().shortName);
         });
         minus.setOnMouseClicked(event -> {
             int newQTY = productNotDefaultProductToppingsQTY.getOrDefault(productTopping, productTopping.getQtyDefault()) - 1;
@@ -172,7 +164,7 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
             minus.setDisable(newQTY <= productTopping.getQtyMin());
 
             productNotDefaultProductToppingsQTY.put(productTopping, newQTY);
-            productToppingQuantityField.setText(String.valueOf(newQTY));
+            productToppingQuantityLabel.setText(newQTY + " " + productTopping.getQtyMeasure().shortName);
         });
         plus.setDisable(productTopping.getQtyDefault() >= productTopping.getQtyMax());
         minus.setDisable(productTopping.getQtyDefault() <= productTopping.getQtyMin());
@@ -219,9 +211,11 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
             int newQTY = newValue.intValue();
             plusQuantityImgBtn.setDisable(newQTY >= product.getQtyMax());
             minusQuantityImgBtn.setDisable(newQTY <= product.getQtyMin());
-            productQuantityFiled.setText(String.valueOf(newValue.toString()));
+
+            productQuantityLabel.setText(newValue + " " + product.getQtyMeasure().shortName);
+
+            resetTotalPrice();
         });
-        productQuantity.addListener((observable, oldValue, newValue) -> resetTotalPrice());
     }
 
     private void initProductNotDefaultProductToppingsQTYUpdateListeners() {
@@ -230,7 +224,7 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
 
     private void initTotalPriceUpdateListeners() {
         totalPrice.addListener(
-                (observable, oldValue, newValue) -> totalPriceField.setText(priceFormatter.format(newValue))
+                (observable, oldValue, newValue) -> calculatedPriceLabel.setText(newValue + " р")
         );
     }
 
@@ -243,7 +237,8 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
         AdaptiveTextHelper.setTextCentre(priceTopic, "Цена", 0.2, null);
         AdaptiveTextHelper.setTextCentre(productToppingsTopic, "Добавки", 0.065, null);
         nameLabel = AdaptiveTextHelper.setTextCentre(nameTopic, "", 0.05, null);
-        quantityMeasureLabel = AdaptiveTextHelper.setTextCentre(productQuantityMeasureTopic, "", 0.4, null);
+        calculatedPriceLabel = AdaptiveTextHelper.setTextCentre(calculatedPriceTopic, "", 0.15, null);
+        productQuantityLabel = AdaptiveTextHelper.setTextCentre(productQuantityTopic, "", 0.15, null);
     }
 
     private AnchorPane getClickableNumberKbBtn(int num, StringExpression fontSize) {
@@ -299,7 +294,6 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
         this.productQuantity.set(product.getQtyDefault());
 
         nameLabel.setText(product.getName());
-        quantityMeasureLabel.setText(product.getQtyMeasure().shortName);
 
         productToppingsScroll.setContent(computeProductToppingsRows(product));
     }
@@ -307,12 +301,11 @@ public class ProductParentPane extends ParentPane<MenuCategoryProductsParentPane
     @Override
     protected void beforeClose() {
         this.productNotDefaultProductToppingsQTY.clear();
-        this.productQuantity.set(0);
+        this.productQuantity.set(-1);
         this.productCategory = null;
         this.product = null;
 
         nameLabel.setText("");
-        quantityMeasureLabel.setText("");
 
         productToppingsScroll.setVvalue(0.0);
         productToppingsScroll.setContent(null);

@@ -12,13 +12,6 @@ import java.util.Map;
 
 public class OrderPaidMarkUpdateListener {
 
-    public static class MarkColors {
-
-        public static final Color UNPAID = Color.web("#FF4040");
-        public static final Color PAID = Color.BLACK;
-
-    }
-
     private static final Map<Long, Label> waiters = new HashMap<>();
 
     static {
@@ -27,7 +20,11 @@ public class OrderPaidMarkUpdateListener {
 
     public static void addWaiter(long orderID, Label waiter) {
         waiters.put(orderID, waiter);
-        waiter.setTextFill(OrderUtils.getOrCreateInstance(orderID).isPaid() ? MarkColors.PAID : MarkColors.UNPAID);
+        waiter.getStyleClass().add("created-order-name");
+        waiter.getStyleClass().add("");
+        if (!OrderUtils.getOrCreateInstance(orderID).isPaid()) {
+            waiter.getStyleClass().add("unpaid");
+        }
     }
 
     public static void process(long orderID) {
@@ -35,7 +32,7 @@ public class OrderPaidMarkUpdateListener {
             PrinterManager.print(OrderWithItemsPrinterPageFactory.getFor(orderID));
             Label waiter = waiters.get(orderID);
             if (waiter != null) {
-                waiter.setTextFill(MarkColors.PAID);
+                waiter.getStyleClass().remove("unpaid");
                 waiters.remove(orderID);
             }
         }

@@ -61,11 +61,11 @@ public class MainParentPane extends ParentPane<Void> {
     private void initImgBtns() {
         PaneHelper.setImageBackgroundCentre(
                 draftNewOrderImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/NewOrder.png")
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/DraftNewOrder.png")
         );
         PaneHelper.setImageBackgroundCentre(
                 openSettingsImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/Settings.png")
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/MainPane/OpenSettings.png")
         );
     }
 

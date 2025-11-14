@@ -48,6 +48,9 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
     private final ObjectProperty<BigDecimal> reverseDiscount = new SimpleObjectProperty<>(BigDecimal.ONE);
 
     public BigDecimal getOrderDiscount() {
+        if (order == null) {
+            throw new NullPointerException("The discount of order being opened does not exist");
+        }
         return BigDecimal.ONE.subtract(reverseDiscount.get());
     }
 
@@ -59,7 +62,7 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
         ObservableList<Node> items = rows.getChildren();
         BigDecimal itemsTotalPriceTemp = BigDecimal.ZERO;
         for (OrderItem item : order.getItems()) {
-            addItemRows(item, items);
+            addItemRow(item, items);
             itemsTotalPriceTemp = itemsTotalPriceTemp.add(item.totalPrice());
         }
         itemsTotalPrice.set(itemsTotalPriceTemp);
@@ -67,7 +70,7 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
         itemsScroll.setContent(rows);
     }
 
-    private void addItemRows(OrderItem item, ObservableList<Node> rows) {
+    private void addItemRow(OrderItem item, ObservableList<Node> rows) {
         HBox row = new HBox(5);
         row.getStyleClass().add("order-item-line");
         row.prefWidthProperty().bind(itemsScroll.widthProperty());
@@ -106,7 +109,7 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
 
     private AnchorPane getDeleteItemFromOrderImgBtn(OrderItem item, ObservableList<Node> deleteFrom, Node toDelete) {
         AnchorPane deleteImgBtn = new AnchorPane();
-        deleteImgBtn.getStyleClass().add("img-btn");
+        deleteImgBtn.getStyleClass().add("anchor-pane-as-button");
         PaneHelper.setImageBackgroundCentre(deleteImgBtn, deleteItemImgBtnResource);
 
         deleteImgBtn.setOnMouseClicked(event -> {
@@ -171,11 +174,15 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
     }
 
     private void initDiscountListeners() {
-        Label discountLabel = AdaptiveTextHelper.setTextCentre(discountTopic, "Скидка 0%", 0.12, null);
+        Label discountLabel = AdaptiveTextHelper.setTextCentre(discountTopic, "Скидка 0%", 0.14, null);
         discountSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             int discount = newValue.intValue();
-            discountLabel.setText("Скидка " + discount + "%");
             reverseDiscount.set(BigDecimal.ONE.subtract(BigDecimal.valueOf(discount).divide(BIG_DECIMAL_ONE_HUNDRED, 2, RoundingMode.HALF_UP)));
+
+            discountLabel.setText("Скидка " + discount + "%");
+
+            String style = "-track-color: linear-gradient(to right, #ffd54f 0%, #ffd54f " + discount + "%, #cccccc " + discount + "%, #cccccc 100%);";
+            discountSlider.setStyle(style);
         });
     }
 

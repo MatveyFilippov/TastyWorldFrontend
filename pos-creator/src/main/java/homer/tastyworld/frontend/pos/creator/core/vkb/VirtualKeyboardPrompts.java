@@ -44,6 +44,7 @@ public class VirtualKeyboardPrompts {
 
     private static AnchorPane createClickablePrompt(HBox promptsContainer, int index) {
         AnchorPane prompt = new AnchorPane();
+        prompt.getStyleClass().add("anchor-pane-as-button");
         HBox.setHgrow(prompt, Priority.ALWAYS);
         prompt.prefHeightProperty().bind(promptsContainer.heightProperty().multiply(0.95));
         prompt.prefWidthProperty().bind(promptsContainer.widthProperty().divide(PROMPTS_QTY));
@@ -76,8 +77,10 @@ public class VirtualKeyboardPrompts {
         PromptsProcessor processor = getProcessor(field);
         String var = field.getText();
         if (var != null && !var.isBlank()) {
-            processor.put(var.trim());
-            processor.save();  // TODO: optimize & save not for each time
+            boolean isAdded = processor.put(var.trim());
+            if (isAdded) {
+                processor.save();
+            }
         }
     }
 

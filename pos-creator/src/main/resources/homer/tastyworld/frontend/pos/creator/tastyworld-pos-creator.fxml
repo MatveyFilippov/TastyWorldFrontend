@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.GaussianBlur?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -63,9 +64,9 @@
                       <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <AnchorPane fx:id="mainPaneOpenSettingsImgBtn" onMouseClicked="#mainPaneOpenSettingsImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="mainPaneOpenSettingsImgBtn" onMouseClicked="#mainPaneOpenSettingsImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <AnchorPane fx:id="mainPaneClientPointNameTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <AnchorPane fx:id="mainPaneDraftNewOrderImgBtn" onMouseClicked="#mainPaneDraftNewOrderImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="mainPaneDraftNewOrderImgBtn" onMouseClicked="#mainPaneDraftNewOrderImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                   <GridPane alignment="CENTER" GridPane.rowIndex="2">
@@ -179,9 +180,9 @@
                         <RowConstraints vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <AnchorPane fx:id="menuCategoriesPaneDeleteCreatingOrderImgBtn" onMouseClicked="#menuCategoriesPaneDeleteCreatingOrderImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="menuCategoriesPaneDeleteCreatingOrderImgBtn" onMouseClicked="#menuCategoriesPaneDeleteCreatingOrderImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <AnchorPane fx:id="menuCategoriesPaneNameTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <AnchorPane fx:id="menuCategoriesPaneLookCreatingOrderImgBtn" onMouseClicked="#menuCategoriesPaneLookCreatingOrderImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="menuCategoriesPaneLookCreatingOrderImgBtn" onMouseClicked="#menuCategoriesPaneLookCreatingOrderImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                   <GridPane alignment="CENTER" GridPane.rowIndex="1">
@@ -225,7 +226,7 @@
                         <RowConstraints vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <AnchorPane fx:id="menuCategoryProductsPaneGoBackInMenuCategoriesImgBtn" onMouseClicked="#menuCategoryProductsPaneGoBackInMenuCategoriesImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="menuCategoryProductsPaneGoBackInMenuCategoriesImgBtn" onMouseClicked="#menuCategoryProductsPaneGoBackInMenuCategoriesImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <AnchorPane fx:id="menuCategoryProductsPaneNameTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
@@ -271,9 +272,9 @@
                         <RowConstraints vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <AnchorPane fx:id="productPaneGoBackInMenuCategoryProductsImgBtn" onMouseClicked="#productPaneGoBackInMenuCategoryProductsImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="productPaneGoBackInMenuCategoryProductsImgBtn" onMouseClicked="#productPaneGoBackInMenuCategoryProductsImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <AnchorPane fx:id="productPaneNameTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <AnchorPane fx:id="productPaneAddProductToOrderImgBtn" onMouseClicked="#productPaneAddProductToOrderImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="productPaneAddProductToOrderImgBtn" onMouseClicked="#productPaneAddProductToOrderImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                   <GridPane alignment="CENTER" GridPane.rowIndex="1">
@@ -294,8 +295,10 @@
                             <ColumnConstraints hgrow="SOMETIMES" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints vgrow="SOMETIMES" />
-                            <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints percentHeight="18.0" vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints percentHeight="18.0" vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
                             <RowConstraints percentHeight="60.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
@@ -309,36 +312,27 @@
                                 </rowConstraints>
                                  <children>
                                     <AnchorPane fx:id="productPanePriceTopic" />
-                                    <TextField fx:id="productPaneTotalPriceField" editable="false" focusTraversable="false" GridPane.columnIndex="1">
-                                       <font>
-                                          <Font size="35.0" />
-                                       </font>
-                                    </TextField>
+                                    <AnchorPane fx:id="productPaneCalculatedPriceTopic" styleClass="anchor-pane-as-text-field" GridPane.columnIndex="1" />
                                  </children>
                               </GridPane>
-                              <GridPane GridPane.rowIndex="1">
+                              <GridPane GridPane.rowIndex="2">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" />
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="65.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="69.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <AnchorPane fx:id="productPaneMinusQuantityImgBtn" styleClass="img-btn" />
-                                    <TextField fx:id="productPaneQuantityFiled" alignment="CENTER" focusTraversable="false" GridPane.columnIndex="2">
-                                       <font>
-                                          <Font size="36.0" />
-                                       </font>
-                                    </TextField>
-                                    <AnchorPane fx:id="productPaneQuantityMeasureTopic" GridPane.columnIndex="3" />
-                                    <AnchorPane fx:id="productPanePlusQuantityImgBtn" styleClass="img-btn" GridPane.columnIndex="4" />
+                                    <AnchorPane fx:id="productPaneMinusQuantityImgBtn" styleClass="anchor-pane-as-button" />
+                                    <AnchorPane fx:id="productPaneQuantityTopic" styleClass="anchor-pane-as-text-field" GridPane.columnIndex="2" />
+                                    <AnchorPane fx:id="productPanePlusQuantityImgBtn" styleClass="anchor-pane-as-button" GridPane.columnIndex="4" />
                                  </children>
                               </GridPane>
-                              <GridPane fx:id="productPaneNumbersKeyboardGrid" alignment="CENTER" hgap="5.0" vgap="5.0" GridPane.rowIndex="2">
+                              <GridPane fx:id="productPaneNumbersKeyboardGrid" alignment="CENTER" hgap="5.0" vgap="5.0" GridPane.rowIndex="4">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" />
                                     <ColumnConstraints hgrow="SOMETIMES" />
@@ -392,8 +386,8 @@
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="44.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="32.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="36.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
                         <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                      </columnConstraints>
@@ -403,10 +397,10 @@
                         <RowConstraints vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <AnchorPane fx:id="lookCreatingOrderPaneGoBackInMenuCategoriesImgBtn" onMouseClicked="#lookCreatingOrderPaneGoBackInMenuCategoriesImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="lookCreatingOrderPaneGoBackInMenuCategoriesImgBtn" onMouseClicked="#lookCreatingOrderPaneGoBackInMenuCategoriesImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <AnchorPane fx:id="lookCreatingOrderPaneNameTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <AnchorPane fx:id="lookCreatingOrderPaneTotalAmountTopic" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <AnchorPane fx:id="lookCreatingOrderPaneFormOrderImgBtn" onMouseClicked="#lookCreatingOrderPaneFormOrderImgBtn" styleClass="img-btn" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                        <AnchorPane fx:id="lookCreatingOrderPaneFormOrderImgBtn" onMouseClicked="#lookCreatingOrderPaneFormOrderImgBtn" styleClass="anchor-pane-as-button" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                   <GridPane alignment="CENTER" GridPane.rowIndex="2">
@@ -416,16 +410,16 @@
                         <ColumnConstraints hgrow="SOMETIMES" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints percentHeight="11.0" vgrow="ALWAYS" />
                         <RowConstraints percentHeight="2.0" vgrow="NEVER" />
-                        <RowConstraints vgrow="ALWAYS" />
+                        <RowConstraints percentHeight="11.0" vgrow="ALWAYS" />
                         <RowConstraints percentHeight="2.0" vgrow="NEVER" />
-                        <RowConstraints percentHeight="75.0" vgrow="NEVER" />
+                        <RowConstraints percentHeight="74.0" vgrow="NEVER" />
                      </rowConstraints>
                      <children>
-                        <TextField fx:id="lookCreatingOrderPaneDeliveryField" onMouseClicked="#showVirtualKeyboardParentPane" promptText="Адрес доставки" GridPane.columnIndex="1">
+                        <TextField fx:id="lookCreatingOrderPaneDeliveryField" focusTraversable="false" onMouseClicked="#showVirtualKeyboardParentPane" promptText="Адрес доставки" GridPane.columnIndex="1">
                            <font>
-                              <Font size="20.0" />
+                              <Font size="26.0" />
                            </font>
                         </TextField>
                         <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -440,7 +434,7 @@
                           </rowConstraints>
                            <children>
                               <AnchorPane fx:id="lookCreatingOrderPaneDiscountTopic" />
-                              <Slider fx:id="lookCreatingOrderPaneDiscountSlider" blockIncrement="5.0" majorTickUnit="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" />
+                              <Slider fx:id="lookCreatingOrderPaneDiscountSlider" blockIncrement="5.0" focusTraversable="false" majorTickUnit="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" />
                               <CheckBox fx:id="lookCreatingOrderPaneSendPaymentCheckBox" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" text="Оплатить сейчас" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="20.0" />
@@ -457,103 +451,91 @@
       </AnchorPane>
       <AnchorPane fx:id="lookCreatedOrderPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" />
-                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="84.0" />
-                <ColumnConstraints hgrow="SOMETIMES" percentWidth="8.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints percentHeight="5.0" vgrow="NEVER" />
-                <RowConstraints percentHeight="90.0" vgrow="NEVER" />
-                <RowConstraints percentHeight="5.0" vgrow="NEVER" />
-              </rowConstraints>
+            <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" />
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.columnIndex="1" />
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.columnIndex="2" />
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.rowIndex="1" />
-                  <AnchorPane style="-fx-background-color: #F5F5F5; -fx-background-radius: 25; -fx-border-color: #999999; -fx-border-radius: 25;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <AnchorPane style="-fx-background-color: rgba(255, 255, 255, 0.75);">
+                     <effect>
+                        <GaussianBlur radius="0.0" />
+                     </effect>
+                  </AnchorPane>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="ALWAYS" />
+                        <ColumnConstraints hgrow="NEVER" percentWidth="84.0" />
+                      <ColumnConstraints hgrow="ALWAYS" percentWidth="8.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints percentHeight="5.0" vgrow="ALWAYS" />
+                      <RowConstraints percentHeight="90.0" vgrow="NEVER" />
+                      <RowConstraints percentHeight="5.0" vgrow="ALWAYS" />
+                    </rowConstraints>
                      <children>
-                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
-                              <RowConstraints percentHeight="82.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
+                        <AnchorPane style="-fx-background-color: #F5F5F5; -fx-background-radius: 25; -fx-border-color: #999999; -fx-border-radius: 25;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <GridPane>
+                              <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" />
-                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="46.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="30.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="96.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="2.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints vgrow="SOMETIMES" />
-                                    <RowConstraints percentHeight="75.0" vgrow="SOMETIMES" />
-                                    <RowConstraints vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="15.0" vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="67.0" vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="2.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <AnchorPane fx:id="lookCreatedOrderPaneCloseImgBtn" onMouseClicked="#closeLookOrderPane" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <AnchorPane fx:id="lookCreatedOrderPaneNameTopic" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <AnchorPane fx:id="lookCreatedOrderPaneTotalAmountTopic" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <AnchorPane fx:id="lookCreatedOrderPaneCompleteOrderImgBtn" onMouseClicked="#lookOrderSetDoneImgBtnPressed" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                                 </children>
-                              </GridPane>
-                              <GridPane fx:id="lookCreatedOrderPaneItemsContainer" alignment="CENTER" GridPane.rowIndex="2">
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" />
-                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="92.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints vgrow="SOMETIMES" />
-                                    <RowConstraints percentHeight="88.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                                 <children>
-                                    <GridPane alignment="CENTER" GridPane.columnIndex="1">
+                                    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="75.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" />
-                                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="41.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="35.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <TextField fx:id="lookCreatedOrderPaneDeliveryField" onMouseClicked="#showVirtualKeyboardParentPane" promptText="Адрес доставки">
-                                             <font>
-                                                <Font size="17.0" />
-                                             </font>
-                                          </TextField>
-                                          <Button fx:id="lookCreatedOrderPaneSetPaidBtn" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#lookOrderSetPaidBtnPressed" text="Оплачен" GridPane.columnIndex="2">
-                                             <font>
-                                                <Font size="18.0" />
-                                             </font>
-                                          </Button>
+                                          <AnchorPane fx:id="lookCreatedOrderPaneCloseImgBtn" onMouseClicked="#lookCreatedOrderPaneCloseImgBtnPressed" styleClass="anchor-pane-as-button" />
+                                          <AnchorPane fx:id="lookCreatedOrderPaneNameTopic" GridPane.columnIndex="1" />
+                                          <AnchorPane fx:id="lookCreatedOrderPaneTotalAmountTopic" GridPane.columnIndex="2" />
+                                          <AnchorPane fx:id="lookCreatedOrderPaneCompleteOrderImgBtn" onMouseClicked="#lookCreatedOrderPaneCompleteOrderImgBtn" styleClass="anchor-pane-as-button" GridPane.columnIndex="3" />
                                        </children>
                                     </GridPane>
+                                    <GridPane alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="22.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="18.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="60.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <AnchorPane fx:id="lookCreatedOrderPaneDiscountTopic" />
+                                          <AnchorPane fx:id="lookCreatedOrderPaneSetOrderPaidImgBtnImgBtn" onMouseClicked="#lookCreatedOrderPaneSetOrderPaidImgBtnImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="1" />
+                                          <TextField fx:id="lookCreatedOrderPaneDeliveryField" focusTraversable="false" onMouseClicked="#showVirtualKeyboardParentPane" promptText="Адрес доставки" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="26.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </GridPane>
+                                    <ScrollPane fx:id="lookCreatedOrderPaneItemsScroll" fitToWidth="true" focusTraversable="false" style="-fx-border-radius: 12; -fx-border-color: transparent; -fx-background-radius: 12; -fx-background-color: transparent;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                  </children>
                               </GridPane>
                            </children>
-                        </GridPane>
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </AnchorPane>
                      </children>
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin>
-                  </AnchorPane>
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.rowIndex="2" />
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <AnchorPane onMouseClicked="#closeLookOrderPane" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  </GridPane>
                </children>
-            </GridPane>
+            </StackPane>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="virtualKeyboardPaneParent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

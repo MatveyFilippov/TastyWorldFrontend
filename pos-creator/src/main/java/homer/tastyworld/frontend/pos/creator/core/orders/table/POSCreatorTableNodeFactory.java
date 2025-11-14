@@ -26,6 +26,7 @@ public class POSCreatorTableNodeFactory implements TableNodeFactory {
 
     private AnchorPane createNode(String name) {
         AnchorPane pane = new AnchorPane();
+        pane.getStyleClass().add("anchor-pane-as-button");
         AdaptiveTextHelper.setTextCentre(pane, name, 0.4, null);
         pane.setOpacity(1.0);
         pane.setMinSize(0, 0);

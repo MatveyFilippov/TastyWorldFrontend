@@ -5,165 +5,157 @@ import homer.tastyworld.frontend.pos.creator.panes.ParentPane;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItem;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItemModifier;
-import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderUtils;
 import homer.tastyworld.frontend.starterpack.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.utils.ui.helpers.PaneHelper;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 public class LookCreatedOrderParentPane extends ParentPane<Order> {
 
-    private static Long currentOrderID = null;
-    private final AnchorPane nameTopic, totalAmountTopic;
-    private final AnchorPane closePaneImgBtn, setDoneImgBtn;
-    private final GridPane itemsContainer;
-    private final TextField deliveryInfoField;
-    private final Button setPaidBtn;
-    @Getter(lazy = true, value = AccessLevel.PRIVATE)
-    private final Label nameTopicLabel = AdaptiveTextHelper.setTextCentre(nameTopic, "", 0.16, null);
-    @Getter(lazy = true, value = AccessLevel.PRIVATE)
-    private final Label priceTopicLabel = AdaptiveTextHelper.setTextCentre(totalAmountTopic, "", 0.1, null);
-    private final ScrollPane scroll = new ScrollPane();
+    private final AnchorPane closeImgBtn, completeOrderImgBtn, setOrderPaidImgBtn;
+    private final AnchorPane nameTopic, totalAmountTopic, discountTopic;
+    private final TextField deliveryField;
+    private final ScrollPane itemsScroll;
 
-    public static Long getCurrentOrderID() {
-        return currentOrderID;
-    }
+    private Label nameLabel, totalAmountLabel, discountLabel;
 
-    public GridPane computeItemsTable(OrderItem[] items) {
-        GridPane table = new GridPane();
-        table.setVgap(5);
-        table.setAlignment(Pos.CENTER);
+    private Order order;
+    private final BigDecimal BIG_DECIMAL_ONE_HUNDRED = BigDecimal.valueOf(100);
 
-        for (int i = 0; i < items.length; i++) {
-            table.add(getItemLine(items[i]), 0, i);
+    public Order getOrder() {
+        if (order == null) {
+            throw new NullPointerException("The order being opened does not exist");
         }
-
-        return table;
+        return order;
     }
 
-    private HBox getItemLine(OrderItem item) {
-        HBox row = new HBox(7);
-        row.setStyle("-fx-border-color: #000000;");
-        row.prefWidthProperty().bind(scroll.widthProperty());
-        row.prefHeightProperty().bind(scroll.heightProperty().multiply(0.2));
+    public void setItemsScrollContent() {
+        VBox rows = new VBox(5);
+        rows.setFillWidth(true);
+        rows.setAlignment(Pos.CENTER);
+
+        ObservableList<Node> items = rows.getChildren();
+        Arrays.stream(order.getItems()).forEach(item -> addItemRow(item, items));
+
+        itemsScroll.setContent(rows);
+    }
+
+    private void addItemRow(OrderItem item, ObservableList<Node> rows) {
+        HBox row = new HBox(5);
+        row.getStyleClass().add("order-item-line");
+        row.prefWidthProperty().bind(itemsScroll.widthProperty());
+        row.prefHeightProperty().bind(itemsScroll.heightProperty().multiply(0.16));
         row.setAlignment(Pos.CENTER);
 
         AnchorPane space1 = new AnchorPane();
-        AnchorPane name = getItemName(item);
-        AnchorPane pieceQTY = getItemQTY(item);
-        VBox modifiers = getModifiers(item);
-        AnchorPane price = getItemPrice(item);
+        AnchorPane name = new AnchorPane();
+        AdaptiveTextHelper.setTextCentre(name, item.name(), 0.075, null);
+        AnchorPane quantity = new AnchorPane();
+        AdaptiveTextHelper.setTextCentre(quantity, item.quantity() + " " + item.qtyMeasure().shortName, 0.25, null);
+        VBox modifiers = getModifiers(item.notDefaultModifiers());
+        AnchorPane price = new AnchorPane();
+        AdaptiveTextHelper.setTextCentre(price, item.totalPrice() + " р", 0.2, null);
         AnchorPane space2 = new AnchorPane();
 
-        row.getChildren().addAll(space1, name, pieceQTY, modifiers, price, space2);
+        row.getChildren().addAll(space1, name, quantity, modifiers, price, space2);
         HBox.setHgrow(space1, Priority.ALWAYS);
         HBox.setHgrow(name, Priority.ALWAYS);
-        HBox.setHgrow(pieceQTY, Priority.ALWAYS);
+        HBox.setHgrow(quantity, Priority.ALWAYS);
         HBox.setHgrow(modifiers, Priority.ALWAYS);
         HBox.setHgrow(price, Priority.ALWAYS);
         HBox.setHgrow(space2, Priority.ALWAYS);
         space1.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
         name.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
-        pieceQTY.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
+        quantity.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
         modifiers.prefWidthProperty().bind(row.widthProperty().multiply(0.35));
         price.prefWidthProperty().bind(row.widthProperty().multiply(0.13));
         space2.prefWidthProperty().bind(row.widthProperty().multiply(0.02));
 
-        return row;
+        rows.add(row);
     }
 
-    private AnchorPane getItemName(OrderItem item) {
-        AnchorPane name = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(name, item.name(), 0.075, null);
-        return name;
-    }
-
-    private AnchorPane getItemQTY(OrderItem item) {
-        AnchorPane pieceQTY = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(pieceQTY, item.quantity() + " " + item.qtyMeasure().shortName, 0.25, null);
-        return pieceQTY;
-    }
-
-    private VBox getModifiers(OrderItem item) {
+    private VBox getModifiers(OrderItemModifier[] modifiers) {
         VBox result = new VBox();
         result.setFillWidth(true);
         result.setAlignment(Pos.CENTER);
-        for (OrderItemModifier modifier : item.notDefaultModifiers()) {
-            result.getChildren().add(getModifierLine(modifier));
+        for (OrderItemModifier modifier : modifiers) {
+            AnchorPane modifierLine = new AnchorPane();
+            AdaptiveTextHelper.setTextCentre(
+                    modifierLine,
+                    "%s (%s р) %s %s".formatted(
+                            modifier.name(), modifier.unitPrice(), modifier.quantity(), modifier.qtyMeasure().shortName
+                    ),
+                    0.05,
+                    null
+            );
+            result.getChildren().add(modifierLine);
         }
         return result;
     }
 
-    private AnchorPane getModifierLine(OrderItemModifier modifier) {
-        AnchorPane modifierLine = new AnchorPane();
-        modifierLine.setStyle("-fx-border-color: #000000;");
-        AdaptiveTextHelper.setTextCentre(
-                modifierLine,
-                "%s %s %s".formatted(modifier.name(), modifier.quantity(), modifier.qtyMeasure().shortName),
-                0.065,
-                null
-        );
-        return modifierLine;
-    }
-
-    private AnchorPane getItemPrice(OrderItem item) {
-        AnchorPane price = new AnchorPane();
-        AdaptiveTextHelper.setTextCentre(price, item.totalPrice().toString(), 0.25, null);
-        return price;
-    }
-
-    private void initItemsTable() {
-        scroll.setFitToWidth(true);
-        itemsContainer.add(scroll, 1, 1);
-    }
-
-    private void initImgBtnsInLookOrderPane() {
+    private void initImgBtns() {
         PaneHelper.setImageBackgroundCentre(
-                closePaneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/ClosePane.png")
+                closeImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookCreatedOrderPane/Close.png")
         );
         PaneHelper.setImageBackgroundCentre(
-                setDoneImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookOrderPane/SetDone.png")
+                completeOrderImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookCreatedOrderPane/CompleteOrder.png")
         );
+        PaneHelper.setImageBackgroundCentre(
+                setOrderPaidImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookCreatedOrderPane/SetOrderPaid.png")
+        );
+    }
+
+    private void initTopicsLabel() {
+        nameLabel = AdaptiveTextHelper.setTextCentre(nameTopic, "", 0.16, null);
+        totalAmountLabel = AdaptiveTextHelper.setTextCentre(totalAmountTopic, "", 0.1, null);
+        discountLabel = AdaptiveTextHelper.setTextCentre(discountTopic, "", 0.14, null);
     }
 
     @Override
     public void initialize() {
-        initItemsTable();
-        initImgBtnsInLookOrderPane();
+        initImgBtns();
+        initTopicsLabel();
     }
 
     @Override
     protected void beforeOpen(Order order) {
-        currentOrderID = order.getOrderID();
-        deliveryInfoField.setText(order.getDeliveryInfo());
-        getNameTopicLabel().setText("Заказ " + order.getName());
-        getPriceTopicLabel().setText("Стоимость: " + order.getTotalAmount());
-        setPaidBtn.setDisable(order.isPaid());
-        scroll.setContent(computeItemsTable(order.getItems()));
+        this.order = order;
+
+        setItemsScrollContent();
+        setOrderPaidImgBtn.setDisable(order.isPaid());
+        totalAmountLabel.setText("Стоимость: " + order.getTotalAmount().setScale(2, RoundingMode.HALF_UP) + " р");
+        deliveryField.setText(order.getDeliveryInfo());
+        discountLabel.setText("Скидка " + order.getDiscount().multiply(BIG_DECIMAL_ONE_HUNDRED).setScale(0, RoundingMode.UNNECESSARY) + "%");
+        nameLabel.setText("Заказ " + order.getName());
     }
 
     @Override
     protected void beforeClose() {
-        scroll.setVvalue(0.0);
-        getNameTopicLabel().setText("");
-        getPriceTopicLabel().setText("");
-        deliveryInfoField.clear();
-        setPaidBtn.setDisable(true);
-        currentOrderID = null;
+        nameLabel.setText("");
+        discountLabel.setText("");
+        deliveryField.clear();
+        totalAmountLabel.setText("");
+        setOrderPaidImgBtn.setDisable(true);
+        itemsScroll.setVvalue(0.0);
+        itemsScroll.setContent(null);
+
+        this.order = null;
     }
 
 }
