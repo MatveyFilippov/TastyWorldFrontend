@@ -46,18 +46,11 @@ public class EvotorMobcashier {
     }
 
     private static String getMeasureName(MenuQuantitativeMeasure menuQuantitativeMeasure) {
-        // return switch (menuQuantitativeMeasure) {
-        //     case MenuQuantitativeMeasure.PIECES -> "шт";
-        //     case MenuQuantitativeMeasure.GRAMS -> "г";
-        //     default -> "иные ед измерения";
-        // };
-        if (menuQuantitativeMeasure == MenuQuantitativeMeasure.PIECES) {
-            return "шт";
-        } else if (menuQuantitativeMeasure == MenuQuantitativeMeasure.GRAMS) {
-            return "г";
-        } else {
-            return "иные ед измерения";
-        }
+        return switch (menuQuantitativeMeasure) {
+            case PIECES -> "шт";
+            case GRAMS -> "г";
+            default -> "иные ед измерения";
+        };
     }
 
     private static void addOrderItemModifierToOrderCreator(OrderItemModifier modifier, String tax, OrderCreator creator) {
