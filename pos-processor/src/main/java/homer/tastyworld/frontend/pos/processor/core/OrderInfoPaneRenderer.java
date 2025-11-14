@@ -97,7 +97,7 @@ public class OrderInfoPaneRenderer {
 
     private static AnchorPane getEditItemQuantityImgBtn(OrderItem item) {
         AnchorPane editImgBtn = new AnchorPane();
-        editImgBtn.getStyleClass().add("img-btn");
+        editImgBtn.getStyleClass().add("anchor-pane-as-button");
         PaneHelper.setImageBackgroundCentre(editImgBtn, editItemQuantityImgBtnResource);
 
         editImgBtn.setDisable(!isItemEditable(item));

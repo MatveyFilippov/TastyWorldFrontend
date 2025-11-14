@@ -48,7 +48,7 @@
                             <RowConstraints vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <AnchorPane fx:id="setOrderPreparingImgBtn" onMouseClicked="#setOrderPreparingImgBtnPressed" styleClass="img-btn" />
+                              <AnchorPane fx:id="setOrderPreparingImgBtn" onMouseClicked="#setOrderPreparingImgBtnPressed" styleClass="anchor-pane-as-button" />
                               <GridPane GridPane.columnIndex="1">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" />
@@ -74,7 +74,7 @@
                                     <AnchorPane fx:id="orderNameTopic" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
-                              <AnchorPane fx:id="setOrderReadyImgBtn" onMouseClicked="#setOrderReadyImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="2" />
+                              <AnchorPane fx:id="setOrderReadyImgBtn" onMouseClicked="#setOrderReadyImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="2" />
                            </children>
                         </GridPane>
                         <ScrollPane fx:id="scrollItems" focusTraversable="false" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-radius: 12; -fx-border-color: transparent; -fx-background-radius: 12; -fx-background-color: transparent;" vbarPolicy="ALWAYS" GridPane.rowIndex="2" />
@@ -135,9 +135,9 @@
                                         <RowConstraints vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <AnchorPane fx:id="editItemQuantityPaneCloseImgBtn" onMouseClicked="#editItemQuantityPaneCloseImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="1" />
+                                          <AnchorPane fx:id="editItemQuantityPaneCloseImgBtn" onMouseClicked="#editItemQuantityPaneCloseImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="1" />
                                           <AnchorPane fx:id="editItemQuantityPaneNameTopic" GridPane.columnIndex="2" />
-                                          <AnchorPane fx:id="editItemQuantityPaneSubmitImgBtn" onMouseClicked="#editItemQuantityPaneSubmitImgBtnPressed" styleClass="img-btn" GridPane.columnIndex="3" />
+                                          <AnchorPane fx:id="editItemQuantityPaneSubmitImgBtn" onMouseClicked="#editItemQuantityPaneSubmitImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="3" />
                                        </children>
                                     </GridPane>
                                     <AnchorPane fx:id="editItemQuantityPaneTotalTopic" style="-fx-border-color: #000000; -fx-background-color: #FFFFFF; -fx-background-radius: 25; -fx-border-radius: 25;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
