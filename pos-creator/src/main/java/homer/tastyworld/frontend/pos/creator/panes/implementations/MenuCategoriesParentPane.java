@@ -56,7 +56,7 @@ public class MenuCategoriesParentPane extends ParentPane<Void> {
         );
 
         AnchorPane topWithImage = new AnchorPane();
-        PaneHelper.setImageBackgroundBottom(topWithImage, category.getImage());
+        PaneHelper.setImageBackgroundCentre(topWithImage, category.getImage());
 
         AnchorPane bottomWithName = new AnchorPane();
         AdaptiveTextHelper.setTextCentre(bottomWithName, category.getName(), 0.085, null);

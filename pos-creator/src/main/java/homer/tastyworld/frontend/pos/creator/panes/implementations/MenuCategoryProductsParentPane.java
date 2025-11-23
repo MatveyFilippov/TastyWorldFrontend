@@ -58,7 +58,7 @@ public class MenuCategoryProductsParentPane extends ParentPane<MenuCategory> {
         );
 
         AnchorPane topWithImage = new AnchorPane();
-        PaneHelper.setImageBackgroundBottom(topWithImage, product.getImage());
+        PaneHelper.setImageBackgroundCentre(topWithImage, product.getImage());
 
         AnchorPane bottomWithName = new AnchorPane();
         AdaptiveTextHelper.setTextCentre(bottomWithName, product.getName(), 0.085, null);
