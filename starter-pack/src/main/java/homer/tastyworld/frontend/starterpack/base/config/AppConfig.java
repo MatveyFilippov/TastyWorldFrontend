@@ -13,10 +13,10 @@ import java.util.Optional;
 
 public class AppConfig {
 
-    public static final String TW_SRA_URL = "http://tastyworld-pos.ru:1212/api/v1";  // TastyWorld Service-REST-API
+    public static final String TW_SRA_URL = "http://tastyworld-pos.ru/api/v1";  // TastyWorld Service-REST-API
     public static final String TW_MN_HOST = "tastyworld-pos.ru";  // TastyWorld Microservice-Notifier
     public static final int TW_MN_PORT = 5672;  // TastyWorld Microservice-Notifier
-    public static final String TW_MN_VHOST = "playground";  // TastyWorld Microservice-Notifier
+    public static final String TW_MN_VHOST = "main";  // TastyWorld Microservice-Notifier
     public static final String EVOTOR_MC_API_URL = "https://mobcashier.evotor.ru/api/v1";  // Evotor Mobile-Cashier
     public static final File APP_DATA_DIR = new File(System.getProperty("user.home"), ".TastyWorld");
     private static String appIdentifierName, appVersion;
