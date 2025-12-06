@@ -13,6 +13,7 @@ import java.util.Arrays;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -25,9 +26,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class LookCreatedOrderParentPane extends ParentPane<Order> {
 
-    private final AnchorPane closeImgBtn, completeOrderImgBtn, setOrderPaidImgBtn;
+    private final AnchorPane closeImgBtn, completeOrderImgBtn, sendPaymentImgBtn;
     private final AnchorPane nameTopic, totalAmountTopic, discountTopic;
     private final TextField deliveryField;
+    private final CheckBox isTakeawayPackCheckBox;
     private final ScrollPane itemsScroll;
 
     private Label nameLabel, totalAmountLabel, discountLabel;
@@ -116,9 +118,17 @@ public class LookCreatedOrderParentPane extends ParentPane<Order> {
                 POSCreatorApplication.class.getResourceAsStream("images/buttons/LookCreatedOrderPane/CompleteOrder.png")
         );
         PaneHelper.setImageBackgroundCentre(
-                setOrderPaidImgBtn,
-                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookCreatedOrderPane/SetOrderPaid.png")
+                sendPaymentImgBtn,
+                POSCreatorApplication.class.getResourceAsStream("images/buttons/LookCreatedOrderPane/SendPayment.png")
         );
+    }
+
+    private void initDeliveryInfoListeners() {
+        deliveryField.textProperty().addListener((observable, oldValue, newValue) -> {
+            boolean isTakeawayPack = newValue != null && !newValue.isBlank();
+            isTakeawayPackCheckBox.setSelected(isTakeawayPack);
+            isTakeawayPackCheckBox.setDisable(isTakeawayPack);
+        });
     }
 
     private void initTopicsLabel() {
@@ -130,6 +140,7 @@ public class LookCreatedOrderParentPane extends ParentPane<Order> {
     @Override
     public void initialize() {
         initImgBtns();
+        initDeliveryInfoListeners();
         initTopicsLabel();
     }
 
@@ -138,9 +149,12 @@ public class LookCreatedOrderParentPane extends ParentPane<Order> {
         this.order = order;
 
         setItemsScrollContent();
-        setOrderPaidImgBtn.setDisable(order.isPaid());
+        sendPaymentImgBtn.setDisable(order.isPaid());
         totalAmountLabel.setText("Стоимость: " + order.getTotalAmount().setScale(2, RoundingMode.HALF_UP) + " р");
         deliveryField.setText(order.getDeliveryInfo());
+        if (order.isTakeawayPack()) {
+            isTakeawayPackCheckBox.setSelected(true);
+        }
         discountLabel.setText("Скидка " + order.getDiscount().multiply(BIG_DECIMAL_ONE_HUNDRED).setScale(0, RoundingMode.UNNECESSARY) + "%");
         nameLabel.setText("Заказ " + order.getName());
     }
@@ -151,7 +165,7 @@ public class LookCreatedOrderParentPane extends ParentPane<Order> {
         discountLabel.setText("");
         deliveryField.clear();
         totalAmountLabel.setText("");
-        setOrderPaidImgBtn.setDisable(true);
+        sendPaymentImgBtn.setDisable(true);
         itemsScroll.setVvalue(0.0);
         itemsScroll.setContent(null);
 

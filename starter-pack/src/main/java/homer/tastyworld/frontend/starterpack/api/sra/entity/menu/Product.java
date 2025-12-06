@@ -5,7 +5,7 @@ import homer.tastyworld.frontend.starterpack.api.engine.Requester;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.misc.ProductTax;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.misc.ProductType;
 import homer.tastyworld.frontend.starterpack.api.sra.tools.RequestUtils;
-import homer.tastyworld.frontend.starterpack.utils.managers.cache.ImageResponseContentCacheProcessor;
+import homer.tastyworld.frontend.starterpack.utils.managers.cache.FileResponseContentCacheProcessor;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.misc.MenuQuantitativeMeasure;
 import homer.tastyworld.frontend.starterpack.utils.managers.cache.CacheManager;
 import lombok.EqualsAndHashCode;
@@ -56,7 +56,7 @@ public final class Product {
             @Nullable Boolean is_active
     ) {}
 
-    private static final ImageResponseContentCacheProcessor imageCache = CacheManager.getForImageResponseContent();
+    private static final FileResponseContentCacheProcessor imageCache = CacheManager.getForFileResponseContent();
 
     private final long productID;
     private String name;

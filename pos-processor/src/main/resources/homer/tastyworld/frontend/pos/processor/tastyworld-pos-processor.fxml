@@ -54,11 +54,12 @@
                                   <ColumnConstraints hgrow="SOMETIMES" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints percentHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints vgrow="SOMETIMES" />
+                                  <RowConstraints percentHeight="70.0" vgrow="SOMETIMES" />
+                                    <RowConstraints percentHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <GridPane>
+                                    <AnchorPane fx:id="orderNameTopic" />
+                                    <GridPane GridPane.rowIndex="1">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" />
                                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -68,10 +69,9 @@
                                       </rowConstraints>
                                        <children>
                                           <AnchorPane fx:id="orderDraftedTimeTopic" />
-                                          <AnchorPane fx:id="orderDeliveryTopic" GridPane.columnIndex="1" />
+                                          <AnchorPane fx:id="orderTakeawayPackTopic" GridPane.columnIndex="1" />
                                        </children>
                                     </GridPane>
-                                    <AnchorPane fx:id="orderNameTopic" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                               <AnchorPane fx:id="setOrderReadyImgBtn" onMouseClicked="#setOrderReadyImgBtnPressed" styleClass="anchor-pane-as-button" GridPane.columnIndex="2" />

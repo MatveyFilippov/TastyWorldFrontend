@@ -13,7 +13,7 @@ public class CacheManager {
     }
 
     private static final Set<ManageableCacheProcessor> caches = new HashSet<>();
-    private static ImageResponseContentCacheProcessor imageResponseContentCacheProcessor;
+    private static FileResponseContentCacheProcessor fileResponseContentCacheProcessor;
 
     public static void register(ManageableCacheProcessor cache) {
         caches.add(cache);
@@ -32,12 +32,12 @@ public class CacheManager {
         return newCacheableFunction;
     }
 
-    public static ImageResponseContentCacheProcessor getForImageResponseContent() {
-        if (imageResponseContentCacheProcessor == null) {
-            imageResponseContentCacheProcessor = new ImageResponseContentCacheProcessor();
-            register(imageResponseContentCacheProcessor);
+    public static FileResponseContentCacheProcessor getForFileResponseContent() {
+        if (fileResponseContentCacheProcessor == null) {
+            fileResponseContentCacheProcessor = new FileResponseContentCacheProcessor();
+            register(fileResponseContentCacheProcessor);
         }
-        return imageResponseContentCacheProcessor;
+        return fileResponseContentCacheProcessor;
     }
 
     public static void cleanAll() {

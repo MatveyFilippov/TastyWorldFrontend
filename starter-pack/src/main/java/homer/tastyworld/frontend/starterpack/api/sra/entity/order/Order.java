@@ -30,12 +30,14 @@ public final class Order {
             BigDecimal discount,
             Boolean is_paid,
             @Nullable OffsetDateTime paid_at,
+            Boolean is_takeaway_pack,
             @Nullable String delivery_info
     ) {}
 
     private record DraftOrderRequestBody(
             String name,
             @Nullable BigDecimal discount,
+            @Nullable Boolean is_takeaway_pack,
             @Nullable String delivery_info
     ) {}
 
@@ -105,6 +107,7 @@ public final class Order {
 
     private record EditOrderRequestBody(
             @Nullable BigDecimal discount,
+            @Nullable Boolean is_takeaway_pack,
             @Nullable String delivery_info
     ) {}
 
@@ -117,6 +120,7 @@ public final class Order {
     private BigDecimal totalAmount;
     private boolean isPaid = false;
     private LocalDateTime paidAt;
+    private Boolean isTakeawayPack;
     private String deliveryInfo;
 
     private Order(long orderID, String name, LocalDateTime draftAt) {
@@ -145,9 +149,9 @@ public final class Order {
         return of(requestGetOrderResponseBody(orderID));
     }
 
-    public static Order draft(NameController nameController, @Nullable BigDecimal discount, @Nullable String deliveryInfo) {
+    public static Order draft(NameController nameController, @Nullable BigDecimal discount, @Nullable Boolean isTakeawayPack, @Nullable String deliveryInfo) {
         DraftOrderRequestBody draftOrderRequestBody = new DraftOrderRequestBody(
-                nameController.getFreeName(), discount, deliveryInfo
+                nameController.getFreeName(), discount, isTakeawayPack, deliveryInfo
         );
         Request draftOrderRequest = Request.of(
                 RequestUtils.getURI("/orders/draft"), Method.POST, RequestUtils.getBearerAuthorization(), draftOrderRequestBody
@@ -368,9 +372,9 @@ public final class Order {
         return paidAt;
     }
 
-    private GetOrderResponseBody editOrder(@Nullable BigDecimal newDiscount, @Nullable String newDeliveryInfo) {
+    private GetOrderResponseBody editOrder(@Nullable BigDecimal newDiscount, @Nullable Boolean newIsTakeawayPack, @Nullable String newDeliveryInfo) {
         EditOrderRequestBody editOrderRequestBody = new EditOrderRequestBody(
-                newDiscount, newDeliveryInfo
+                newDiscount, newIsTakeawayPack, newDeliveryInfo
         );
         Request editOrderRequest = Request.of(
                 RequestUtils.getURI("/orders/" + orderID), Method.PATCH, RequestUtils.getBearerAuthorization(), editOrderRequestBody
@@ -382,11 +386,15 @@ public final class Order {
     }
 
     public void setDiscount(BigDecimal newDiscount) {
-        editOrder(newDiscount, null);
+        editOrder(newDiscount, null, null);
+    }
+
+    public void setTakeawayPack(boolean newIsTakeawayPack) {
+        editOrder(null, newIsTakeawayPack, null);
     }
 
     public void setDeliveryInfo(@Nullable String newDeliveryInfo) {
-        editOrder(null, newDeliveryInfo);
+        editOrder(null, null, newDeliveryInfo == null ? "" : newDeliveryInfo);
     }
 
     public BigDecimal getDiscount() {
@@ -400,6 +408,19 @@ public final class Order {
             discount = getOrderResponseBody.discount();
         }
         return getOrderResponseBody.discount();
+    }
+
+    public boolean isTakeawayPack() {
+        if (isTakeawayPack != null) {
+            return isTakeawayPack;
+        }
+
+        GetOrderResponseBody getOrderResponseBody = requestGetOrderResponseBody(orderID);
+
+        if (isCompleted) {
+            isTakeawayPack = getOrderResponseBody.is_takeaway_pack();
+        }
+        return getOrderResponseBody.is_takeaway_pack();
     }
 
     @Nullable

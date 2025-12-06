@@ -5,6 +5,7 @@ import homer.tastyworld.frontend.pos.creator.panes.ParentPane;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.order.Order;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItem;
 import homer.tastyworld.frontend.starterpack.api.sra.entity.order.OrderItemModifier;
+import homer.tastyworld.frontend.starterpack.utils.ui.AlertWindows;
 import homer.tastyworld.frontend.starterpack.utils.ui.DialogWindows;
 import homer.tastyworld.frontend.starterpack.utils.ui.helpers.AdaptiveTextHelper;
 import homer.tastyworld.frontend.starterpack.utils.ui.helpers.PaneHelper;
@@ -33,6 +34,7 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
 
     private final AnchorPane goBackInMenuCategoriesImgBtn, formOrderImgBtn;
     private final AnchorPane nameTopic, totalAmountTopic;
+    private final CheckBox isTakeawayPackCheckBox;
     private final TextField deliveryField;
     private final AnchorPane discountTopic;
     private final Slider discountSlider;
@@ -186,6 +188,14 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
         });
     }
 
+    private void initDeliveryInfoListeners() {
+        deliveryField.textProperty().addListener((observable, oldValue, newValue) -> {
+            boolean isTakeawayPack = newValue != null && !newValue.isBlank();
+            isTakeawayPackCheckBox.setSelected(isTakeawayPack);
+            isTakeawayPackCheckBox.setDisable(isTakeawayPack);
+        });
+    }
+
     private void initTopicsLabel() {
         nameLabel = AdaptiveTextHelper.setTextCentre(nameTopic, "", 0.16, null);
     }
@@ -195,6 +205,7 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
         initImgBtns();
         initTotalAmountListeners();
         initDiscountListeners();
+        initDeliveryInfoListeners();
         initTopicsLabel();
     }
 
@@ -204,6 +215,9 @@ public class LookCreatingOrderParentPane extends ParentPane<Order> {
 
         setItemsScrollContent();
         deliveryField.setText(order.getDeliveryInfo());
+        if (order.isTakeawayPack()) {
+            isTakeawayPackCheckBox.setSelected(true);
+        }
         discountSlider.setValue(order.getDiscount().multiply(BIG_DECIMAL_ONE_HUNDRED).doubleValue());
         nameLabel.setText("Заказ " + order.getName());
         sendPaymentCheckBox.setSelected(order.isPaid());

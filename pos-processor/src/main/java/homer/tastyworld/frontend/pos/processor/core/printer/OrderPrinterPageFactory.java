@@ -67,8 +67,10 @@ public class OrderPrinterPageFactory extends PrinterPageFactory {
         addDivider('=');
         addEmptyLines(1);
         dropFontStyle();
-        if (toPrint.getDeliveryInfo() != null) {
-            addLineRight("Доставка: " + toPrint.getDeliveryInfo());
+        if (toPrint.isTakeawayPack()) {
+            addLineRight(
+                    "Собрать на " + (toPrint.getDeliveryInfo() != null ? "доставку: " + toPrint.getDeliveryInfo() : "вынос")
+            );
         }
         addEmptyLines(5);
     }

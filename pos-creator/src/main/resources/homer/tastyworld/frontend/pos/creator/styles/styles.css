@@ -129,6 +129,10 @@
 }
 
 
+.check-box {
+    -fx-cursor: hand;
+}
+
 .check-box:selected .mark {
     -fx-background-color: #ff4040;
 }

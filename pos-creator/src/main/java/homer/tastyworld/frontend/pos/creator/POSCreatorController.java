@@ -104,7 +104,7 @@ public class POSCreatorController {
     @FXML
     private AnchorPane lookCreatingOrderPaneNameTopic, lookCreatingOrderPaneTotalAmountTopic;
     @FXML
-    private ScrollPane lookCreatingOrderPaneItemsScroll;
+    private CheckBox lookCreatingOrderPaneIsTakeawayPackCheckBox;
     @FXML
     private TextField lookCreatingOrderPaneDeliveryField;
     @FXML
@@ -113,16 +113,20 @@ public class POSCreatorController {
     private Slider lookCreatingOrderPaneDiscountSlider;
     @FXML
     private CheckBox lookCreatingOrderPaneSendPaymentCheckBox;
+    @FXML
+    private ScrollPane lookCreatingOrderPaneItemsScroll;
 
     private LookCreatedOrderParentPane lookCreatedOrderPane;
     @FXML
     private AnchorPane lookCreatedOrderPaneParent;
     @FXML
-    private AnchorPane lookCreatedOrderPaneCloseImgBtn, lookCreatedOrderPaneCompleteOrderImgBtn, lookCreatedOrderPaneSetOrderPaidImgBtnImgBtn;
+    private AnchorPane lookCreatedOrderPaneCloseImgBtn, lookCreatedOrderPaneCompleteOrderImgBtn, lookCreatedOrderPaneSendPaymentImgBtn;
     @FXML
     private AnchorPane lookCreatedOrderPaneNameTopic, lookCreatedOrderPaneTotalAmountTopic, lookCreatedOrderPaneDiscountTopic;
     @FXML
     private TextField lookCreatedOrderPaneDeliveryField;
+    @FXML
+    private CheckBox lookCreatedOrderPaneIsTakeawayPackCheckBox;
     @FXML
     private ScrollPane lookCreatedOrderPaneItemsScroll;
 
@@ -205,6 +209,7 @@ public class POSCreatorController {
                 .formOrderImgBtn(lookCreatingOrderPaneFormOrderImgBtn)
                 .nameTopic(lookCreatingOrderPaneNameTopic)
                 .totalAmountTopic(lookCreatingOrderPaneTotalAmountTopic)
+                .isTakeawayPackCheckBox(lookCreatingOrderPaneIsTakeawayPackCheckBox)
                 .deliveryField(lookCreatingOrderPaneDeliveryField)
                 .discountTopic(lookCreatingOrderPaneDiscountTopic)
                 .discountSlider(lookCreatingOrderPaneDiscountSlider)
@@ -220,11 +225,12 @@ public class POSCreatorController {
                 .current(lookCreatedOrderPaneParent)
                 .closeImgBtn(lookCreatedOrderPaneCloseImgBtn)
                 .completeOrderImgBtn(lookCreatedOrderPaneCompleteOrderImgBtn)
-                .setOrderPaidImgBtn(lookCreatedOrderPaneSetOrderPaidImgBtnImgBtn)
+                .sendPaymentImgBtn(lookCreatedOrderPaneSendPaymentImgBtn)
                 .nameTopic(lookCreatedOrderPaneNameTopic)
                 .totalAmountTopic(lookCreatedOrderPaneTotalAmountTopic)
                 .discountTopic(lookCreatedOrderPaneDiscountTopic)
                 .deliveryField(lookCreatedOrderPaneDeliveryField)
+                .isTakeawayPackCheckBox(lookCreatedOrderPaneIsTakeawayPackCheckBox)
                 .itemsScroll(lookCreatedOrderPaneItemsScroll)
                 .build();
         lookCreatedOrderPane.initialize();
@@ -353,6 +359,16 @@ public class POSCreatorController {
 
     @FXML
     void lookCreatingOrderPaneGoBackInMenuCategoriesImgBtnPressed() {
+        Order order = OrderCreator.get();
+
+        order.setTakeawayPack(lookCreatingOrderPaneIsTakeawayPackCheckBox.isSelected());
+        String deliveryInfo = lookCreatingOrderPaneDeliveryField.getText();
+        order.setDeliveryInfo(deliveryInfo);
+        if (deliveryInfo != null && !deliveryInfo.isBlank()) {
+            VirtualKeyboardPrompts.appendVar(lookCreatingOrderPaneDeliveryField);
+        }
+        order.setDiscount(lookCreatingOrderPane.getOrderDiscount());
+
         menuCategoriesPane.openAndCloseFrom(lookCreatingOrderPane, null);
     }
 
@@ -377,6 +393,7 @@ public class POSCreatorController {
             return;
         }
 
+        order.setTakeawayPack(lookCreatingOrderPaneIsTakeawayPackCheckBox.isSelected());
         String deliveryInfo = lookCreatingOrderPaneDeliveryField.getText();
         order.setDeliveryInfo(deliveryInfo);
         if (deliveryInfo != null && !deliveryInfo.isBlank()) {
@@ -417,6 +434,7 @@ public class POSCreatorController {
     void lookCreatedOrderPaneCloseImgBtnPressed() {
         Order order = lookCreatedOrderPane.getOrder();
 
+        order.setTakeawayPack(lookCreatedOrderPaneIsTakeawayPackCheckBox.isSelected());
         String deliveryInfo = lookCreatedOrderPaneDeliveryField.getText();
         order.setDeliveryInfo(deliveryInfo);
         if (deliveryInfo != null && !deliveryInfo.isBlank()) {
@@ -440,6 +458,7 @@ public class POSCreatorController {
             return;
         }
 
+        order.setTakeawayPack(lookCreatedOrderPaneIsTakeawayPackCheckBox.isSelected());
         String deliveryInfo = lookCreatedOrderPaneDeliveryField.getText();
         order.setDeliveryInfo(deliveryInfo);
         if (deliveryInfo != null && !deliveryInfo.isBlank()) {
@@ -448,7 +467,7 @@ public class POSCreatorController {
 
         if (!isPaid) {
             order.setPaid();
-            lookCreatedOrderPaneSetOrderPaidImgBtnImgBtn.setDisable(true);
+            lookCreatedOrderPaneSendPaymentImgBtn.setDisable(true);
         }
 
         if (order.getStatus().compareTo(OrderStatus.READY) < 0) {
@@ -460,7 +479,7 @@ public class POSCreatorController {
     }
 
     @FXML
-    void lookCreatedOrderPaneSetOrderPaidImgBtnImgBtnPressed() {
+    void lookCreatedOrderPaneSendPaymentImgBtnPressed() {
         Order order = lookCreatedOrderPane.getOrder();
 
         boolean isPaid;
@@ -481,7 +500,7 @@ public class POSCreatorController {
 
         if (isPaid) {
             order.setPaid();
-            lookCreatedOrderPaneSetOrderPaidImgBtnImgBtn.setDisable(true);
+            lookCreatedOrderPaneSendPaymentImgBtn.setDisable(true);
         }
     }
 

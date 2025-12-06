@@ -26,7 +26,7 @@ public class POSProcessorController {
     @FXML
     private AnchorPane setOrderPreparingImgBtn, setOrderReadyImgBtn;
     @FXML
-    private AnchorPane orderDraftedTimeTopic, orderDeliveryTopic, orderNameTopic;
+    private AnchorPane orderNameTopic, orderDraftedTimeTopic, orderTakeawayPackTopic;
 
     @FXML
     private AnchorPane editItemQuantityPaneParent;
@@ -42,7 +42,7 @@ public class POSProcessorController {
         checkSubscriptionDays();
         initImgBtnsInMainPane();
         initImgBtnsInEditItemQuantityPane();
-        OrderInfoPaneRenderer.init(scrollItems, orderDraftedTimeTopic, orderDeliveryTopic, orderNameTopic);
+        OrderInfoPaneRenderer.init(scrollItems, orderNameTopic, orderDraftedTimeTopic, orderTakeawayPackTopic);
         OrdersScrollQueue.init(scrollOrders);
         EditItemQuantityPane.init(
                 editItemQuantityPaneParent,

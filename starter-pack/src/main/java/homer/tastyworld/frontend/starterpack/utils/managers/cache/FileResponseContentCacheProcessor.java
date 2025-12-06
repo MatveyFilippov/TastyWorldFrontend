@@ -1,31 +1,30 @@
 package homer.tastyworld.frontend.starterpack.utils.managers.cache;
 
-import homer.tastyworld.frontend.starterpack.api.sra.ImageResponse;
+import homer.tastyworld.frontend.starterpack.api.sra.FileResponse;
 import homer.tastyworld.frontend.starterpack.base.AppLogger;
 import homer.tastyworld.frontend.starterpack.base.config.AppConfig;
 import homer.tastyworld.frontend.starterpack.utils.misc.FileDirectories;
 import homer.tastyworld.frontend.starterpack.utils.misc.SHA256;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
-public final class ImageResponseContentCacheProcessor implements CacheManager.ManageableCacheProcessor {
+public final class FileResponseContentCacheProcessor implements CacheManager.ManageableCacheProcessor {
 
-    private static final AppLogger logger = AppLogger.getFor(ImageResponseContentCacheProcessor.class);
-    private static final File cachedImagesDir = new File(AppConfig.APP_DATA_DIR, "CachedPhotos");
+    private static final AppLogger logger = AppLogger.getFor(FileResponseContentCacheProcessor.class);
+    private static final File cachedFilesDir = new File(AppConfig.APP_DATA_DIR, "CachedFiles");
 
-    ImageResponseContentCacheProcessor() {}
+    FileResponseContentCacheProcessor() {}
 
     private Optional<InputStream> getContentIfCached(String abstractPath, String expectedHashSHA256) {
         if (!AppConfig.isAppCacheAvailable()) {
             return Optional.empty();
         }
 
-        File actualFile = new File(cachedImagesDir, abstractPath);
+        File actualFile = new File(cachedFilesDir, abstractPath);
         if (!actualFile.isFile()) {
             return Optional.empty();
         }
@@ -34,14 +33,14 @@ public final class ImageResponseContentCacheProcessor implements CacheManager.Ma
         try {
             actualHashSHA256 = SHA256.hash(actualFile);
         } catch (Exception ex) {
-            logger.warn("Can't get SHA-256 hash from cached image", ex);
+            logger.warn("Can't get SHA-256 hash of cached file", ex);
         }
 
         if (expectedHashSHA256.equals(actualHashSHA256)) {
             try {
                 return Optional.of(new FileInputStream(actualFile));
             } catch (Exception ex) {
-                logger.warn("Can't get content from cached image", ex);
+                logger.warn("Can't get content of cached file", ex);
             }
         }
 
@@ -53,37 +52,37 @@ public final class ImageResponseContentCacheProcessor implements CacheManager.Ma
             return;
         }
 
-        File file = new File(cachedImagesDir, abstractPath);
+        File file = new File(cachedFilesDir, abstractPath);
         FileDirectories.createDir(file.getParentFile());
         try {
             Files.copy(content, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception ex) {
-            logger.warn("Can't cache (save) image content", ex);
+            logger.warn("Can't cache (save) file content", ex);
         }
     }
 
-    public InputStream cacheByRequest(String imageEndpoint) {
-        ImageResponse imageResponse = ImageResponse.request(imageEndpoint);
+    public InputStream cacheByRequest(String getFileEndpoint) {
+        FileResponse fileResponse = FileResponse.request(getFileEndpoint);
 
         if (AppConfig.isAppCacheAvailable()) {
-            cache(imageResponse.getContent(), imageResponse.info.abstractPath());
+            cache(fileResponse.getContent(), fileResponse.info.abstractPath());
         }
 
-        return imageResponse.getContent();
+        return fileResponse.getContent();
     }
 
-    public InputStream get(String abstractPath, String expectedHashSHA256, String imageEndpoint) {
-        return getContentIfCached(abstractPath, expectedHashSHA256).orElseGet(() -> cacheByRequest(imageEndpoint));
+    public InputStream get(String abstractPath, String expectedHashSHA256, String getFileEndpoint) {
+        return getContentIfCached(abstractPath, expectedHashSHA256).orElseGet(() -> cacheByRequest(getFileEndpoint));
     }
 
-    public InputStream get(String infoEndpoint, String imageEndpoint) {
-        ImageResponse.Info info = ImageResponse.requestInfo(infoEndpoint);
-        return get(info.abstractPath(), info.hashSHA256(), imageEndpoint);
+    public InputStream get(String getFileInfoEndpoint, String getFileEndpoint) {
+        FileResponse.Info info = FileResponse.requestInfo(getFileInfoEndpoint);
+        return get(info.abstractPath(), info.hashSHA256(), getFileEndpoint);
     }
 
     @Override
     public void clean() {
-        FileDirectories.cleanDir(cachedImagesDir);
+        FileDirectories.cleanDir(cachedFilesDir);
     }
 
 }

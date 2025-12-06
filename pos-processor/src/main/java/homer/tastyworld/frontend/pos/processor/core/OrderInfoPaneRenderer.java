@@ -32,7 +32,7 @@ public class OrderInfoPaneRenderer {
     private static Order renderedOrder;
     private static ScrollPane scroll;
     private static ObservableList<Node> items;
-    private static Label orderDraftedTimeLabel, orderDeliveryLabel, orderNameLabel;
+    private static Label orderNameLabel, orderDraftedTimeLabel, orderTakeawayPackTopic;
 
     public static Optional<Order> getRenderedOrder() {
         return Optional.ofNullable(renderedOrder);
@@ -41,12 +41,15 @@ public class OrderInfoPaneRenderer {
     public static void render(long orderID) {
         clean();
         renderedOrder = OrderUtils.getOrCreateInstance(orderID);
-        orderDraftedTimeLabel.setText(renderedOrder.getDraftAt().format(orderDraftedDateTimeFormatter));
-        orderDeliveryLabel.setText("Доставка: " + (renderedOrder.getDeliveryInfo() == null ? "Нет" : "Да"));
         orderNameLabel.setText("Заказ " + renderedOrder.getName());
-        items.addAll(
-                Arrays.stream(renderedOrder.getItems()).map(OrderInfoPaneRenderer::getItemLine).toList()
-        );
+        orderDraftedTimeLabel.setText(renderedOrder.getDraftAt().format(orderDraftedDateTimeFormatter));
+        if (renderedOrder.isTakeawayPack()) {
+            orderTakeawayPackTopic.setText("На вынос");
+            orderTakeawayPackTopic.setTextFill(Color.RED);
+        } else {
+            orderTakeawayPackTopic.setText("В зале");
+        }
+        items.addAll(Arrays.stream(renderedOrder.getItems()).map(OrderInfoPaneRenderer::getItemLine).toList());
     }
 
     public static void rerender() {
@@ -136,7 +139,8 @@ public class OrderInfoPaneRenderer {
 
     public static void clean() {
         renderedOrder = null;
-        orderDeliveryLabel.setText("");
+        orderTakeawayPackTopic.setTextFill(Color.BLACK);
+        orderTakeawayPackTopic.setText("");
         orderDraftedTimeLabel.setText("");
         orderNameLabel.setText("Заказ не выбран");
         items.clear();
@@ -149,16 +153,16 @@ public class OrderInfoPaneRenderer {
         }
     }
 
-    public static void init(ScrollPane scroll, AnchorPane orderDraftedTimeTopic, AnchorPane orderDeliveryTopic, AnchorPane orderNameTopic) {
+    public static void init(ScrollPane scroll, AnchorPane orderNameTopic, AnchorPane orderDraftedTimeTopic, AnchorPane orderTakeawayPackTopic) {
         VBox rows = new VBox(5);
         rows.setFillWidth(true);
         rows.setAlignment(Pos.CENTER);
         scroll.setContent(rows);
         OrderInfoPaneRenderer.items = rows.getChildren();
         OrderInfoPaneRenderer.scroll = scroll;
-        StringExpression miscInfoTopicsFontSize = AdaptiveTextHelper.getFontSize(orderDeliveryTopic, 0.08);
+        StringExpression miscInfoTopicsFontSize = AdaptiveTextHelper.getFontSize(orderTakeawayPackTopic, 0.08);
         OrderInfoPaneRenderer.orderDraftedTimeLabel = AdaptiveTextHelper.setTextCentre(orderDraftedTimeTopic, "", miscInfoTopicsFontSize, null);
-        OrderInfoPaneRenderer.orderDeliveryLabel = AdaptiveTextHelper.setTextCentre(orderDeliveryTopic, "", miscInfoTopicsFontSize, null);
+        OrderInfoPaneRenderer.orderTakeawayPackTopic = AdaptiveTextHelper.setTextCentre(orderTakeawayPackTopic, "", miscInfoTopicsFontSize, null);
         OrderInfoPaneRenderer.orderNameLabel = AdaptiveTextHelper.setTextCentre(orderNameTopic, "Заказ не выбран", 0.1, Color.BLACK);;
     }
 

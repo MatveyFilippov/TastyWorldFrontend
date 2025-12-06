@@ -5,7 +5,7 @@ import homer.tastyworld.frontend.starterpack.api.engine.Requester;
 import homer.tastyworld.frontend.starterpack.api.sra.tools.RequestUtils;
 import homer.tastyworld.frontend.starterpack.utils.managers.cache.CacheManager;
 import homer.tastyworld.frontend.starterpack.utils.managers.cache.CacheableFunction;
-import homer.tastyworld.frontend.starterpack.utils.managers.cache.ImageResponseContentCacheProcessor;
+import homer.tastyworld.frontend.starterpack.utils.managers.cache.FileResponseContentCacheProcessor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.apache.hc.core5.http.Method;
@@ -34,7 +34,7 @@ public final class MenuCategory {
     ) {}
 
     private static final CacheableFunction<Long, MenuCategory> cacheableGetCategory = CacheManager.getForFunction(MenuCategory::get);
-    private static final ImageResponseContentCacheProcessor imageCache = CacheManager.getForImageResponseContent();
+    private static final FileResponseContentCacheProcessor imageCache = CacheManager.getForFileResponseContent();
 
     private final long categoryID;
     private String name;
