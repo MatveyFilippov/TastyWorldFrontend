@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final BigDecimal BIG_DECIMAL_ONE_HUNDRED = BigDecimal.valueOf(100);
     private final Order toPrint;
 
     public OrderWithItemsPrinterPageFactory(Order toPrint) {
@@ -78,8 +79,15 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
         }
     }
 
+    private void setDiscountIfNotZero() {
+        BigDecimal discount = toPrint.getDiscount();
+        if (discount.compareTo(BigDecimal.ZERO) > 0) {
+            addLineRight("СКИДКА: " + discount.multiply(BIG_DECIMAL_ONE_HUNDRED).setScale(0, RoundingMode.UNNECESSARY) + "%");
+        }
+    }
+
     @Override
-    protected void setContent() throws IOException {
+    protected void setContent() throws IOException {  // TODO: add clientpoint.name & clientpoint.address
         setFontStyle(new byte[] {0x1B, 0x21, 0x38});  // 4x high + 2x width
         addLineCenter(toPrint.getName());
         dropFontStyle();
@@ -91,6 +99,7 @@ public class OrderWithItemsPrinterPageFactory extends PrinterPageFactory {
         addDivider('=');
         setItems();
         addDivider('=');
+        setDiscountIfNotZero();
         addLineRight("ИТОГО: " + toPrint.getTotalAmount().setScale(2, RoundingMode.HALF_UP) + " р");
         addDivider('~');
         addLineCenter("СПАСИБО ЗА ВИЗИТ!");
